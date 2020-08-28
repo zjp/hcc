@@ -1,0 +1,5 @@
+.DS_Store
+holycc
+obj
+compile_commands.json
+src/lexer.yy.cc
