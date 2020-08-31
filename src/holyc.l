@@ -32,7 +32,91 @@ DIGIT [0-9]
             yylval = lval;
 %}
 
-"+"		{
+"@" {
+		int tokenKind = TokenKind::AT;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+"^" {
+		int tokenKind = TokenKind::CARAT;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+"[" {
+		int tokenKind = TokenKind::LBRACE;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+"]" {
+		int tokenKind = TokenKind::RBRACE;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+"{" {
+		int tokenKind = TokenKind::LCURLY;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+"}" {
+		int tokenKind = TokenKind::RCURLY;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+"(" {
+		int tokenKind = TokenKind::LPAREN;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+")" {
+		int tokenKind = TokenKind::RPAREN;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+";" {
+		int tokenKind = TokenKind::SEMICOLON;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+"," {
+		int tokenKind = TokenKind::COMMA;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+"--" {
+		int tokenKind = TokenKind::DASHDASH;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+"-" {
+		int tokenKind = TokenKind::DASH;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+"+"	{
 		// Keep track of the "kind" of token we matched. In this case,
 		// it's a CROSS (aka the plus symbol). The full list of token
 		// kinds is declared around line 197 of grammar.hh. The testing
@@ -66,16 +150,107 @@ DIGIT [0-9]
 		return tokenKind;
 		}
 
-"-" {
-		//Essentially the same thing as CROSS, but without the verbose
-		// comments so it doesn't look so scary.
-		int tokenKind = TokenKind::DASH;
+"++" {
+		int tokenKind = TokenKind::CROSSCROSS;
 		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
 		colNum++;
 		return tokenKind;
-		}
+}
 
-{DIGIT}+	{
+"*" {
+		int tokenKind = TokenKind::STAR;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+"/" {
+		int tokenKind = TokenKind::SLASH;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+"!" {
+		int tokenKind = TokenKind::NOT;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+"==" {
+		int tokenKind = TokenKind::EQUALS;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+"!=" {
+		int tokenKind = TokenKind::NOTEQUALS;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+"<" {
+		int tokenKind = TokenKind::LESS;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+">" {
+		int tokenKind = TokenKind::GREATER;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+"&" {
+		int tokenKind = TokenKind::AMP;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+"<=" {
+		int tokenKind = TokenKind::LESSEQ;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+">=" {
+		int tokenKind = TokenKind::GREATEREQ;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+"=" {
+		int tokenKind = TokenKind::ASSIGN;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+
+"&&" {
+		int tokenKind = TokenKind::AND;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+
+"||" {
+		int tokenKind = TokenKind::OR;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum++;
+		return tokenKind;
+}
+
+{DIGIT}+ {
 		//TODO: The following computation of the integer
 		// value does not check for overflow. It should do so.
 		int intVal = atoi(yytext);
@@ -92,21 +267,21 @@ DIGIT [0-9]
 		//As before, alert the client program that an INTLITERAL 
 		// token was matched
 		return TokenKind::INTLITERAL;
-		}
+}
 
-\n		{
+\n {
 		//Update the line number, reset the columnNumber
 		lineNum++;
 		colNum = 0;
-		}
+}
 
 
-.   {
+. {
 		//TODO: Add the rest of the rules above this point so that legal characters
 		// are properly accounted for. 
 		std::string msg = "Illegal character ";
 		msg += yytext;
 		error(lineNum,colNum,msg);
 		colNum += yyleng;
-    }
+}
 %%
