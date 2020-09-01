@@ -26,6 +26,7 @@ using TokenKind = holyc::Parser::token;
 %option c++
 
 DIGIT [0-9]
+COMMENT #.*
 
 %%
 %{          /** Code executed at the beginning of yylex **/
@@ -381,12 +382,21 @@ DIGIT [0-9]
 		return TokenKind::INTLITERAL;
 }
 
+
+{COMMENT} {
+	// We are guaranteed that we don't have anything else on the line to parse because
+	// our compiler does not deal with multiline comments
+	lineNum++;
+	colNum = 1;
+}
+
 \n {
 		//Update the line number, reset the columnNumber
 		lineNum++;
 		colNum = 1;
 }
 
+	/* Errors and Fall-Through Rules */
 
 . {
 		//TODO: Add the rest of the rules above this point so that legal characters
