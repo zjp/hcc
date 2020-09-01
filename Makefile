@@ -33,11 +33,6 @@ endif
 # On macOS, g++ is symlinked to clang (so is c++). When g++ is installed
 # via homebrew, homebrew appends the version to the binary so that it is
 # not in conflict with the symlink.
-ifeq ($(HOST_SYS),Darwin) 
-	CXX := g++-10
-else
-	CXX := g++
-endif
 
 .PHONY: all pre-build rebuild retest clean test lsp-refs cleantest
 
@@ -87,9 +82,13 @@ endif
 test: 
 	for file in $(TESTS); \
 	do \
+		echo $$file; \
 		./holycc $$file -t $${file%.*}.out 2> $${file%.*}.err; \
+		echo "Diff of output"; \
 		diff $${file%.*}.out $${file%.*}.out.expected; \
+		echo "Diff of error"; \
 		diff $${file%.*}.err $${file%.*}.err.expected; \
+		echo ""; \
 	done
 
 cleantest:
