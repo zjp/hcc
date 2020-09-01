@@ -26,10 +26,6 @@ using TokenKind = holyc::Parser::token;
 %option c++
 
 DIGIT [0-9]
-IDENTIFIER [_a-zA-Z][a-zA-Z0-9_]*
-CHARACTERLITERAL '\[x20-x7e]
-STRINGLITERAL ".*"
-COMMENT #.*
 
 %%
 %{          /** Code executed at the beginning of yylex **/
@@ -385,42 +381,16 @@ COMMENT #.*
 		return TokenKind::INTLITERAL;
 }
 
-{IDENTIFIER} {
-		int tokenKind = TokenKind::ID;
-		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
-		colNum += yyleng;
-		return tokenKind;
-}
+	/* Whitespace */
 
-{STRINGLITERAL}  {
-		int tokenKind = TokenKind::STRLITERAL;
-		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
-		colNum += yyleng;
-		return tokenKind;
+[ ] {
+		colNum++;
 }
-
-{CHARACTERLITERAL} {
-		int tokenKind = TokenKind::CHARLIT;
-		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
-		colNum += yyleng;
-		return tokenKind;
-}
-
-{COMMENT} {
-	// We are guaranteed that we don't have anything else on the line to parse because
-	// our compiler does not deal with multiline comments
-	lineNum++;
-	colNum = 1;
-}
-
 \n {
 		//Update the line number, reset the columnNumber
 		lineNum++;
 		colNum = 1;
 }
-
-	/* Errors and Fall-Through Rules */
-
 . {
 		//TODO: Add the rest of the rules above this point so that legal characters
 		// are properly accounted for. 
