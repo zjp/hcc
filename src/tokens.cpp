@@ -11,11 +11,11 @@ static std::string tokenKindString(int tokKind){
 		case TokenKind::END: return "EOF";
 		case TokenKind::AND: return "AND";
 		case TokenKind::AMP: return "AMP";
-		case TokenKind::AT: return "AT";
 		case TokenKind::ASSIGN: return "ASSIGN";
+		case TokenKind::AT: return "AT";
 		case TokenKind::BOOL: return "BOOL";
 		case TokenKind::BOOLPTR: return "BOOLPTR";
-		case TokenKind::CARAT: return "CARAT";
+		case TokenKind::CARAT: return "CARAT"; 
 		case TokenKind::CHAR: return "CHAR";
 		case TokenKind::CHARLIT: return "CHARLIT";
 		case TokenKind::CHARPTR: return "CHARPTR";
@@ -42,6 +42,7 @@ static std::string tokenKindString(int tokKind){
 		case TokenKind::LPAREN: return "LPAREN";
 		case TokenKind::NOT: return "NOT";
 		case TokenKind::NOTEQUALS: return "NOTEQUALS";
+		case TokenKind::NULLPTR: return "NULLPTR";
 		case TokenKind::OR: return "OR";
 		case TokenKind::RBRACE: return "RBRACE";
 		case TokenKind::RCURLY: return "RCURLY";
@@ -55,6 +56,7 @@ static std::string tokenKindString(int tokKind){
 		case TokenKind::TRUE: return "TRUE";
 		case TokenKind::VOID: return "VOID";
 		case TokenKind::WHILE: return "WHILE";
+		case TokenKind::DOT: return "DOT";
 		default:	
 			return "OTHER";
 	}
