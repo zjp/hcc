@@ -3,3 +3,5 @@ holycc
 obj
 compile_commands.json
 src/lexer.yy.cc
+tests/*.out
+tests/*.err

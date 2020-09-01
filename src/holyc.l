@@ -272,7 +272,7 @@ DIGIT [0-9]
 \n {
 		//Update the line number, reset the columnNumber
 		lineNum++;
-		colNum = 0;
+		colNum = 1;
 }
 
 
