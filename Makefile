@@ -85,8 +85,9 @@ endif
 test: 
 	for file in $(TESTS); \
 	do \
-		./holycc $$file -t $${file%.*}.out; \
+		./holycc $$file -t $${file%.*}.out 2> $${file%.*}.err; \
 		diff $${file%.*}.out $${file%.*}.out.expected; \
+		diff $${file%.*}.err $${file%.*}.err.expected; \
 	done
 
 cleantest:
