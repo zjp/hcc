@@ -39,7 +39,7 @@ else
 	CXX := g++
 endif
 
-.PHONY: all pre-build rebuild clean test lsp-refs cleantest
+.PHONY: all pre-build rebuild retest clean test lsp-refs cleantest
 
 ####### END DEFINITIONS **********
 all:
@@ -59,6 +59,8 @@ pre-build:
 	- mkdir obj
 
 rebuild: clean all
+
+retest: clean all test
 
 # Generate compile_commands.json, a file that can be parsed by C++ clients to
 # LSP. Enables jump-to-definition and in-window documentation in Emacs, among
