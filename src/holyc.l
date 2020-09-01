@@ -27,6 +27,7 @@ using TokenKind = holyc::Parser::token;
 
 DIGIT [0-9]
 IDENTIFIER [_a-zA-Z][a-zA-Z0-9_]*
+CHARACTERLITERAL '\[x20-x7e]
 STRINGLITERAL ".*"
 COMMENT #.*
 
@@ -398,6 +399,12 @@ COMMENT #.*
 		return tokenKind;
 }
 
+{CHARACTERLITERAL} {
+		int tokenKind = TokenKind::CHARLIT;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum += yyleng;
+		return tokenKind;
+}
 
 {COMMENT} {
 	// We are guaranteed that we don't have anything else on the line to parse because
