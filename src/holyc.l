@@ -26,6 +26,7 @@ using TokenKind = holyc::Parser::token;
 %option c++
 
 DIGIT [0-9]
+IDENTIFIER [_a-zA-Z][a-zA-Z0-9_]*
 STRINGLITERAL ".*"
 COMMENT #.*
 
@@ -383,6 +384,12 @@ COMMENT #.*
 		return TokenKind::INTLITERAL;
 }
 
+{IDENTIFIER} {
+		int tokenKind = TokenKind::ID;
+		this->yylval->tokenValue = new Token(lineNum, colNum, tokenKind);
+		colNum += yyleng;
+		return tokenKind;
+}
 
 {STRINGLITERAL}  {
 		int tokenKind = TokenKind::STRLITERAL;
