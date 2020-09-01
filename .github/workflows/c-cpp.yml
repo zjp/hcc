@@ -15,8 +15,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: fetch
+    - name: update
+      run: sudo apt-get update
+    - name: upgrade
+      run: sudo apt-get upgrade
+    - name: get flex
       run: sudo apt-get install flex
+    - name: get flex headers
+      run: sudo apt-get install libfl-dev
     - name: make
       run: make
     - name: make test
