@@ -363,22 +363,19 @@ DIGIT [0-9]
 }
 
 {DIGIT}+ {
-		//TODO: The following computation of the integer
-		// value does not check for overflow. It should do so.
-		int intVal = atoi(yytext);
-
-
-		//Note that the IntLitToken does not take a TokenKind argument
-		// since it's implicitly known that the token represents an
-		// INTLITERAL		
+		int intVal = 0;
+		if(strtol(yytext, nullptr, 0) > INT_MAX) {
+			intVal = INT_MAX;
+			errIntOverflow(lineNum,colNum);
+		} else {
+			intVal = atoi(yytext);
+		}
 		yylval->tokenValue = new IntLitToken(lineNum, colNum, intVal);
-
-		//TODO: update the colNum count according to the number of
-		// characters consumed. 
-
-		//As before, alert the client program that an INTLITERAL 
-		// token was matched
+		colNum += yyleng;
 		return TokenKind::INTLITERAL;
+}
+
+
 }
 
 	/* Whitespace */
