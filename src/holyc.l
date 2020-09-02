@@ -27,6 +27,7 @@ using TokenKind = holyc::Parser::token;
 
 DIGIT [0-9]
 IDENTIFIER [a-zA-Z_][a-zA-Z0-9_]*
+STRINGLITERAL ".*"
 
 %%
 %{          /** Code executed at the beginning of yylex **/
@@ -390,6 +391,13 @@ IDENTIFIER [a-zA-Z_][a-zA-Z0-9_]*
 		return tokenKind;
 }
 
+{STRINGLITERAL} {
+		int tokenKind = TokenKind::STRLITERAL;
+		this->yylval->tokenValue = new StrToken(lineNum, colNum, yytext);
+		colNum += yyleng;
+		return tokenKind;
+}
+	
 	/* Whitespace */
 	
 	/* Load the following program into a C compiler and observe the error 
@@ -406,11 +414,13 @@ IDENTIFIER [a-zA-Z_][a-zA-Z0-9_]*
 [ ] {
 		colNum++;
 }
+
 \n {
 		//Update the line number, reset the columnNumber
 		lineNum++;
 		colNum = 1;
 }
+
 . {
 		//TODO: Add the rest of the rules above this point so that legal characters
 		// are properly accounted for. 
