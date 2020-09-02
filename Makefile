@@ -12,8 +12,12 @@ TESTDIR := ./tests
 HOST_SYS := $(shell uname -s)
 
 ifeq ($(HOST_SYS),Darwin)
-	LEXER_TOOL := /usr/local/Cellar/flex/2.6.4_1/bin/flex
-else
+	ifneq (,$(shell stat /usr/local/Cellar/flex/2.6.4_1/bin/flex))
+		LEXER_TOOL := /usr/local/Cellar/flex/2.6.4_1/bin/flex
+	endif
+endif
+
+ifndef LEXER_TOOL
 	LEXER_TOOL := flex
 endif
 
@@ -26,10 +30,15 @@ TESTS := $(wildcard $(TESTDIR)/*.holyc)
 DEPS := $(OBJ_SRCS:.o=.d)
 
 ifeq ($(HOST_SYS),Darwin)
-	INCLUDES = /usr/local/opt/flex/include
-else
+	ifneq (,$(shell stat /usr/local/opt/flex/include))
+		INCLUDES = /usr/local/opt/flex/include
+	endif
+endif
+
+ifndef INCLUDES
 	INCLUDES = /usr/include/
 endif
+
 # On macOS, g++ is symlinked to clang (so is c++). When g++ is installed
 # via homebrew, homebrew appends the version to the binary so that it is
 # not in conflict with the symlink.
