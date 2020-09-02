@@ -46,9 +46,17 @@ public:
 			val = '\n';
 		} else if (text == "'\\\\"){
 			val = '\\';
+		/* I don't know why the requirements call for us to match a literal tab/space character
+		 * as well as the escaped representation \t and now I'm too afraid to ask. */
+		} else if(text == "'\\ ") {
+			val = ' ';
+		} else if(text == "'\\	") {
+			val = '	';
+		} else {
+			errChrEsc(lineNum, colNum);
+			val = 0;
 		}
-		this->yylval->tokenValue = new CharLitToken(
-		this->lineNum, this->colNum, val);
+		this->yylval->tokenValue = new CharLitToken(this->lineNum, this->colNum, val);
 		colNum += static_cast<size_t>(yyleng);
 		return TokenKind::CHARLIT;
 	}

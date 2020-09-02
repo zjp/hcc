@@ -384,33 +384,13 @@ STRINGLITERAL ".*"
 		return tokenKind;
 }
 
-'\\. {
-		int tokenKind = TokenKind::CHARLIT;
-		char escapename = yytext[2];
-		if(yytext[2] == 'n'){
-			escapename = '\n';
-		}
-		else if(yytext[2] == 't'){
-			escapename = '\t';
-		}
-		else if(yytext[2] == ' '){
-		}
-		else if(yytext[2] == '\\'){
-			
-		}
-		else{
-			errChrEsc(lineNum,colNum);
-		}
-		this->yylval->tokenValue = new CharLitToken(lineNum, colNum, escapename);
-		colNum += yyleng;
-		return tokenKind;
+'(\\\t|\\[tn ]|\\\\|.) {
+		return makeCharLitToken(yytext);
 }
 
-'. {
-		int tokenKind = TokenKind::CHARLIT;
-		this->yylval->tokenValue = new CharLitToken(lineNum, colNum, yytext[1]);
+'\\. {
+		errChrEsc(lineNum, colNum);
 		colNum += yyleng;
-		return tokenKind;
 }
 
 {STRINGLITERAL} {
