@@ -393,6 +393,14 @@ STRINGLITERAL ".*"
 		else if(yytext[2] == 't'){
 			escapename = '\t';
 		}
+		else if(yytext[2] == ' '){
+		}
+		else if(yytext[2] == '\\'){
+			
+		}
+		else{
+			errChrEsc(lineNum,colNum);
+		}
 		this->yylval->tokenValue = new CharLitToken(lineNum, colNum, escapename);
 		colNum += yyleng;
 		return tokenKind;

@@ -1,0 +1,6 @@
+CHAR [1,1]
+ID:at [1,6]
+ASSIGN [1,9]
+CHARLIT:@
+SEMICOLON [1,13]
+EOF [2,1]
