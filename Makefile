@@ -96,9 +96,9 @@ test:
 		echo $$file; \
 		./holycc $$file -t $${file%.*}.out 2> $${file%.*}.err; \
 		echo "Diff of output"; \
-		diff $${file%.*}.out $${file%.*}.out.expected; \
+		diff --text $${file%.*}.out $${file%.*}.out.expected; \
 		echo "Diff of error"; \
-		diff $${file%.*}.err $${file%.*}.err.expected; \
+		diff --text $${file%.*}.err $${file%.*}.err.expected; \
 	done
 
 cleantest:
