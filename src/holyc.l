@@ -383,6 +383,11 @@ IDENTIFIER [a-zA-Z_][a-zA-Z0-9_]*
 		return tokenKind;
 }
 
+'[a-zA-Z0-9] {
+		int tokenKind = TokenKind::CHARLIT;
+		this->yylval->tokenValue = new CharLitToken(lineNum, colNum, tokenKind);
+		colNum += yyleng;
+		return tokenKind;
 }
 
 	/* Whitespace */
