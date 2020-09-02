@@ -379,6 +379,17 @@ DIGIT [0-9]
 }
 
 	/* Whitespace */
+	
+	/* Load the following program into a C compiler and observe the error 
+	 * generated implies a tab is 1 character:
+	 * 
+	 * int main() {
+	 *	a;
+	 * }
+	 */
+\t { 
+		colNum++;
+}
 
 [ ] {
 		colNum++;
