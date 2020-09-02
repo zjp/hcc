@@ -1,0 +1,14 @@
+INT [1,1]
+ID:onetwo [1,5]
+ASSIGN [1,12]
+INTLIT:12 [1,14]
+SEMICOLON [1,16]
+CHAR [1,18]
+ID:charchar [1,23]
+ASSIGN [1,32]
+CHARLIT:tab
+SEMICOLON [1,37]
+ID:hahahah [1,39]
+SEMICOLON [1,46]
+CHARLIT:/
+EOF [2,1]
