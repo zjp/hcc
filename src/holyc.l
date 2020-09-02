@@ -28,6 +28,7 @@ using TokenKind = holyc::Parser::token;
 DIGIT [0-9]
 IDENTIFIER [a-zA-Z_][a-zA-Z0-9_]*
 STRINGLITERAL ".*"
+COMMENT #.*
 
 %%
 %{          /** Code executed at the beginning of yylex **/
@@ -398,6 +399,10 @@ STRINGLITERAL ".*"
 		this->yylval->tokenValue = new StrToken(lineNum, colNum, yytext);
 		colNum += yyleng;
 		return tokenKind;
+}
+
+{COMMENT} {
+	/* Do nothing */
 }
 	
 	/* Whitespace */
