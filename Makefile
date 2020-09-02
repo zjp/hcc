@@ -89,15 +89,16 @@ endif
 	$(CXX) -g -std=c++14 -I$(INCDIR) -I$(INCLUDES) -c $(SRCDIR)/lexer.yy.cc -o $(OBJDIR)/lexer.o
 
 test: 
+	@ echo ""
 	for file in $(TESTS); \
 	do \
+		echo ""; \
 		echo $$file; \
 		./holycc $$file -t $${file%.*}.out 2> $${file%.*}.err; \
 		echo "Diff of output"; \
 		diff $${file%.*}.out $${file%.*}.out.expected; \
 		echo "Diff of error"; \
 		diff $${file%.*}.err $${file%.*}.err.expected; \
-		echo ""; \
 	done
 
 cleantest:
