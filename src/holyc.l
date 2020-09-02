@@ -384,9 +384,23 @@ STRINGLITERAL ".*"
 		return tokenKind;
 }
 
-'[a-zA-Z0-9] {
+'\\. {
 		int tokenKind = TokenKind::CHARLIT;
-		this->yylval->tokenValue = new CharLitToken(lineNum, colNum, tokenKind);
+		char escapename = yytext[2];
+		if(yytext[2] == 'n'){
+			escapename = '\n';
+		}
+		else if(yytext[2] == 't'){
+			escapename = '\t';
+		}
+		this->yylval->tokenValue = new CharLitToken(lineNum, colNum, escapename);
+		colNum += yyleng;
+		return tokenKind;
+}
+
+'. {
+		int tokenKind = TokenKind::CHARLIT;
+		this->yylval->tokenValue = new CharLitToken(lineNum, colNum, yytext[1]);
 		colNum += yyleng;
 		return tokenKind;
 }
