@@ -26,6 +26,7 @@ using TokenKind = holyc::Parser::token;
 %option c++
 
 DIGIT [0-9]
+IDENTIFIER [a-zA-Z_][a-zA-Z0-9_]*
 
 %%
 %{          /** Code executed at the beginning of yylex **/
@@ -375,6 +376,12 @@ DIGIT [0-9]
 		return TokenKind::INTLITERAL;
 }
 
+{IDENTIFIER} {
+		int tokenKind = TokenKind::ID;
+		this->yylval->tokenValue = new IDToken(lineNum, colNum, yytext);
+		colNum += yyleng;
+		return tokenKind;
+}
 
 }
 
