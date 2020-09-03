@@ -423,37 +423,37 @@ COMMENT #.*
 		errIllegal(lineNum, colNum, yytext);
 }
 
-\".*\\[nt ]?.*\" {
+\".*\\[nt ]?.*\" { //catches any string with \n, \t, or \  like "one\n"
 		int tokenKind = TokenKind::STRLITERAL;
 		this->yylval->tokenValue = new StrToken(lineNum, colNum, yytext);
 		colNum += yyleng;
 		return tokenKind;
 }
 
-\".*\\.*\" {
+\".*\\.*\" { //catches strings with good quotes but a bad \ like "one\k"
 		errStrEsc(lineNum, colNum);
 		colNum += yyleng;
 }
 
 
-{STRINGLITERAL} {
+{STRINGLITERAL} { //catches all other strings with good quotes like "one"
 		int tokenKind = TokenKind::STRLITERAL;
 		this->yylval->tokenValue = new StrToken(lineNum, colNum, yytext);
 		colNum += yyleng;
 		return tokenKind;
 }
 
-\".*\\[nt ]?.* {
+\".*\\[nt ]?.* { //catches strings with bad quotes but valid \ like "one\n
 		errStrUnterm(lineNum, colNum);
 		colNum += yyleng;
 }
 
-\".*\\.* {
+\".*\\.* { //catches strings with bad quotes and bad \ like "one\k
 		errStrEscAndUnterm(lineNum, colNum);
 		colNum += yyleng;
 }
 
-\".* {
+\".* { //catches all other strings with bad quotes like "one
 		errStrUnterm(lineNum, colNum);
 		colNum += yyleng;
 }
