@@ -384,28 +384,43 @@ COMMENT #.*
 		colNum += yyleng;
 		return tokenKind;
 }
-	/* TODO: '\ should be an error, not a char */
+
+	/* 1. ASCII space -> ASCII ] 
+	 * 2. ASCII [ -> ASCII DEL 
+	 * 3. '\\
+	 * 4. '\t
+	 * 5. '\n 
+	 * 6. '\(space literal) */
 '([\x20-\x5B]|[\x5D-\x7F]|\\\\|\\t|\\n|\\[ ]) {
 		return makeCharLitToken(yytext);
 }
-
+	
+	/* '\(tab literal) */
 '\\[	] {
 		return makeCharLitToken(yytext);
 }
 
+	/* '\(any other char) -- Bad escape sequence */
 '\\. {
 		errChrEsc(lineNum, colNum);
 		colNum += yyleng;
 }
-
+	
+	/* '\(no char) -- Empty char literal escape sequence */
 '\\ {
 		errChrEscEmpty(lineNum, colNum);
 		colNum = 1;
 }
 
+	/* '(no char) -- Empty char literal */
 ' {
 		errChrEmpty(lineNum, colNum);
 		colNum = 1;
+}
+
+	/* '(any other char) -- Illegal Character */
+'. {
+		errIllegal(lineNum, colNum, yytext);
 }
 
 {STRINGLITERAL} {
