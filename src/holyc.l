@@ -423,7 +423,8 @@ COMMENT #.*
 		errIllegal(lineNum, colNum, yytext);
 }
 
-\".*\\[nt ]?.*\" { //catches any string with \n, \t, or \  like "one\n"
+\".*\\[nt\"\\].*\" { //catches any string with \n, \t, or \  like "one\n"
+		printf("good quotes good slash\n");
 		int tokenKind = TokenKind::STRLITERAL;
 		this->yylval->tokenValue = new StrToken(lineNum, colNum, yytext);
 		colNum += yyleng;
@@ -431,29 +432,34 @@ COMMENT #.*
 }
 
 \".*\\.*\" { //catches strings with good quotes but a bad \ like "one\k"
+		printf("good quotes bad slash\n");
 		errStrEsc(lineNum, colNum);
 		colNum += yyleng;
 }
 
 
-{STRINGLITERAL} { //catches all other strings with good quotes like "one"
+\".*\" { //catches all other strings with good quotes like "one"
+		printf("good quotes no slash\n");
 		int tokenKind = TokenKind::STRLITERAL;
 		this->yylval->tokenValue = new StrToken(lineNum, colNum, yytext);
 		colNum += yyleng;
 		return tokenKind;
 }
 
-\".*\\[nt ]?.* { //catches strings with bad quotes but valid \ like "one\n
+\".*\\[nt\"\\].* { //catches strings with bad quotes but valid \ like "one\n
+		printf("bad quotes valid slash\n");
 		errStrUnterm(lineNum, colNum);
 		colNum += yyleng;
 }
 
 \".*\\.* { //catches strings with bad quotes and bad \ like "one\k
+		printf("bad quotes and bad slash\n");
 		errStrEscAndUnterm(lineNum, colNum);
 		colNum += yyleng;
 }
 
 \".* { //catches all other strings with bad quotes like "one
+		printf("bad quotes no slashes\n");
 		errStrUnterm(lineNum, colNum);
 		colNum += yyleng;
 }
