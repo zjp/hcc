@@ -423,11 +423,39 @@ COMMENT #.*
 		errIllegal(lineNum, colNum, yytext);
 }
 
+\".*\\[nt ]?.*\" {
+		int tokenKind = TokenKind::STRLITERAL;
+		this->yylval->tokenValue = new StrToken(lineNum, colNum, yytext);
+		colNum += yyleng;
+		return tokenKind;
+}
+
+\".*\\.*\" {
+		errStrEsc(lineNum, colNum);
+		colNum += yyleng;
+}
+
+
 {STRINGLITERAL} {
 		int tokenKind = TokenKind::STRLITERAL;
 		this->yylval->tokenValue = new StrToken(lineNum, colNum, yytext);
 		colNum += yyleng;
 		return tokenKind;
+}
+
+\".*\\[nt ]?.* {
+		errStrUnterm(lineNum, colNum);
+		colNum += yyleng;
+}
+
+\".*\\.* {
+		errStrEscAndUnterm(lineNum, colNum);
+		colNum += yyleng;
+}
+
+\".* {
+		errStrUnterm(lineNum, colNum);
+		colNum += yyleng;
 }
 
 {COMMENT} {
