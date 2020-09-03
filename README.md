@@ -9,5 +9,5 @@ compiler nor the name of the C subset over which it operates is to be taken as a
 views.
 
 # Contributors
-Zachary Pearson
-Jacob Swearingen
+- Zachary Pearson
+- Jacob Swearingen
