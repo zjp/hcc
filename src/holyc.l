@@ -384,14 +384,28 @@ COMMENT #.*
 		colNum += yyleng;
 		return tokenKind;
 }
+	/* TODO: '\ should be an error, not a char */
+'([\x20-\x5B]|[\x5D-\x7F]|\\\\|\\t|\\n|\\[ ]) {
+		return makeCharLitToken(yytext);
+}
 
-'(\\\t|\\[tn ]|\\\\|.) {
+'\\[	] {
 		return makeCharLitToken(yytext);
 }
 
 '\\. {
 		errChrEsc(lineNum, colNum);
 		colNum += yyleng;
+}
+
+'\\ {
+		errChrEscEmpty(lineNum, colNum);
+		colNum = 1;
+}
+
+' {
+		errChrEmpty(lineNum, colNum);
+		colNum = 1;
 }
 
 {STRINGLITERAL} {
