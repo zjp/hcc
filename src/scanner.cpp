@@ -18,7 +18,7 @@ void Scanner::outputTokens(std::ostream& outstream){
 			  << std::endl;
 			return;
 		} else {
-			outstream << lexeme.tokenValue->toString()
+			outstream << lexeme.transToken->toString()
 			  << std::endl;
 		}
 	}

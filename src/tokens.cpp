@@ -56,7 +56,6 @@ static std::string tokenKindString(int tokKind){
 		case TokenKind::TRUE: return "TRUE";
 		case TokenKind::VOID: return "VOID";
 		case TokenKind::WHILE: return "WHILE";
-		case TokenKind::DOT: return "DOT";
 		default:	
 			return "OTHER";
 	}

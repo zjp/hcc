@@ -23,12 +23,15 @@ endif
 
 CPP_SRCS := $(wildcard $(SRCDIR)/*.cpp)
 
-OBJ_SRCS := $(OBJDIR)/lexer.o $(CPP_SRCS:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
+OBJ_SRCS := $(OBJDIR)/parser.o $(OBJDIR)/lexer.o $(CPP_SRCS:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
 TESTS := $(wildcard $(TESTDIR)/*.holyc)
 
 DEPS := $(OBJ_SRCS:.o=.d)
 
+FLAGS=-pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Wuninitialized -Winit-self -Wmissing-declarations -Wmissing-include-dirs -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wsign-conversion -Wsign-promo -Wstrict-overflow=5 -Wundef -Werror -Wno-unused -Wno-unused-parameter
+
+# Grab the right version of flex
 ifeq ($(HOST_SYS),Darwin)
 	ifneq (,$(shell stat /usr/local/opt/flex/include))
 		INCLUDES = /usr/local/opt/flex/include
@@ -39,11 +42,22 @@ ifndef INCLUDES
 	INCLUDES = /usr/include/
 endif
 
+# Grab the right version of bison
+ifeq ($(HOST_SYS),Darwin)
+	ifneq (,$(shell stat /usr/local/opt/bison/bin/bison))
+		BISON = /usr/local/opt/bison/bin/bison
+	endif
+endif
+
+ifndef BISON
+	BISON = bison
+endif
+
 # On macOS, g++ is symlinked to clang (so is c++). When g++ is installed
 # via homebrew, homebrew appends the version to the binary so that it is
 # not in conflict with the symlink.
 
-.PHONY: all pre-build rebuild retest clean test lsp-refs cleantest
+.PHONY: all pre-build rebuild retest clean test test-lexer lsp-refs cleantest
 
 ####### END DEFINITIONS **********
 all:
@@ -51,7 +65,7 @@ all:
 	make holycc
 
 clean:
-	rm -rf $(OBJDIR) $(SRCDIR)/*.cc $(DEPS) $(BINNAME)
+	rm -rf *.output $(OBJDIR) $(INCDIR)/*.hh $(SRCDIR)/*.cc $(SRCDIR)/*.hh $(DEPS) $(BINNAME)
 
 -include $(DEPS)
 
@@ -75,6 +89,16 @@ lsp-refs: clean
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) -g -std=c++14 -I$(INCDIR) -I$(INCLUDES) -MMD -MP -c -o $@ $<
 
+
+$(OBJDIR)/parser.o: $(SRCDIR)/parser.cc
+	$(CXX) $(FLAGS) -I$(INCDIR) -I$(INCLUDES) -Wno-sign-compare -Wno-sign-conversion -Wno-switch-default -g -std=c++14 -MMD -MP -c -o $@ $<
+
+$(SRCDIR)/parser.cc: $(SRCDIR)/holyc.yy
+	$(BISON) -Werror --defines=$(INCDIR)/grammar.hh -v $<
+	mv parser.cc $(SRCDIR)
+# This file is useless as of Bison 3.2. Cycle servers have 3.4.1 -- Locally, I have 3.7.1
+	- rm stack.hh
+
 $(SRCDIR)/lexer.yy.cc: $(SRCDIR)/holyc.l
 	$(LEXER_TOOL) --outfile=$(SRCDIR)/lexer.yy.cc $<
 
@@ -89,6 +113,9 @@ endif
 	$(CXX) -g -std=c++14 -I$(INCDIR) -I$(INCLUDES) -c $(SRCDIR)/lexer.yy.cc -o $(OBJDIR)/lexer.o
 
 test: 
+	@ echo "Called"
+
+test-lexer: 
 	@ echo ""
 	for file in $(TESTS); \
 	do \

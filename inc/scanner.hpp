@@ -30,7 +30,7 @@ public:
 	virtual int yylex( holyc::Parser::semantic_type * const lval);
 
 	int makeBareToken(int tagIn){
-		this->yylval->tokenValue = new Token(
+		this->yylval->transToken = new Token(
 		this->lineNum, this->colNum, tagIn);
 		colNum += static_cast<size_t>(yyleng);
 		return tagIn;
@@ -56,7 +56,7 @@ public:
 			errChrEsc(lineNum, colNum);
 			val = 0;
 		}
-		this->yylval->tokenValue = new CharLitToken(this->lineNum, this->colNum, val);
+		this->yylval->transToken = new CharLitToken(this->lineNum, this->colNum, val);
 		colNum += static_cast<size_t>(yyleng);
 		return TokenKind::CHARLIT;
 	}

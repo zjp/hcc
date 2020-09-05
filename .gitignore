@@ -5,3 +5,6 @@ compile_commands.json
 src/lexer.yy.cc
 tests/*.out
 tests/*.err
+src/parser.cc
+inc/grammar.hh
+parser.output
