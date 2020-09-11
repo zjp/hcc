@@ -8,17 +8,6 @@ language is not equivalent to "actual" HolyC and will not work as a compiler for
 compiler nor the name of the C subset over which it operates is to be taken as an endorsement of Terry Davis or his
 views.
 
-# Errata
-For whatever reason,
-```
-./holycc <infile> -p
-```
-is not the correct syntax for testing the parser. Please instead use
-```
-./holycc -p <infile>
-```
-at this time.
-
 # Contributors
 - Zachary Pearson
 - Jacob Swearingen
