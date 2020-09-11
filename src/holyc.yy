@@ -138,6 +138,9 @@ globals	: globals decl
 decl : varDecl SEMICOLON
 	 {
 	 }
+	 | fnDecl 
+	 {
+	 }
 
 varDecl : type id
 		{
@@ -149,19 +152,212 @@ type : INT
 	 | INTPTR
 	 { 
 	 }
+	 | BOOL
+	 {
+	 }
+	 | BOOLPTR
+	 {
+	 }
+	 | CHAR
+	 {
+	 }
+	 | CHARPTR
+	 {
+	 }
+	 | VOID
+	 {
+	 }
+
+fnDecl : type id formals fnBody
+	   {
+	   }
+
+formals : LPAREN RPAREN
+		{
+		}
+		| LPAREN formalsList RPAREN
+		{
+		}
+
+formalsList : formalDecl 
+			{
+			}
+			| formalDecl COMMA formalsList
+			{
+			}
+
+formalDecl : type id
+		   {
+		   }
+
+fnBody : LCURLY stmtList RCURLY
+	   {
+	   }
+
+stmtList : stmtList stmt
+		 {
+		 }
+		 | /* epsilon */
+		 {
+		 }
+
+stmt : varDecl SEMICOLON
+	 {
+	 }
+	 | assignExp SEMICOLON
+	 {
+	 }
+	 | lval DASHDASH SEMICOLON
+	 {
+	 }
+	 | lval CROSSCROSS SEMICOLON
+	 {
+	 }
+	 | FROMCONSOLE lval SEMICOLON
+	 {
+	 }
+	 | TOCONSOLE exp SEMICOLON
+	 {
+	 }
+	 | IF LPAREN exp RPAREN LCURLY stmtList RCURLY
+	 {
+	 }
+	 | IF LPAREN exp RPAREN LCURLY stmtList RCURLY ELSE LCURLY stmtList RCURLY
+	 {
+	 }
+	 | WHILE LPAREN exp RPAREN LCURLY stmtList RCURLY
+	 {
+	 }
+	 | RETURN exp SEMICOLON
+	 {
+	 }
+	 | RETURN SEMICOLON
+	 {
+	 }
+	 | fncall SEMICOLON
+	 {
+	 }
+
+assignExp : lval ASSIGN exp
+		  {
+		  }
+
+fncall : id LPAREN RPAREN   // fn call with no args
+	   {
+	   }
+	   | id LPAREN actualsList RPAREN  // with args
+	   {
+	   }
+
+actualsList : exp
+			{
+			}
+			| actualsList COMMA exp
+			{
+			}
+
+exp : assignExp
+	{
+	}
+	| exp DASH exp
+	{
+	}
+	| exp CROSS exp
+	{
+	}
+	| exp STAR exp
+	{
+	}
+	| exp SLASH exp
+	{
+	}
+	| exp AND exp
+	{
+	}
+	| exp OR exp
+	{
+	}
+	| exp EQUALS exp
+	{
+	}
+	| exp NOTEQUALS exp
+	{
+	}
+	| exp GREATER exp
+	{
+	}
+	| exp GREATEREQ exp
+	{
+	}
+	| exp LESS exp
+	{
+	}
+	| exp LESSEQ exp
+	{
+	}
+	| NOT exp
+	{
+	}
+	| DASH term
+	{
+	}
+	| term
+	{
+	}
+
+term : lval
+	 {
+	 }
+	 | INTLITERAL
+	 {
+	 }
+	 | STRLITERAL
+	 {
+	 }
+	 | CHARLIT
+	 {
+	 }
+	 | TRUE
+	 {
+	 }
+	 | FALSE
+	 {
+	 }
+	 | NULLPTR
+	 {
+	 }
+	 | LPAREN exp RPAREN
+	 {
+	 }
+	 | fncall
+	 {
+	 }
+
+lval : id
+	 {
+	 }
+	 | id LBRACE exp RBRACE
+	 {
+	 }
+	 | AT id
+	 {
+	 }
+	 | CARAT id
+	 {
+	 }
 
 id : ID
    {
    }
-	
+
 %%
 
 void holyc::Parser::error(const std::string& err_message){
    /* For project grading, only report "syntax error"
-      if a program has bad syntax. However, you will
-      probably want better output for debugging. Thus,
-      this error function prints a verbose message to 
-      stdout, but only prints "syntax error" to stderr
+	  if a program has bad syntax. However, you will
+	  probably want better output for debugging. Thus,
+	  this error function prints a verbose message to 
+	  stdout, but only prints "syntax error" to stderr
    */
 	std::cout << err_message << std::endl;
 	std::cerr << "syntax error" << std::endl;
