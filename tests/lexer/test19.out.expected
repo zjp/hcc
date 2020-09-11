@@ -1,0 +1,5 @@
+STRINGLIT:"" [1,1]
+STRINGLIT:"&!88" [2,1]
+STRINGLIT:"use \n to denote a newline character" [3,1]
+STRINGLIT:"use \" to  for a quote and \\ for a backslash" [4,1]
+EOF [9,1]

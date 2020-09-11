@@ -113,7 +113,7 @@ int main( const int argc, const char **argv ) {
 		try {
 			bool parsed = parse(inFile);
 			if (!parsed) {
-				std::cerr << "Parse failed";
+				std::cerr << "Parse failed\n";
 			}
 		} catch (ToDoError * e) {
 			std::cerr << "ToDo: " << e->msg() << std::endl;

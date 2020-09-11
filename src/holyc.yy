@@ -65,7 +65,7 @@ project)
    holyc::Token*                         transToken;
 }
 
-%token                   END	   0 "end file"
+%token                   END	   0 "EOF"
 %token	<transToken>     AND
 %token  <transToken>     AMP
 %token	<transToken>     AT
@@ -124,34 +124,35 @@ project)
    grammar and make sure that all of the productions of the 
    given nonterminals are complete
 */
-program 	: globals
-		  {
-		  }
+program	: globals
+		{
+		}
 
-globals 	: globals decl 
-	  	  { 
-	  	  }
+globals	: globals decl 
+	  	{ 
+	  	}
 		| /* epsilon */
-		  {
-		  }
+		{
+		}
 
-decl 		: varDecl SEMICOLON
-		  { }
+decl : varDecl SEMICOLON
+	 {
+	 }
 
-varDecl 	: type id
-		  {
-		  }
+varDecl : type id
+		{
+		}
 
-type 		: INT
-	  	  { 
-		  }
-		| INTPTR
-	  	  { 
-		  }
+type : INT
+	 { 
+	 }
+	 | INTPTR
+	 { 
+	 }
 
-id		: ID
-		  {
-		  }
+id : ID
+   {
+   }
 	
 %%
 

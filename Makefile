@@ -25,11 +25,16 @@ CPP_SRCS := $(wildcard $(SRCDIR)/*.cpp)
 
 OBJ_SRCS := $(OBJDIR)/parser.o $(OBJDIR)/lexer.o $(CPP_SRCS:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
-TESTS := $(wildcard $(TESTDIR)/*.holyc)
+LEXER_TESTS := $(wildcard $(TESTDIR)/lexer/*.holyc)
+PARSER_TESTS := $(wildcard $(TESTDIR)/parser/*.holyc)
 
 DEPS := $(OBJ_SRCS:.o=.d)
 
-FLAGS=-pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Wuninitialized -Winit-self -Wmissing-declarations -Wmissing-include-dirs -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wsign-conversion -Wsign-promo -Wstrict-overflow=5 -Wundef -Werror -Wno-unused -Wno-unused-parameter
+FLAGS=-pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy\
+	  -Wdisabled-optimization -Wformat=2 -Wuninitialized -Winit-self\
+	  -Wmissing-declarations -Wmissing-include-dirs -Wold-style-cast\
+	  -Woverloaded-virtual -Wredundant-decls -Wsign-conversion -Wsign-promo\
+	  -Wstrict-overflow=5 -Wundef -Werror -Wno-unused -Wno-unused-parameter
 
 # Grab the right version of flex
 ifeq ($(HOST_SYS),Darwin)
@@ -57,7 +62,8 @@ endif
 # via homebrew, homebrew appends the version to the binary so that it is
 # not in conflict with the symlink.
 
-.PHONY: all pre-build rebuild retest clean test test-lexer lsp-refs cleantest
+.PHONY: all pre-build rebuild retest clean lsp-refs\
+	test test-lexer test-parser cleantest
 
 ####### END DEFINITIONS **********
 all:
@@ -112,12 +118,24 @@ else
 endif
 	$(CXX) -g -std=c++14 -I$(INCDIR) -I$(INCLUDES) -c $(SRCDIR)/lexer.yy.cc -o $(OBJDIR)/lexer.o
 
-test: 
-	@ echo "Called"
+test: test-parser
+
+test-parser:
+	@ echo ""
+	for file in $(PARSER_TESTS); \
+	do \
+		echo ""; \
+		echo $$file; \
+		./holycc $$file -t $${file%.*}.out 2> $${file%.*}.err; \
+		echo "Diff of output"; \
+		diff --text $${file%.*}.out $${file%.*}.out.expected; \
+		echo "Diff of error"; \
+		diff --text $${file%.*}.err $${file%.*}.err.expected; \
+	done
 
 test-lexer: 
 	@ echo ""
-	for file in $(TESTS); \
+	for file in $(LEXER_TESTS); \
 	do \
 		echo ""; \
 		echo $$file; \
