@@ -58,8 +58,10 @@ static bool parse(const char * inFile){
 	return true;
 }
 
-int main( const int argc, const char **argv ) {
-	if (argc == 0) {
+int 
+main( const int argc, const char **argv )
+{
+	if (argc == 0){
 		usageAndDie();
 	}
 	const char * inFile = NULL;
@@ -67,15 +69,14 @@ int main( const int argc, const char **argv ) {
 	bool checkParse = false;
 	bool useful = false;
 	int i = 1;
-	for (int i = 1 ; i < argc ; i++) {
+	for (int i = 1 ; i < argc ; i++){
 		if (argv[i][0] == '-'){
-			if (argv[i][1] == 't') {
+			if (argv[i][1] == 't'){
 				i++;
 				tokensFile = argv[i];
 				useful = true;
-			} else if (argv[i][1] == 'p') {
+			} else if (argv[i][1] == 'p'){
 				i++;
-				inFile = argv[i];
 				checkParse = true;
 				useful = true;
 			} else {
@@ -84,7 +85,7 @@ int main( const int argc, const char **argv ) {
 				usageAndDie();
 			}
 		} else {
-			if (inFile == NULL) {
+			if (inFile == NULL){
 				inFile = argv[i];
 			} else {
 				std::cerr << "Only 1 input file allowed";
@@ -93,29 +94,29 @@ int main( const int argc, const char **argv ) {
 			}
 		}
 	}
-	if (inFile == NULL) {
+	if (inFile == NULL){
 		usageAndDie();
 	}
-	if (!useful) {
+	if (!useful){
 		std::cerr << "Whoops, you didn't tell holycc what to do!\n";
 		usageAndDie();
 	}
 
-	if (tokensFile != NULL) {
+	if (tokensFile != NULL){
 		try {
 			writeTokenStream(inFile, tokensFile);
-		} catch (InternalError * e) {
+		} catch (InternalError * e){
 			std::cerr << "Error: " << e->msg() << std::endl;
 		}
 	}
 
-	if (checkParse) {
+	if (checkParse){
 		try {
 			bool parsed = parse(inFile);
-			if (!parsed) {
-				std::cerr << "Parse failed\n";
+			if (!parsed){
+				std::cerr << "Parse failed";
 			}
-		} catch (ToDoError * e) {
+		} catch (ToDoError * e){
 			std::cerr << "ToDo: " << e->msg() << std::endl;
 			exit(1);
 		}

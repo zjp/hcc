@@ -126,7 +126,7 @@ test-parser:
 	do \
 		echo ""; \
 		echo $$file; \
-		./holycc $$file -t $${file%.*}.out 2> $${file%.*}.err; \
+		./holycc $$file -p 1> $${file%.*}.out 2> $${file%.*}.err; \
 		echo "Diff of output"; \
 		diff --text $${file%.*}.out $${file%.*}.out.expected; \
 		echo "Diff of error"; \
