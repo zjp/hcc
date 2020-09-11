@@ -100,7 +100,7 @@ $(OBJDIR)/parser.o: $(SRCDIR)/parser.cc
 	$(CXX) $(FLAGS) -I$(INCDIR) -I$(INCLUDES) -Wno-sign-compare -Wno-sign-conversion -Wno-switch-default -g -std=c++14 -MMD -MP -c -o $@ $<
 
 $(SRCDIR)/parser.cc: $(SRCDIR)/holyc.yy
-	$(BISON) -Werror --defines=$(INCDIR)/grammar.hh -v $<
+	$(BISON) -Werror -Wcounterexamples --defines=$(INCDIR)/grammar.hh -v $<
 	mv parser.cc $(SRCDIR)
 # This file is useless as of Bison 3.2. Cycle servers have 3.4.1 -- Locally, I have 3.7.1
 	- rm stack.hh
