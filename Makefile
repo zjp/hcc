@@ -63,7 +63,8 @@ endif
 # not in conflict with the symlink.
 
 .PHONY: all pre-build rebuild retest clean lsp-refs\
-	test test-lexer test-parser cleantest
+	test test-lexer test-parser cleantest cleanalltest\
+	clean-parser-test clean-lexer-test
 
 ####### END DEFINITIONS **********
 all:
@@ -120,15 +121,15 @@ endif
 
 test: test-parser
 
+testall: test-lexer test-parser 
+
 test-parser:
 	@ echo ""
 	for file in $(PARSER_TESTS); \
 	do \
 		echo ""; \
 		echo $$file; \
-		./holycc $$file -p 1> $${file%.*}.out 2> $${file%.*}.err; \
-		echo "Diff of output"; \
-		diff --text $${file%.*}.out $${file%.*}.out.expected; \
+		./holycc $$file -p 1> /dev/null 2> $${file%.*}.err; \
 		echo "Diff of error"; \
 		diff --text $${file%.*}.err $${file%.*}.err.expected; \
 	done
@@ -146,8 +147,18 @@ test-lexer:
 		diff --text $${file%.*}.err $${file%.*}.err.expected; \
 	done
 
-cleantest:
-	for file in $(TESTS); \
+cleantest: clean-parser-test
+
+clean-parser-test:
+	for file in $(PARSER_TESTS); \
+	do \
+		rm -f $${file%.*}.err; \
+	done
+
+clean-lexer-test:
+	for file in $(LEXER_TESTS); \
 	do \
 		rm -f $${file%.*}.out $${file%.*}.err; \
 	done
+
+cleanalltest: clean-parser-test clean-lexer-test
