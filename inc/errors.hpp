@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-namespace holyc{
+namespace holeyc{
 
 class Report{
 public:

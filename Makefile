@@ -3,7 +3,7 @@
 # Date: 27 August 2020
 
 ####### BEGIN DEFINITIONS **********
-BINNAME := holycc
+BINNAME := holeycc
 SRCDIR := ./src
 INCDIR := ./inc
 OBJDIR := ./obj
@@ -25,8 +25,8 @@ CPP_SRCS := $(wildcard $(SRCDIR)/*.cpp)
 
 OBJ_SRCS := $(OBJDIR)/parser.o $(OBJDIR)/lexer.o $(CPP_SRCS:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
-LEXER_TESTS := $(wildcard $(TESTDIR)/lexer/*.holyc)
-PARSER_TESTS := $(wildcard $(TESTDIR)/parser/*.holyc)
+LEXER_TESTS := $(wildcard $(TESTDIR)/lexer/*.holeyc)
+PARSER_TESTS := $(wildcard $(TESTDIR)/parser/*.holeyc)
 
 DEPS := $(OBJ_SRCS:.o=.d)
 
@@ -69,14 +69,14 @@ endif
 ####### END DEFINITIONS **********
 all:
 	@ echo "Compiling for $(HOST_SYS)"
-	make holycc
+	make holeycc
 
 clean:
 	rm -rf *.output $(OBJDIR) $(INCDIR)/*.hh $(SRCDIR)/*.cc $(SRCDIR)/*.hh $(DEPS) $(BINNAME)
 
 -include $(DEPS)
 
-holycc: pre-build $(OBJ_SRCS)
+holeycc: pre-build $(OBJ_SRCS)
 	$(CXX) -g -std=c++14 -I$(INCDIR) -o $@ $(OBJ_SRCS)
 
 pre-build:
@@ -100,13 +100,13 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 $(OBJDIR)/parser.o: $(SRCDIR)/parser.cc
 	$(CXX) $(FLAGS) -I$(INCDIR) -I$(INCLUDES) -Wno-sign-compare -Wno-sign-conversion -Wno-switch-default -g -std=c++14 -MMD -MP -c -o $@ $<
 
-$(SRCDIR)/parser.cc: $(SRCDIR)/holyc.yy
+$(SRCDIR)/parser.cc: $(SRCDIR)/holeyc.yy
 	$(BISON) -Werror --defines=$(INCDIR)/grammar.hh -v $<
 	mv parser.cc $(SRCDIR)
 # This file is useless as of Bison 3.2. Cycle servers have 3.4.1 -- Locally, I have 3.7.1
 	- rm stack.hh
 
-$(SRCDIR)/lexer.yy.cc: $(SRCDIR)/holyc.l
+$(SRCDIR)/lexer.yy.cc: $(SRCDIR)/holeyc.l
 	$(LEXER_TOOL) --outfile=$(SRCDIR)/lexer.yy.cc $<
 
 # In case we're using an old version of flex, and instead of suppressing warnings
@@ -129,7 +129,7 @@ test-parser:
 	do \
 		echo ""; \
 		echo $$file; \
-		./holycc $$file -p 1> /dev/null 2> $${file%.*}.err; \
+		./holeycc $$file -p 1> /dev/null 2> $${file%.*}.err; \
 		echo "Diff of error"; \
 		diff --text $${file%.*}.err $${file%.*}.err.expected; \
 	done
@@ -140,7 +140,7 @@ test-lexer:
 	do \
 		echo ""; \
 		echo $$file; \
-		./holycc $$file -t $${file%.*}.out 2> $${file%.*}.err; \
+		./holeycc $$file -t $${file%.*}.out 2> $${file%.*}.err; \
 		echo "Diff of output"; \
 		diff --text $${file%.*}.out $${file%.*}.out.expected; \
 		echo "Diff of error"; \

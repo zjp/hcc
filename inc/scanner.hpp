@@ -8,9 +8,9 @@
 #include "grammar.hh"
 #include "errors.hpp"
 
-using TokenKind = holyc::Parser::token;
+using TokenKind = holeyc::Parser::token;
 
-namespace holyc {
+namespace holeyc {
 
 class Scanner : public yyFlexLexer {
 public:
@@ -26,8 +26,8 @@ public:
 	//get rid of override virtual function warning
 	using FlexLexer::yylex;
 
-	// YY_DECL defined in the flex holyc.l
-	virtual int yylex( holyc::Parser::semantic_type * const lval);
+	// YY_DECL defined in the flex holeyc.l
+	virtual int yylex( holeyc::Parser::semantic_type * const lval);
 
 	int makeBareToken(int tagIn){
 		this->yylval->transToken = new Token(
@@ -62,42 +62,42 @@ public:
 	}
 
 	void errIllegal(size_t l, size_t c, std::string match) {
-		holyc::Report::fatal(l, c, "Illegal character " + match);
+		holeyc::Report::fatal(l, c, "Illegal character " + match);
 	}
 
 	void errChrEscEmpty(size_t l, size_t c){
-		holyc::Report::fatal(l, c, "Empty escape sequence in"
+		holeyc::Report::fatal(l, c, "Empty escape sequence in"
 		" character literal");
 	}
 
 	void errChrEmpty(size_t l, size_t c){
-		holyc::Report::fatal(l, c, "Empty character literal");
+		holeyc::Report::fatal(l, c, "Empty character literal");
 	}
 
 	void errChrEsc(size_t l, size_t c){
-		holyc::Report::fatal(l, c, "Bad escape sequence in"
+		holeyc::Report::fatal(l, c, "Bad escape sequence in"
 		" char literal");
 	}
 
 	void errStrEsc(size_t l, size_t c){
-		holyc::Report::fatal(l, c, "String literal with bad"
+		holeyc::Report::fatal(l, c, "String literal with bad"
 		" escape sequence ignored");
 	
 	}
 
 	void errStrUnterm(size_t l, size_t c){
-		holyc::Report::fatal(l, c, "Unterminated string"
+		holeyc::Report::fatal(l, c, "Unterminated string"
 		" literal ignored");
 	
 	}
 
 	void errStrEscAndUnterm(size_t l, size_t c) {
-		holyc::Report::fatal(l, c, "Unterminated string literal"
+		holeyc::Report::fatal(l, c, "Unterminated string literal"
 		"  with bad escape sequence ignored");
 	}
 
 	void errIntOverflow(size_t l, size_t c) {
-		holyc::Report::fatal(l, c, "Integer literal too large;"
+		holeyc::Report::fatal(l, c, "Integer literal too large;"
 		"  using max value");
 	}
 
@@ -114,7 +114,7 @@ public:
 	void outputTokens(std::ostream& outstream);
 
 private:
-	holyc::Parser::semantic_type *yylval = nullptr;
+	holeyc::Parser::semantic_type *yylval = nullptr;
 	size_t lineNum;
 	size_t colNum;
 };

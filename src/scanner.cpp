@@ -1,10 +1,10 @@
 #include <fstream>
 #include "scanner.hpp"
 
-using namespace holyc;
+using namespace holeyc;
 
-using TokenKind = holyc::Parser::token;
-using Lexeme = holyc::Parser::semantic_type;
+using TokenKind = holeyc::Parser::token;
+using Lexeme = holeyc::Parser::semantic_type;
 
 void Scanner::outputTokens(std::ostream& outstream){
 	Lexeme lexeme;

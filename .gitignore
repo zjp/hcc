@@ -1,5 +1,5 @@
 .DS_Store
-holycc
+holeycc
 obj
 compile_commands.json
 src/lexer.yy.cc
