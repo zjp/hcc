@@ -1,10 +1,10 @@
 #include "tokens.hpp" // Get the class declarations
 #include "grammar.hh" // Get the TokenKind definitions
 
-namespace holyc{
+namespace holeyc{
 
-using TokenKind = holyc::Parser::token;
-using Lexeme = holyc::Parser::semantic_type;
+using TokenKind = holeyc::Parser::token;
+using Lexeme = holeyc::Parser::semantic_type;
 
 static std::string tokenKindString(int tokKind){
 	switch(tokKind){
@@ -147,4 +147,4 @@ int IntLitToken::num() const {
 	return this->myNum;
 }
 
-} //End namespace holyc
+} //End namespace holeyc

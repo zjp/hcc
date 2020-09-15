@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace holyc {
+namespace holeyc {
 
 class Token {
 	public:

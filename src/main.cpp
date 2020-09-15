@@ -5,10 +5,10 @@
 #include "errors.hpp"
 #include "scanner.hpp"
 
-using namespace holyc;
+using namespace holeyc;
 
 static void usageAndDie(){
-	std::cerr << "Usage: holycc <infile>"
+	std::cerr << "Usage: holeycc <infile>"
 	<< " [-p]: Parse the input to check syntax\n"
 	<< " [-t <tokensFile>]: Output tokens to <tokensFile>\n"
 	;
@@ -50,8 +50,8 @@ static bool parse(const char * inFile){
 		throw new InternalError(msg.c_str());
 	}
 
-	holyc::Scanner scanner(&inStream);
-	holyc::Parser parser(scanner);
+	holeyc::Scanner scanner(&inStream);
+	holeyc::Parser parser(scanner);
 	int errCode = parser.parse();
 	if (errCode != 0){ return false; }
 
@@ -98,7 +98,7 @@ main( const int argc, const char **argv )
 		usageAndDie();
 	}
 	if (!useful){
-		std::cerr << "Whoops, you didn't tell holycc what to do!\n";
+		std::cerr << "Whoops, you didn't tell holeycc what to do!\n";
 		usageAndDie();
 	}
 

@@ -5,9 +5,9 @@
 /* Get our custom yyFlexScanner subclass */
 #include "scanner.hpp"
 #undef YY_DECL
-#define YY_DECL int holyc::Scanner::yylex(holyc::Parser::semantic_type * const lval)
+#define YY_DECL int holeyc::Scanner::yylex(holeyc::Parser::semantic_type * const lval)
 
-using TokenKind = holyc::Parser::token;
+using TokenKind = holeyc::Parser::token;
 
 /* define yyterminate as returning an EOF token (instead of NULL) */
 #define yyterminate() return ( TokenKind::END )
@@ -18,7 +18,7 @@ using TokenKind = holyc::Parser::token;
 %}
 
 %option nodefault
-%option yyclass="holyc::Scanner"
+%option yyclass="holeyc::Scanner"
 %option noyywrap
 %option c++
 

@@ -2,7 +2,7 @@
 %require "3.0"
 %debug
 %defines
-%define api.namespace {holyc}
+%define api.namespace {holeyc}
  /*
  If your bison install has trouble with the
  line %define api.parser.class {Parser} try
@@ -18,7 +18,7 @@
 %code requires{
   #include <list>
   #include "tokens.hpp"
-  namespace holyc {
+  namespace holeyc {
     class Scanner;
   }
 
@@ -35,7 +35,7 @@
 //End "requires" code
 }
 
-%parse-param { holyc::Scanner &scanner }
+%parse-param { holeyc::Scanner &scanner }
 
 %code{
    // C std code for utility functions
@@ -83,11 +83,11 @@ project)
 %precedence NOT
 
 %union {
-   holyc::Token*         transToken;
-   holyc::CharLitToken*  transCharToken;
-   holyc::IDToken*       transIDToken;
-   holyc::IntLitToken*   transIntToken;
-   holyc::StrToken*      transStrToken;
+   holeyc::Token*         transToken;
+   holeyc::CharLitToken*  transCharToken;
+   holeyc::IDToken*       transIDToken;
+   holeyc::IntLitToken*   transIntToken;
+   holeyc::StrToken*      transStrToken;
 }
 
 %token                   END     0 "EOF"
@@ -359,7 +359,7 @@ id : ID
 
 %%
 
-void holyc::Parser::error(const std::string& err_message){
+void holeyc::Parser::error(const std::string& err_message){
    /* For project grading, only report "syntax error"
     if a program has bad syntax. However, you will
     probably want better output for debugging. Thus,
