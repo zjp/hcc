@@ -73,7 +73,6 @@ true 		    { return makeBareToken(TokenKind::TRUE); }
 "*"		        { return makeBareToken(TokenKind::STAR); }
 "/"		        { return makeBareToken(TokenKind::SLASH); }
 "!"	 	        { return makeBareToken(TokenKind::NOT); }
-"&"          { return makeBareToken(TokenKind::AMP); }
 "&&"          { return makeBareToken(TokenKind::AND); }
 "||"          { return makeBareToken(TokenKind::OR); }
 "=="          { return makeBareToken(TokenKind::EQUALS); }

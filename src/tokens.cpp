@@ -10,7 +10,6 @@ static std::string tokenKindString(int tokKind){
 	switch(tokKind){
 		case TokenKind::END: return "EOF";
 		case TokenKind::AND: return "AND";
-		case TokenKind::AMP: return "AMP";
 		case TokenKind::ASSIGN: return "ASSIGN";
 		case TokenKind::AT: return "AT";
 		case TokenKind::BOOL: return "BOOL";
