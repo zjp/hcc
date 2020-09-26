@@ -27,7 +27,7 @@ class MinusNode;           /* Unimplemented */
 class NotEqualsNode;       /* Unimplemented */
 class OrNode;              /* Unimplemented */
 class PlusNode;            /* Unimplemented */
-class MultNode;            /* Unimplemented */
+class TimesNode;           /* Unimplemented */
 class DerefNode;           /* Unimplemented */
 class IDNode;              /* Given */
 class IndexNode;           /* Unimplemented */
@@ -101,128 +101,164 @@ public:
 	}
 	void unparse(std::ostream& out, int indent) override;
 private:
-	std::list<DeclNode * > * myGlobals;
+	std::list<DeclNode*>* myGlobals;
 };
 
 class ExpNode : public ASTNode {
 protected:
 	ExpNode(size_t line, size_t col)
-		: ASTNode(line, col){
+		: ASTNode(line, col) {
 	}
-	void unparse(std::ostream& out, int indent) override = 0;
-};
-
-class IDNode : public ExpNode {
 public:
-	IDNode(IDToken * token)
-		: ExpNode(token->line(), token->col()), myStrVal(token->value()) {
-		myStrVal = token->value();
-	}
-	void unparse(std::ostream& out, int indent);
-private:
-	/** The name of the identifier **/
-	std::string myStrVal;
+	void unparse(std::ostream& out, int indent) override = 0; 
 };
 
 class BinaryExpNode : public ExpNode {
-	protected:
-	ExpNode(size_t line, size_t col)
-		: ASTNode(line, col){
+public:
+	BinaryExpNode(size_t line, size_t col, ExpNode* lhs, ExpNode* rhs)
+		: ExpNode(line, col), myLhs(lhs), myRhs(rhs) {
 	}
-    ExpNode * myArm1, myArm2;
-	void unparse(std::ostream& out, int indent) override = 0;
+	virtual void unparse(std::ostream& out, int indent);
+protected:
+	ExpNode* myLhs;
+	ExpNode* myRhs;
 };
 
 class AndNode : public BinaryExpNode {
 public:
-	virtual void unparse(std::ostream& out, int indent);
+	AndNode(size_t line, size_t col, ExpNode* lhs, ExpNode* rhs)
+		: BinaryExpNode(line, col, lhs, rhs) {
+	}
+	void unparse(std::ostream& out, int indent);
 private:
-    ExpNode * myArm1, myArm2;
 };
 
 class DivideNode : public BinaryExpNode {
 public:
-	virtual void unparse(std::ostream& out, int indent);
+	DivideNode(size_t line, size_t col, ExpNode* lhs, ExpNode* rhs)
+		: BinaryExpNode(line, col, lhs, rhs) {
+	}
+	void unparse(std::ostream& out, int indent);
 private:
-    ExpNode * myArm1, myArm2;
-};
-class AndNode : public BinaryExpNode {
-public:
-	virtual void unparse(std::ostream& out, int indent);
-private:
-    ExpNode * myArm1, myArm2;
 };
 
 class EqualsNode : public BinaryExpNode {
 public:
-	virtual void unparse(std::ostream& out, int indent);
+	EqualsNode(size_t line, size_t col, ExpNode* lhs, ExpNode* rhs)
+		: BinaryExpNode(line, col, lhs, rhs) {
+	}
+	void unparse(std::ostream& out, int indent);
 private:
-    ExpNode * myArm1, myArm2;
 };
 
 class GreaterNode : public BinaryExpNode {
 public:
-	virtual void unparse(std::ostream& out, int indent);
+	GreaterNode(size_t line, size_t col, ExpNode* lhs, ExpNode* rhs)
+		: BinaryExpNode(line, col, lhs, rhs) {
+	}
+	void unparse(std::ostream& out, int indent);
 private:
-    ExpNode * myArm1, myArm2;
 };
 
 class GreaterEqNode : public BinaryExpNode {
 public:
-	virtual void unparse(std::ostream& out, int indent);
+	GreaterEqNode(size_t line, size_t col, ExpNode* lhs, ExpNode* rhs)
+		: BinaryExpNode(line, col, lhs, rhs) {
+	}
+	void unparse(std::ostream& out, int indent);
 private:
-    ExpNode * myArm1, myArm2;
 };
 
 class LessNode : public BinaryExpNode {
 public:
-	virtual void unparse(std::ostream& out, int indent);
+	LessNode(size_t line, size_t col, ExpNode* lhs, ExpNode* rhs)
+		: BinaryExpNode(line, col, lhs, rhs) {
+	}
+	void unparse(std::ostream& out, int indent);
 private:
-    ExpNode * myArm1, myArm2;
 };
 
 class LessEqNode : public BinaryExpNode {
 public:
-	virtual void unparse(std::ostream& out, int indent);
+	LessEqNode(size_t line, size_t col, ExpNode* lhs, ExpNode* rhs)
+		: BinaryExpNode(line, col, lhs, rhs) {
+	}
+	void unparse(std::ostream& out, int indent);
 private:
-    ExpNode * myArm1, myArm2;
 };
 
 class MinusNode : public BinaryExpNode {
 public:
-	virtual void unparse(std::ostream& out, int indent);
+	MinusNode(size_t line, size_t col, ExpNode* lhs, ExpNode* rhs)
+		: BinaryExpNode(line, col, lhs, rhs) {
+	}
+	void unparse(std::ostream& out, int indent);
 private:
-    ExpNode * myArm1, myArm2;
 };
 
 class NotEqualsNode : public BinaryExpNode {
 public:
-	virtual void unparse(std::ostream& out, int indent);
+	NotEqualsNode(size_t line, size_t col, ExpNode* lhs, ExpNode* rhs)
+		: BinaryExpNode(line, col, lhs, rhs) {
+	}
+	void unparse(std::ostream& out, int indent);
 private:
-    ExpNode * myArm1, myArm2;
 };
 
 class OrNode : public BinaryExpNode {
 public:
-	virtual void unparse(std::ostream& out, int indent);
+	OrNode(size_t line, size_t col, ExpNode* lhs, ExpNode* rhs)
+		: BinaryExpNode(line, col, lhs, rhs) {
+	}
+	void unparse(std::ostream& out, int indent);
 private:
-    ExpNode * myArm1, myArm2;
 };
 
 class PlusNode : public BinaryExpNode {
 public:
-	virtual void unparse(std::ostream& out, int indent);
+	PlusNode(size_t line, size_t col, ExpNode* lhs, ExpNode* rhs)
+		: BinaryExpNode(line, col, lhs, rhs) {
+	}
+	void unparse(std::ostream& out, int indent);
 private:
-    ExpNode * myArm1, myArm2;
 };
 
 class TimesNode : public BinaryExpNode {
 public:
-	virtual void unparse(std::ostream& out, int indent);
+	TimesNode(size_t line, size_t col, ExpNode* lhs, ExpNode* rhs)
+		: BinaryExpNode(line, col, lhs, rhs) {
+	}
+	void unparse(std::ostream& out, int indent);
 private:
-    ExpNode * myArm1, myArm2;
 };
 
+class UnaryExpNode : public ExpNode {
+public:
+	UnaryExpNode(size_t line, size_t col, ExpNode* expr)
+		: ExpNode(line, col), myExpr(expr) {
+	}
+	void unparse(std::ostream& out, int indent);
+protected:
+	ExpNode* myExpr;
+};
+
+class NegNode : public UnaryExpNode {
+public:
+	NegNode(size_t line, size_t col, ExpNode* expr)
+		: UnaryExpNode(line, col, expr) {
+	}
+	void unparse(std::ostream& out, int indent);
+private:
+};
+
+class NotNode : public UnaryExpNode {
+public:
+	NotNode(size_t line, size_t col, ExpNode* expr)
+		: UnaryExpNode(line, col, expr) {
+	}
+	void unparse(std::ostream& out, int indent);
+private:
+};
 /*
  * A variable declaration. Note that this class is intended to
  * represent a global or local variable of any type (including a struct
@@ -236,7 +272,7 @@ private:
  * struct MyStruct instance; *is* a VarDeclNode, since it introduces a
  * new variable to the program.
  */
-class TypeNode : public ASTNode{
+class TypeNode : public ASTNode {
 protected:
 	TypeNode(size_t lineIn, size_t colIn, bool refIn)
 		: ASTNode(lineIn, colIn), myIsReference(refIn){
@@ -249,8 +285,41 @@ private:
 
 class LValNode : public ExpNode {
 public:
-	LValNode(size_t lineIn, size_t colIn)
-		: ExpNode(lineIn, colIn) {
+	LValNode(size_t lineIn, size_t colIn, IDNode* id, ExpNode* expr)
+		: ExpNode(lineIn, colIn), myId(id), myExp(expr) {
+	}
+	void unparse(std::ostream& out, int indent);
+protected:
+	IDNode* myId;
+	ExpNode* myExp;
+};
+
+class IDNode : public LValNode {
+public:
+	IDNode(IDToken* token)
+		: LValNode(token->line(), token->col()), myStrVal(token->value()) {
+		myStrVal = token->value();
+	}
+	void unparse(std::ostream& out, int indent);
+private:
+	/** The name of the identifier **/
+	std::string myStrVal;
+};
+
+
+class DerefNode : public LValNode {
+public:
+	DerefNode(size_t lineIn, size_t colIn, IDNode* id, ExpNode* expr)
+		: LValNode(lineIn, colIn, id, expr) {
+	}
+	void unparse(std::ostream& out, int indent);
+private:
+};
+
+class RefNode : public LValNode {
+public:
+	RefNode(size_t lineIn, size_t colIn, IDNode* id, ExpNode* expr)
+		: LValNode(lineIn, colIn, id, expr) {
 	}
 	void unparse(std::ostream& out, int indent);
 private:
@@ -267,24 +336,74 @@ private:
 	ExpNode* mySrcExpr;
 };
 
+class CallExpNode : public ExpNode {
+public:
+	CallExpNode(size_t lineIn, size_t colIn, IDNode* id, std::list<ExpNode*>* actuals) 
+	    : ExpNode(lineIn, colIn), myId(id), myActuals(actuals) {
+	}
+	void unparse(std::ostream& out, int indent);
+private:
+	IDNode* myId;
+	std::list<ExpNode*>* myActuals;
+};
 
 class StmtNode : public ASTNode {
 public:
 	StmtNode(size_t lineIn, size_t colIn)
 		: ASTNode(lineIn, colIn) {
 	}
-	void unparse(std::ostream& out, int indent);
+	void unparse(std::ostream& out, int indent); 
 private:
 };
 
 class AssignStmtNode : public StmtNode {
 public:
-	AssignStmtNode(size_t lineIn, size_t colIn)
-		: StmtNode(lineIn, colIn) {
+	AssignStmtNode(size_t lineIn, size_t colIn, AssignExpNode* expr)
+		: StmtNode(lineIn, colIn), myExpr(expr) {
 	}
 	void unparse(std::ostream& out, int indent);
 private:
 	AssignExpNode* myExpr;
+};
+
+class FromConsoleStmtNode : public StmtNode {
+public:
+	FromConsoleStmtNode(size_t lineIn, size_t colIn, ExpNode* expr)
+		: StmtNode(lineIn, colIn), myExpr(expr) {
+	}
+	void unparse(std::ostream& out, int indent);
+private:
+	ExpNode* myExpr;
+};
+
+class ToConsoleStmtNode : public StmtNode {
+public:
+	ToConsoleStmtNode(size_t lineIn, size_t colIn, ExpNode* expr) 
+		: StmtNode(lineIn, colIn), myExpr(expr) {
+	}
+	void unparse(std::ostream& out, int indent);
+private:
+	ExpNode* myExpr;
+};
+
+class PostDecStmtNode : public StmtNode {
+public:
+	PostDecStmtNode(size_t lineIn, size_t colIn, ExpNode* expr) 
+		: StmtNode(lineIn, colIn), myExpr(expr) {
+	}
+	void unparse(std::ostream& out, int indent);
+private:
+	ExpNode* myExpr;
+};
+
+class PostIncStmtNode : public StmtNode {
+public:
+	PostIncStmtNode(size_t lineIn, size_t colIn, ExpNode* expr) 
+		: StmtNode(lineIn, colIn), myExpr(expr) {
+	}
+	void unparse(std::ostream& out, int indent);
+private:
+	ExpNode* myExpr;
 };
 
 class DeclNode : public StmtNode {

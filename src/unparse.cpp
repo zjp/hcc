@@ -42,7 +42,7 @@ void ProgramNode::unparse(std::ostream& out, int indent) {
 }
 
 void DeclNode::unparse(std::ostream& out, int indent) {
-    
+
 }
 
 void VarDeclNode::unparse(std::ostream& out, int indent) {
@@ -59,24 +59,42 @@ void FnDeclNode::unparse(std::ostream& out, int indent) {
 	out << " ";
 	this->myId->unparse(out, 0);
 	out << "(";
-	for (auto it = myFormals->begin(); it != myFormals->end(); ++it) {
+	for (auto it = this->myFormals->begin(); it != this->myFormals->end(); ++it) {
 		(*it)->unparse(out, 0);
-		if(it != --myFormals->end()) {
+		if(it != --this->myFormals->end()) {
 			out << ", ";
 		}
 	}
 	out << "){\n";
-	for (auto it = myBody->begin(); it != myBody->end(); ++it) {
+	for (auto it = this->myBody->begin(); it != this->myBody->end(); ++it) {
 		(*it)->unparse(out, 1);
-		if(it != --myBody->end()) {
-			out << "\n";
-		}
 	}
 	out << "}";
 }
 
 void StmtNode::unparse(std::ostream& out, int indent) {
 	doIndent(out, indent);
+}
+
+void AssignStmtNode::unparse(std::ostream& out, int indent) {
+	doIndent(out, indent);
+	this->myExpr->unparse(out, indent);
+	out << ";\n";
+}
+
+void FromConsoleStmtNode::unparse(std::ostream& out, int indent) {
+}
+void ToConsoleStmtNode::unparse(std::ostream& out, int indent) {
+}
+void PostIncStmtNode::unparse(std::ostream& out, int indent) { 
+	doIndent(out, indent);
+	this->myExpr->unparse(out, indent);
+	out << "--;\n";
+}
+void PostDecStmtNode::unparse(std::ostream& out, int indent) { 
+	doIndent(out, indent);
+	this->myExpr->unparse(out, indent);
+	out << "++;\n";
 }
 
 void FormalDeclNode::unparse(std::ostream& out, int indent) {
@@ -87,7 +105,7 @@ void FormalDeclNode::unparse(std::ostream& out, int indent) {
 }
 
 void LValNode::unparse(std::ostream& out, int indent) {
-	out << " ";
+	out << std::endl;
 }
 
 void AssignExpNode::unparse(std::ostream& out, int indent) {
@@ -121,70 +139,112 @@ void BoolTypeNode::unparse(std::ostream& out, int indent) {
 	}
 }
 
+void CallExpNode::unparse(std::ostream& out, int indent) {
+    this->myId->unparse(out, indent);
+	out << "(";
+	// for auto i in alist
+	out << ")";
+}
+
+void DerefNode::unparse(std::ostream& out, int indent) {
+	out << "@";
+	this->myId->unparse(out, indent);
+}
+
+void RefNode::unparse(std::ostream& out, int indent) {
+	out << "^";
+	this->myId->unparse(out, indent);
+}
+
+void UnaryExpNode::unparse(std::ostream& out, int indent) {
+	myExpr->unparse(out, indent);
+}
+
+void NegNode::unparse(std::ostream& out, int indent) {
+	myExpr->unparse(out, indent);
+}
+
+void NotNode::unparse(std::ostream& out, int indent) {
+	myExpr->unparse(out, indent);
+}
+
+void BinaryExpNode::unparse(std::ostream& out, int indent) {
+	myLhs->unparse(out, indent);
+	myRhs->unparse(out, indent);
+}
+
 void VoidTypeNode::unparse(std::ostream& out, int indent) {
 	out << "void";
 }
 
-void AndNode::unparse(std::ostream& out, int indent) { 
-    myArm1->unparse(out, indent);
-    out << " && ";
-    myArm2->unparse(out, indent);
-}
-void DivideNode::unparse(std::ostream& out, int indent) { 
-    myArm1->unparse(out, indent);
-    out << " / ";
-    myArm2->unparse(out, indent);
-}
-void EqualsNode::unparse(std::ostream& out, int indent) { 
-    myArm1->unparse(out, indent);
-    out << " == ";
-    myArm2->unparse(out, indent);
-}
-void GreaterNode::unparse(std::ostream& out, int indent) { 
-    myArm1->unparse(out, indent);
-    out << " > ";
-    myArm2->unparse(out, indent);
+void AndNode::unparse(std::ostream& out, int indent) {
+	myLhs->unparse(out, indent);
+	out << " && ";
+	myRhs->unparse(out, indent);
 }
 
-void GreaterEqNode::unparse(std::ostream& out, int indent) { 
-    myArm1->unparse(out, indent);
-    out << " >= ";
-    myArm2->unparse(out, indent);
+void DivideNode::unparse(std::ostream& out, int indent) {
+	myLhs->unparse(out, indent);
+	out << " / ";
+	myRhs->unparse(out, indent);
 }
-void LessEqNode::unparse(std::ostream& out, int indent) { 
-    myArm1->unparse(out, indent);
-    out << " <= ";
-    myArm2->unparse(out, indent);
+void EqualsNode::unparse(std::ostream& out, int indent) {
+	myLhs->unparse(out, indent);
+	out << " == ";
+	myRhs->unparse(out, indent);
 }
-void LessNode::unparse(std::ostream& out, int indent) { 
-    myArm1->unparse(out, indent);
-    out << " < ";
-    myArm2->unparse(out, indent);
+void GreaterNode::unparse(std::ostream& out, int indent) {
+	myLhs->unparse(out, indent);
+	out << " > ";
+	myRhs->unparse(out, indent);
 }
-void MinusNode::unparse(std::ostream& out, int indent) { 
-    myArm1->unparse(out, indent);
-    out << " - ";
-    myArm2->unparse(out, indent);
+
+void GreaterEqNode::unparse(std::ostream& out, int indent) {
+	myLhs->unparse(out, indent);
+	out << " >= ";
+	myRhs->unparse(out, indent);
 }
-void NotEqualsNode::unparse(std::ostream& out, int indent) { 
-    myArm1->unparse(out, indent);
-    out << " != ";
-    myArm2->unparse(out, indent);
+
+void LessEqNode::unparse(std::ostream& out, int indent) {
+	myLhs->unparse(out, indent);
+	out << " <= ";
+	myRhs->unparse(out, indent);
 }
-void OrNode::unparse(std::ostream& out, int indent) { 
-    myArm1->unparse(out, indent);
-    out << " || ";
-    myArm2->unparse(out, indent);
+
+void LessNode::unparse(std::ostream& out, int indent) {
+	myLhs->unparse(out, indent);
+	out << " < ";
+	myRhs->unparse(out, indent);
 }
-void TimesNode::unparse(std::ostream& out, int indent) { 
-    myArm1->unparse(out, indent);
-    out << " * ";
-    myArm2->unparse(out, indent);
+
+void MinusNode::unparse(std::ostream& out, int indent) {
+	myLhs->unparse(out, indent);
+	out << " - ";
+	myRhs->unparse(out, indent);
 }
-void PlusNode::unparse(std::ostream& out, int indent) { 
-    myArm1->unparse(out, indent);
-    out << " + ";
-    myArm2->unparse(out, indent);
+
+void NotEqualsNode::unparse(std::ostream& out, int indent) {
+	myLhs->unparse(out, indent);
+	out << " != ";
+	myRhs->unparse(out, indent);
+}
+
+void OrNode::unparse(std::ostream& out, int indent) {
+	myLhs->unparse(out, indent);
+	out << " || ";
+	myRhs->unparse(out, indent);
+}
+
+void TimesNode::unparse(std::ostream& out, int indent) {
+	myLhs->unparse(out, indent);
+	out << " * ";
+	myRhs->unparse(out, indent);
+}
+
+void PlusNode::unparse(std::ostream& out, int indent) {
+	myLhs->unparse(out, indent);
+	out << " + ";
+	myRhs->unparse(out, indent);
 }
 
 } // End namespace holeyc
