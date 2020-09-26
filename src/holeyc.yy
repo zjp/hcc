@@ -63,8 +63,9 @@ create new translation value types
     holeyc::Token*                    transToken;
     holeyc::IDToken*                  transIDToken;
 
-    std::list<holeyc::DeclNode*>* transDeclList;
-    /* std::list<holeyc::FormalDeclNode*> transFormalDeclList; */
+    std::list<holeyc::DeclNode*>*       transDeclList;
+    std::list<holeyc::FormalDeclNode*>* transFormalDeclList;
+    std::list<holeyc::StmtNode*>*       transStmtList;
 
     holeyc::AndNode*              transAnd;
     holeyc::DivideNode*           transDivide;
@@ -179,12 +180,78 @@ create new translation value types
 *  the names defined in the %union directive above
 */
 /*    (attribute type)    (nonterminal)    */
-%type <transProgram>    program
-%type <transDeclList>   globals
-%type <transDecl>       decl
-%type <transVarDecl>    varDecl
-%type <transType>       type
-%type <transID>         id
+%type <transProgram>        program
+%type <transDeclList>       globals
+%type <transDecl>           decl
+%type <transVarDecl>        varDecl
+%type <transType>           type
+%type <transID>             id
+%type <transFnDecl>         fnDecl
+%type <transFormalDeclList> formals
+%type <transFormalDeclList> formalsList
+%type <transFormalDecl>     formalDecl
+%type <transStmtList>       fnBody
+%type <transStmtList>       stmtList
+%type <transStmt>           stmt
+%type <transAssignExp>      assignExp
+%type <transLVal>           lval
+%type <transExp>            exp
+/*
+%type <transAnd>
+%type <transDivide>
+%type <transEquals>
+%type <transGreaterEq>
+%type <transGreater>
+%type <transLessEq>
+%type <transLess>
+%type <transMinus>
+%type <transNotEquals>
+%type <transOr>
+%type <transPlus>
+%type <transMult>
+%type <transDeref>
+*/
+/*
+%type <transIndex>
+%type <transRef>
+%type <transNeg>
+%type <transNot>
+%type <transFnDecl>
+*/
+/*
+%type <transFormalDecl>
+%type <transVarDecl>
+%type <transAssignExp>
+%type <transBinaryExp>
+%type <transCallExp>
+%type <transCharLit>
+%type <transFalse>
+%type <transIntLit>
+%type <transLVal>
+%type <transNullPtr>
+%type <transStrLit>
+%type <transTrue>
+%type <transUnaryExp>
+%type <transAssignStmt>
+%type <transCallStmt>
+%type <transDecl>
+%type <transFromConsoleStmt>
+%type <transIfElseStmt>
+%type <transIfStmt>
+%type <transPostDecStmt>
+%type <transPostIncStmt>
+%type <transReturnStmt>
+%type <transToConsoleStmt>
+%type <transWhileStmt>
+%type <transBoolType>
+%type <transCharType>
+%type <transIntType>
+%type <transVoidType>
+%type <transExp>
+%type <transProgram>
+%type <transStmt>
+%type <transType>
+*/
 
 %right ASSIGN
 %left OR
@@ -211,19 +278,19 @@ globals : globals decl
         }
         | /* epsilon */
         {
-            std::list<DeclNode *> * startingGlobals;
-            startingGlobals = new std::list<DeclNode *>();
+            std::list<DeclNode*>* startingGlobals;
+            startingGlobals = new std::list<DeclNode*>();
             $$ = startingGlobals;
         }
         ;
 
 decl : varDecl SEMICOLON
      {
-         //TODO: Make sure to fill out this rule
-         // (as well as any other empty rule!)
+         $$ = $1;
      }
      | fnDecl
      {
+         $$ = $1;
      }
 
 varDecl : type id
@@ -270,36 +337,54 @@ type : INT
 
 fnDecl : type id formals fnBody
        {
+           $$ = new FnDeclNode($1, $2, $3, $4);
        }
 
 formals : LPAREN RPAREN
         {
+            $$ = new std::list<FormalDeclNode*>();
         }
         | LPAREN formalsList RPAREN
         {
+            $$ = $2;
         }
 
 
-formalsList   : formalDecl
-      { }
-    | formalDecl COMMA formalsList
-      { }
+formalsList : formalDecl
+            {
+                $$ = new std::list<FormalDeclNode*>();
+                $$->push_back($1);
+            }
+            | formalDecl COMMA formalsList
+            {
+                $$ = new std::list<FormalDeclNode*>();
+                $$->push_back($1);
+                $$->insert($$->end(), $3->begin(), $3->end());
+            }
 
-formalDecl    : type id
-      { }
+formalDecl : type id
+           {
+               $$ = new FormalDeclNode($1, $2);
+           }
 
-fnBody    : LCURLY stmtList RCURLY
-      { }
+fnBody : LCURLY stmtList RCURLY
+       {
+           $$ = $2;
+       }
 
 stmtList : /* epsilon */
          {
+             $$ = new std::list<StmtNode*>();
          }
          | stmtList stmt
          {
+             $1->insert($$->end(), $2);
+             $$ = $1;
          }
 
 stmt : varDecl SEMICOLON
      {
+         $$ = $1;
      }
      | assignExp SEMICOLON
      {
@@ -397,12 +482,12 @@ exp : assignExp
     }
     | term
     {
-       $$ = $1; 
+       $$ = $1;
     }
 
 assignExp : lval ASSIGN exp
-      {
-      }
+          {
+          }
 
 callExp : id LPAREN RPAREN
         {

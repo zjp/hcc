@@ -53,6 +53,49 @@ void VarDeclNode::unparse(std::ostream& out, int indent) {
 	out << ";\n";
 }
 
+void FnDeclNode::unparse(std::ostream& out, int indent) {
+	doIndent(out, indent);
+	this->myReturnType->unparse(out, 0);
+	out << " ";
+	this->myId->unparse(out, 0);
+	out << "(";
+	for (auto it = myFormals->begin(); it != myFormals->end(); ++it) {
+		(*it)->unparse(out, 0);
+		if(it != --myFormals->end()) {
+			out << ", ";
+		}
+	}
+	out << "){\n";
+	for (auto it = myBody->begin(); it != myBody->end(); ++it) {
+		(*it)->unparse(out, 1);
+		if(it != --myBody->end()) {
+			out << "\n";
+		}
+	}
+	out << "}";
+}
+
+void StmtNode::unparse(std::ostream& out, int indent) {
+	doIndent(out, indent);
+}
+
+void FormalDeclNode::unparse(std::ostream& out, int indent) {
+	doIndent(out, indent);
+	this->myType->unparse(out, 0);
+	out<< " ";
+	this->myId->unparse(out, 0);
+}
+
+void LValNode::unparse(std::ostream& out, int indent) {
+	out << " ";
+}
+
+void AssignExpNode::unparse(std::ostream& out, int indent) {
+	this->myLval->unparse(out, 0);
+	out << " = ";
+	this->mySrcExpr->unparse(out, 0);
+}
+
 void IDNode::unparse(std::ostream& out, int indent) {
 	out << this->myStrVal;
 }
