@@ -451,6 +451,42 @@ private:
 	ExpNode* myExpr;
 };
 
+class IfStmtNode : public StmtNode {
+public:
+	IfStmtNode(size_t lineIn, size_t colIn, ExpNode* expr, std::list<StmtNode*>* StmtList) : StmtNode(lineIn, colIn), myExpr(expr) {
+	void unparse(std::ostream& out, int indent);
+private:
+	ExpNode* myExpr;
+    std::list<StmtNode*>* StmtList;
+};
+
+class IfElseStmtNode: public StmtNode {
+public:
+	IfStmtNode(size_t lineIn, size_t colIn, ExpNode* expr, std::list<StmtNode*>* TrueStmtList, std::list<StmtNode*>* FalseStmtList) : StmtNode(lineIn, colIn), myExpr(expr) {
+	void unparse(std::ostream& out, int indent);
+private:
+	ExpNode* myExpr;
+    std::list<StmtNode*>* TrueStmtList;
+    std::list<StmtNode*>* FalseStmtList;
+};
+
+class WhileStmtNode : public StmtNode {
+public:
+	WhileStmtNode(size_t lineIn, size_t colIn, ExpNode* expr, std::list<StmtNode*>* StmtList) : StmtNode(lineIn, colIn), myExpr(expr) {
+	void unparse(std::ostream& out, int indent);
+private:
+	ExpNode* myExpr;
+    std::list<StmtNode*>* StmtList;
+};
+
+class  ReturnStmtNode : public StmtNode {
+public:
+	ReturnStmtNode(size_t lineIn, size_t colIn, ExpNode* expr) : StmtNode(lineIn, colIn), myExpr(expr) {
+	void unparse(std::ostream& out, int indent);
+private:
+	ExpNode* myExpr;
+};
+
 class ToConsoleStmtNode : public StmtNode {
 public:
 	ToConsoleStmtNode(size_t lineIn, size_t colIn, ExpNode* expr)

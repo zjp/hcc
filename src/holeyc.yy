@@ -413,21 +413,27 @@ stmt : varDecl SEMICOLON
      }
      | IF LPAREN exp RPAREN LCURLY stmtList RCURLY
      {
+        $$ = new IfStmtNode($1->line(), $1->col(), $3, $6); 
      }
      | IF LPAREN exp RPAREN LCURLY stmtList RCURLY ELSE LCURLY stmtList RCURLY
      {
+        $$ = new IfStmtNode($1->line(), $1->col(), $3, $6, $10); 
      }
      | WHILE LPAREN exp RPAREN LCURLY stmtList RCURLY
      {
+        $$ = new WhileStmtNode($1->line(), $1->col(), $3, $6); 
      }
      | RETURN exp SEMICOLON
      {
+        $$ = new ReturnStmtNode($1->line(), $1->col(), $2);
      }
      | RETURN SEMICOLON
      {
+        $$ = new ReturnStmtNode($1->line(), $1->col(), NULL); //unsure about sending NULL but what else is there to be sent?
      }
      | callExp SEMICOLON
      {
+        $$ = new CallExpNode($1->line(), $1->col(), $1, NULL); //unsure about sending NULL but what else is there to be sent?
      }
 
 exp : assignExp
@@ -522,10 +528,11 @@ actualsList : exp
 
 term : lval
      {
-         $$ = $1;
+         $$ = $1; //not sure if this works
      }
      | callExp
      {
+        $$ = new CallExpNode($1->line(), $1->col());
      }
      | NULLPTR
      {
@@ -553,6 +560,7 @@ term : lval
      }
      | LPAREN exp RPAREN
      {
+        $$ = new ExpNode($1->line(), $1->col());
      }
 
 lval : id
