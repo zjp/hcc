@@ -41,9 +41,9 @@ void ProgramNode::unparse(std::ostream& out, int indent) {
 	}
 }
 
-void DeclNode::unparse(std::ostream& out, int indent) {
-
-}
+//void DeclNode::unparse(std::ostream& out, int indent) {
+//	doIndent(out, indent);
+//}
 
 void VarDeclNode::unparse(std::ostream& out, int indent) {
 	doIndent(out, indent);
@@ -80,6 +80,43 @@ void AssignStmtNode::unparse(std::ostream& out, int indent) {
 	doIndent(out, indent);
 	this->myExpr->unparse(out, indent);
 	out << ";\n";
+}
+
+void IfStmtNode::unparse(std::ostream& out, int indent) {
+	out << "if (";
+	this->myExpr->unparse(out, indent);
+	out << ") {";
+	for (auto it = this->StmtList->begin(); it != this->StmtList->end(); ++it) {
+		(*it)->unparse(out, 1);
+	}
+	out << "}";
+}
+
+
+void IfElseStmtNode::unparse(std::ostream& out, int indent) {
+	out << "if ( ";
+	this->myExpr->unparse(out, indent);
+	out << " ) {";
+	for (auto it = this->TrueStmtList->begin(); it != this->TrueStmtList->end(); ++it) {
+		(*it)->unparse(out, 1);
+	}
+	out << " } ";
+	out << "else { ";
+	for (auto it = this->FalseStmtList->begin(); it != this->FalseStmtList->end(); ++it) {
+		(*it)->unparse(out, 1);
+	}
+	out << " } ";
+
+}
+
+void WhileStmtNode::unparse(std::ostream& out, int indent) {
+	out << "while (";
+	this->myExpr->unparse(out, indent);
+	out << ") {";
+	for (auto it = this->StmtList->begin(); it != this->StmtList->end(); ++it) {
+		(*it)->unparse(out, 1);
+	}
+	out << "}";
 }
 
 void FromConsoleStmtNode::unparse(std::ostream& out, int indent) {
