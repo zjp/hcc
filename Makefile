@@ -121,7 +121,7 @@ endif
 
 test: test-parser
 
-testall: test-lexer test-parser 
+testall: test-lexer test-parser
 
 test-parser:
 	@ echo ""
@@ -129,7 +129,9 @@ test-parser:
 	do \
 		echo ""; \
 		echo $$file; \
-		./holeycc $$file -p 1> /dev/null 2> $${file%.*}.err; \
+		./holeycc $$file -u $${file%.*}.out 2> $${file%.*}.err; \
+		echo "Diff of output"; \
+		diff --text $${file%.*}.out $${file%.*}.out.expected; \
 		echo "Diff of error"; \
 		diff --text $${file%.*}.err $${file%.*}.err.expected; \
 	done

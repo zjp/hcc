@@ -9,14 +9,14 @@
 %token-table
 
 %code requires{
-	#include <list>
-	#include "tokens.hpp"
-	#include "ast.hpp"
-	namespace holeyc {
-		class Scanner;
-	}
+  #include <list>
+  #include "tokens.hpp"
+  #include "ast.hpp"
+  namespace holeyc {
+    class Scanner;
+  }
 
-//The following definition is required when 
+//The following definition is required when
 // we don't have the %locations directive
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -43,7 +43,7 @@
    #include "ast.hpp"
    #include "tokens.hpp"
 
-  //Request tokens from our scanner member, not 
+  //Request tokens from our scanner member, not
   // from a global function
   #undef yylex
   #define yylex scanner.yylex
@@ -51,74 +51,123 @@
 
 
 /*
-The %union directive is a way to specify the 
+The %union directive is a way to specify the
 set of possible types that might be used as
 translation attributes in the syntax-directed
-translations. 
+translations.
 
-TODO: You will have to add to this list to 
+TODO: You will have to add to this list to
 create new translation value types
 */
 %union {
-   holeyc::Token *                     transToken;
-   holeyc::IDToken *                   transIDToken;
-   holeyc::ProgramNode *               transProgram;
-   std::list<holeyc::DeclNode *> *     transDeclList;
-   holeyc::DeclNode *                  transDecl;
-   holeyc::VarDeclNode *               transVarDecl;
-   holeyc::TypeNode *                  transType;
-   holeyc::IDNode *                    transID;
+    holeyc::Token*                    transToken;
+    holeyc::IDToken*                  transIDToken;
+
+    std::list<holeyc::DeclNode*>* transDeclList;
+    /* std::list<holeyc::FormalDeclNode*> transFormalDeclList; */
+
+    holeyc::AndNode*              transAnd;
+    holeyc::DivideNode*           transDivide;
+    holeyc::EqualsNode*           transEquals;
+    holeyc::GreaterEqNode*        transGreaterEq;
+    holeyc::GreaterNode*          transGreater;
+    holeyc::LessEqNode*           transLessEq;
+    holeyc::LessNode*             transLess;
+    holeyc::MinusNode*            transMinus;
+    holeyc::NotEqualsNode*        transNotEquals;
+    holeyc::OrNode*               transOr;
+    holeyc::PlusNode*             transPlus;
+    holeyc::MultNode*             transMult;
+    holeyc::DerefNode*            transDeref;
+    holeyc::IDNode*               transID;
+    holeyc::IndexNode*            transIndex;
+    holeyc::RefNode*              transRef;
+    holeyc::NegNode*              transNeg;
+    holeyc::NotNode*              transNot;
+    holeyc::FnDeclNode*           transFnDecl;
+    holeyc::FormalDeclNode*       transFormalDecl;
+    holeyc::VarDeclNode*          transVarDecl;
+    holeyc::AssignExpNode*        transAssignExp;
+    holeyc::BinaryExpNode*        transBinaryExp;
+    holeyc::CallExpNode*          transCallExp;
+    holeyc::CharLitNode*          transCharLit;
+    holeyc::FalseNode*            transFalse;
+    holeyc::IntLitNode*           transIntLit;
+    holeyc::LValNode*             transLVal;
+    holeyc::NullPtrNode*          transNullPtr;
+    holeyc::StrLitNode*           transStrLit;
+    holeyc::TrueNode*             transTrue;
+    holeyc::UnaryExpNode*         transUnaryExp;
+    holeyc::AssignStmtNode*       transAssignStmt;
+    holeyc::CallStmtNode*         transCallStmt;
+    holeyc::DeclNode*             transDecl;
+    holeyc::FromConsoleStmtNode*  transFromConsoleStmt;
+    holeyc::IfElseStmtNode*       transIfElseStmt;
+    holeyc::IfStmtNode*           transIfStmt;
+    holeyc::PostDecStmtNode*      transPostDecStmt;
+    holeyc::PostIncStmtNode*      transPostIncStmt;
+    holeyc::ReturnStmtNode*       transReturnStmt;
+    holeyc::ToConsoleStmtNode*    transToConsoleStmt;
+    holeyc::WhileStmtNode*        transWhileStmt;
+    holeyc::BoolTypeNode*         transBoolType;
+    holeyc::CharTypeNode*         transCharType;
+    holeyc::IntTypeNode*          transIntType;
+    holeyc::VoidTypeNode*         transVoidType;
+    holeyc::ExpNode*              transExp;
+    holeyc::ProgramNode*          transProgram;
+    holeyc::StmtNode*             transStmt;
+    holeyc::TypeNode*             transType;
 }
 
 %define parse.assert
 
-%token                   END	   0 "end file"
-%token	<transToken>     AND
-%token	<transToken>     AT
-%token	<transToken>     ASSIGN
-%token	<transToken>     BOOL
-%token	<transToken>     BOOLPTR
-%token	<transToken>     CARAT
-%token	<transToken>     CHAR
-%token	<transCharToken> CHARLIT
-%token	<transToken>     CHARPTR
-%token	<transToken>     COMMA
-%token	<transToken>     CROSS
-%token	<transToken>     CROSSCROSS
-%token	<transToken>     DASH
-%token	<transToken>     DASHDASH
-%token	<transToken>     ELSE
-%token	<transToken>     EQUALS
-%token	<transToken>     FALSE
-%token	<transToken>     FROMCONSOLE
-%token	<transIDToken>   ID
-%token	<transToken>     IF
-%token	<transToken>     INT
-%token	<transIntToken>  INTLITERAL
-%token	<transToken>     INTPTR
-%token	<transToken>     GREATER
-%token	<transToken>     GREATEREQ
-%token	<transToken>     LBRACE
-%token	<transToken>     LCURLY
-%token	<transToken>     LESS
-%token	<transToken>     LESSEQ
-%token	<transToken>     LPAREN
-%token	<transToken>     NOT
-%token	<transToken>     NOTEQUALS
-%token	<transToken>     NULLPTR
-%token	<transToken>     OR
-%token	<transToken>     RBRACE
-%token	<transToken>     RCURLY
-%token	<transToken>     RETURN
-%token	<transToken>     RPAREN
-%token	<transToken>     SEMICOLON
-%token	<transToken>     SLASH
-%token	<transToken>     STAR
-%token	<transStrToken>  STRLITERAL
-%token	<transToken>     TOCONSOLE
-%token	<transToken>     TRUE
-%token	<transToken>     VOID
-%token	<transToken>     WHILE
+%token                   END     0 "end file"
+%token  <transToken>     AND
+%token  <transToken>     AT
+%token  <transToken>     ASSIGN
+%token  <transToken>     BOOL
+%token  <transToken>     BOOLPTR
+%token  <transToken>     CARAT
+%token  <transToken>     CHAR
+%token  <transCharToken> CHARLIT
+%token  <transToken>     CHARPTR
+%token  <transToken>     COMMA
+%token  <transToken>     CROSS
+%token  <transToken>     CROSSCROSS
+%token  <transToken>     DASH
+%token  <transToken>     DASHDASH
+%token  <transToken>     ELSE
+%token  <transToken>     EQUALS
+%token  <transToken>     FALSE
+%token  <transToken>     FROMCONSOLE
+%token  <transIDToken>   ID
+%token  <transToken>     IF
+%token  <transToken>     INT
+%token  <transIntToken>  INTLITERAL
+%token  <transToken>     INTPTR
+%token  <transToken>     GREATER
+%token  <transToken>     GREATEREQ
+%token  <transToken>     LBRACE
+%token  <transToken>     LCURLY
+%token  <transToken>     LESS
+%token  <transToken>     LESSEQ
+%token  <transToken>     LPAREN
+%token  <transToken>     NOT
+%token  <transToken>     NOTEQUALS
+%token  <transToken>     NULLPTR
+%token  <transToken>     OR
+%token  <transToken>     RBRACE
+%token  <transToken>     RCURLY
+%token  <transToken>     RETURN
+%token  <transToken>     RPAREN
+%token  <transToken>     SEMICOLON
+%token  <transToken>     SLASH
+%token  <transToken>     STAR
+%token  <transStrToken>  STRLITERAL
+%token  <transToken>     TOCONSOLE
+%token  <transToken>     TRUE
+%token  <transToken>     VOID
+%token  <transToken>     WHILE
 
 
 /* Nonterminals
@@ -143,200 +192,266 @@ create new translation value types
 %nonassoc LESS GREATER LESSEQ GREATEREQ EQUALS NOTEQUALS
 %left DASH CROSS
 %left STAR SLASH
-%left NOT 
+%left NOT
 %left AT CARAT
 
 %%
 
-program 	: globals
-		  {
-		  $$ = new ProgramNode($1);
-		  *root = $$;
-		  }
+program : globals
+        {
+            $$ = new ProgramNode($1);
+            *root = $$;
+        }
 
-globals 	: globals decl 
-		  {
-		  $$ = $1;
-		  DeclNode * aGlobalDecl = $2;
-		  $1->push_back(aGlobalDecl);
-		  }
-		| /* epsilon */
-		  {
-		  std::list<DeclNode *> * startingGlobals;
-		  startingGlobals = new std::list<DeclNode *>();
-	 	  $$ = startingGlobals;
-		  }
-		; 
+globals : globals decl
+        {
+            $$ = $1;
+            DeclNode * aGlobalDecl = $2;
+            $1->push_back(aGlobalDecl);
+        }
+        | /* epsilon */
+        {
+            std::list<DeclNode *> * startingGlobals;
+            startingGlobals = new std::list<DeclNode *>();
+            $$ = startingGlobals;
+        }
+        ;
 
-decl 		: varDecl SEMICOLON
-		  {
-		  //TODO: Make sure to fill out this rule
-		  // (as well as any other empty rule!)
-		  }
-		| fnDecl 
-		  { }
+decl : varDecl SEMICOLON
+     {
+         //TODO: Make sure to fill out this rule
+         // (as well as any other empty rule!)
+     }
+     | fnDecl
+     {
+     }
 
-varDecl 	: type id
-		  { 
-		  size_t typeLine = $1->line();
-		  size_t typeCol = $1->col();
-		  $$ = new VarDeclNode(typeLine, typeCol, $1, $2);
-		  }
+varDecl : type id
+        {
+            size_t typeLine = $1->line();
+            size_t typeCol = $1->col();
+            $$ = new VarDeclNode(typeLine, typeCol, $1, $2);
+        }
 
-type 		: INT
-		  {
-		  bool isPtr = false;
-		  $$ = new IntTypeNode($1->line(), $1->col(), isPtr);
-		  }
-		| INTPTR
-		  { }
-		| BOOL
-		  { }
-		| BOOLPTR
-		  { }
-		| CHAR
-		  { }
-		| CHARPTR
-		  { }
-		| VOID
-		  { }
+type : INT
+     {
+         bool isPtr = false;
+         $$ = new IntTypeNode($1->line(), $1->col(), isPtr);
+     }
+     | INTPTR
+     {
+         bool isPtr = true;
+         $$ = new IntTypeNode($1->line(), $1->col(), isPtr);
+     }
+     | BOOL
+     {
+         bool isPtr = false;
+         $$ = new BoolTypeNode($1->line(), $1->col(), isPtr);
+     }
+     | BOOLPTR
+     {
+         bool isPtr = true;
+         $$ = new BoolTypeNode($1->line(), $1->col(), isPtr);
+     }
+     | CHAR
+     {
+         bool isPtr = false;
+         $$ = new CharTypeNode($1->line(), $1->col(), isPtr);
+     }
+     | CHARPTR
+     {
+         bool isPtr = true;
+         $$ = new CharTypeNode($1->line(), $1->col(), isPtr);
+     }
+     | VOID
+     {
+         $$ = new VoidTypeNode($1->line(), $1->col(), false);
+     }
 
-fnDecl 		: type id formals fnBody
-		  { }
+fnDecl : type id formals fnBody
+       {
+       }
 
-formals 	: LPAREN RPAREN
-		  { }
-		| LPAREN formalsList RPAREN
-		  { }
+formals : LPAREN RPAREN
+        {
+        }
+        | LPAREN formalsList RPAREN
+        {
+        }
 
 
-formalsList	: formalDecl
-		  { }
-		| formalDecl COMMA formalsList 
-		  { }
+formalsList   : formalDecl
+      { }
+    | formalDecl COMMA formalsList
+      { }
 
-formalDecl 	: type id
-		  { }
+formalDecl    : type id
+      { }
 
-fnBody		: LCURLY stmtList RCURLY
-		  { }
+fnBody    : LCURLY stmtList RCURLY
+      { }
 
-stmtList 	: /* epsilon */
-		  { }
-		| stmtList stmt
-		  { }
+stmtList : /* epsilon */
+         {
+         }
+         | stmtList stmt
+         {
+         }
 
-stmt		: varDecl SEMICOLON
-		  { }
-		| assignExp SEMICOLON
-		  { }
-		| lval DASHDASH SEMICOLON
-		  { }
-		| lval CROSSCROSS SEMICOLON
-		  { }
-		| FROMCONSOLE lval SEMICOLON
-		  { }
-		| TOCONSOLE exp SEMICOLON
-		  { }
-		| IF LPAREN exp RPAREN LCURLY stmtList RCURLY
-		  { }
-		| IF LPAREN exp RPAREN LCURLY stmtList RCURLY ELSE LCURLY stmtList RCURLY
-		  { }
-		| WHILE LPAREN exp RPAREN LCURLY stmtList RCURLY
-		  { }
-		| RETURN exp SEMICOLON
-		  { }
-		| RETURN SEMICOLON
-		  { }
-		| callExp SEMICOLON
-		  { }
+stmt : varDecl SEMICOLON
+     {
+     }
+     | assignExp SEMICOLON
+     {
+     }
+     | lval DASHDASH SEMICOLON
+     {
+     }
+     | lval CROSSCROSS SEMICOLON
+     {
+     }
+     | FROMCONSOLE lval SEMICOLON
+     {
+     }
+     | TOCONSOLE exp SEMICOLON
+     {
+     }
+     | IF LPAREN exp RPAREN LCURLY stmtList RCURLY
+     {
+     }
+     | IF LPAREN exp RPAREN LCURLY stmtList RCURLY ELSE LCURLY stmtList RCURLY
+     {
+     }
+     | WHILE LPAREN exp RPAREN LCURLY stmtList RCURLY
+     {
+     }
+     | RETURN exp SEMICOLON
+     {
+     }
+     | RETURN SEMICOLON
+     {
+     }
+     | callExp SEMICOLON
+     {
+     }
 
-exp		: assignExp 
-		  { }
-		| exp DASH exp
-		  { }
-		| exp CROSS exp
-		  { }
-		| exp STAR exp
-		  { }
-		| exp SLASH exp
-		  { }
-		| exp AND exp
-		  { }
-		| exp OR exp
-		  { }
-		| exp EQUALS exp
-		  { }
-		| exp NOTEQUALS exp
-		  { }
-		| exp GREATER exp
-		  { }
-		| exp GREATEREQ exp
-		  { }
-		| exp LESS exp
-		  { }
-		| exp LESSEQ exp
-		  { }
-		| NOT exp
-		  { }
-		| DASH term
-		  { }
-		| term 
-		  { }
+exp : assignExp
+    {
+    }
+    | exp DASH exp
+    {
+    }
+    | exp CROSS exp
+    {
+    }
+    | exp STAR exp
+    {
+    }
+    | exp SLASH exp
+    {
+    }
+    | exp AND exp
+    {
+    }
+    | exp OR exp
+    {
+    }
+    | exp EQUALS exp
+    {
+    }
+    | exp NOTEQUALS exp
+    {
+    }
+    | exp GREATER exp
+    {
+    }
+    | exp GREATEREQ exp
+    {
+    }
+    | exp LESS exp
+    {
+    }
+    | exp LESSEQ exp
+    {
+    }
+    | NOT exp
+    {
+    }
+    | DASH term
+    {
+    }
+    | term
+    {
+    }
 
-assignExp	: lval ASSIGN exp
-		  { }
+assignExp : lval ASSIGN exp
+          {
+          }
 
-callExp		: id LPAREN RPAREN
-		  { }
-		| id LPAREN actualsList RPAREN
-		  { }
+callExp : id LPAREN RPAREN
+        {
+        }
+        | id LPAREN actualsList RPAREN
+        {
+        }
 
-actualsList	: exp
-		  { }
-		| actualsList COMMA exp
-		  { }
+actualsList : exp
+            {
+            }
+            | actualsList COMMA exp
+            {
+            }
 
-term 		: lval
-		  { }
-		| callExp
-		  { }
-		| NULLPTR
-		  { }
-		| INTLITERAL 
-		  { }
-		| STRLITERAL 
-		  { }
-		| CHARLIT 
-		  { }
-		| TRUE
-		  { }
-		| FALSE
-		  { }
-		| LPAREN exp RPAREN
-		  { }
+term : lval
+     {
+     }
+     | callExp
+     {
+     }
+     | NULLPTR
+     {
+     }
+     | INTLITERAL
+     {
+     }
+     | STRLITERAL
+     {
+     }
+     | CHARLIT
+     {
+     }
+     | TRUE
+     {
+     }
+     | FALSE
+     {
+     }
+     | LPAREN exp RPAREN
+     {
+     }
 
-lval		: id
-		  {
-		  }
-		| id LBRACE exp RBRACE
-		  {
-		  }
-		| AT id
-		  {
-		  }
-		| CARAT id
-		  {
-		  }
+lval : id
+     {
+     }
+     | id LBRACE exp RBRACE
+     {
+     }
+     | AT id
+     {
+     }
+     | CARAT id
+     {
+     }
 
-id		: ID
-		  {
-		  $$ = new IDNode($1);
-		  }
-	
+id : ID
+   {
+       $$ = new IDNode($1);
+   }
+
 %%
 
 void holeyc::Parser::error(const std::string& msg){
-	std::cout << msg << std::endl;
-	std::cerr << "syntax error" << std::endl;
+  std::cout << msg << std::endl;
+  std::cerr << "syntax error" << std::endl;
+  std::cerr << "No AST built" << std::endl;
 }
