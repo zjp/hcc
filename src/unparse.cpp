@@ -86,12 +86,12 @@ void FromConsoleStmtNode::unparse(std::ostream& out, int indent) {
 }
 void ToConsoleStmtNode::unparse(std::ostream& out, int indent) {
 }
-void PostIncStmtNode::unparse(std::ostream& out, int indent) { 
+void PostIncStmtNode::unparse(std::ostream& out, int indent) {
 	doIndent(out, indent);
 	this->myExpr->unparse(out, indent);
 	out << "--;\n";
 }
-void PostDecStmtNode::unparse(std::ostream& out, int indent) { 
+void PostDecStmtNode::unparse(std::ostream& out, int indent) {
 	doIndent(out, indent);
 	this->myExpr->unparse(out, indent);
 	out << "++;\n";
@@ -140,15 +140,24 @@ void BoolTypeNode::unparse(std::ostream& out, int indent) {
 }
 
 void CallExpNode::unparse(std::ostream& out, int indent) {
-    this->myId->unparse(out, indent);
+	this->myId->unparse(out, indent);
 	out << "(";
-	// for auto i in alist
+	for (auto it = this->myActuals->begin(); it != this->myActuals->end(); ++it) {
+		(*it)->unparse(out, 1);
+	}
 	out << ")";
 }
 
 void DerefNode::unparse(std::ostream& out, int indent) {
 	out << "@";
 	this->myId->unparse(out, indent);
+}
+
+void IndexNode::unparse(std::ostream& out, int indent) {
+	this->myId->unparse(out, indent);
+	out << "[";
+	this->myExp->unparse(out, indent);
+	out << "]";
 }
 
 void RefNode::unparse(std::ostream& out, int indent) {
@@ -245,6 +254,30 @@ void PlusNode::unparse(std::ostream& out, int indent) {
 	myLhs->unparse(out, indent);
 	out << " + ";
 	myRhs->unparse(out, indent);
+}
+
+void CharLitNode::unparse(std::ostream& out, int indent) {
+	out << this->myChar;
+}
+
+void FalseNode::unparse(std::ostream& out, int indent) {
+	out << "false";
+}
+
+void IntLitNode::unparse(std::ostream& out, int indent) {
+	out << this->myInt;
+}
+
+void NullPtrNode::unparse(std::ostream& out, int indent) {
+	out << "NULL";
+}
+
+void StrLitNode::unparse(std::ostream& out, int indent) {
+	out << this->myStr;
+}
+
+void TrueNode::unparse(std::ostream& out, int indent) {
+	out << "true";
 }
 
 } // End namespace holeyc

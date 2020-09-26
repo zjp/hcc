@@ -62,11 +62,14 @@ create new translation value types
 %union {
     holeyc::Token*                      transToken;
     holeyc::IDToken*                    transIDToken;
+    holeyc::IntLitToken*                transIntToken;
+    holeyc::StrToken*                   transStrToken;
+    holeyc::CharLitToken*               transCharToken;
 
     std::list<holeyc::DeclNode*>*       transDeclList;
     std::list<holeyc::FormalDeclNode*>* transFormalDeclList;
     std::list<holeyc::StmtNode*>*       transStmtList;
-	std::list<holeyc::ExpNode*>*        transActualsList;
+    std::list<holeyc::ExpNode*>*        transActualsList;
 
     holeyc::AndNode*                    transAnd;
     holeyc::DivideNode*                 transDivide;
@@ -390,23 +393,23 @@ stmt : varDecl SEMICOLON
      }
      | assignExp SEMICOLON
      {
-	     $$ = new AssignStmtNode($1->line(), $1->col(), $1);
+         $$ = new AssignStmtNode($1->line(), $1->col(), $1);
      }
      | lval DASHDASH SEMICOLON
      {
-	     $$ = new PostDecStmtNode($1->line(), $1->col(), $1);
+         $$ = new PostDecStmtNode($1->line(), $1->col(), $1);
      }
      | lval CROSSCROSS SEMICOLON
      {
-	     $$ = new PostIncStmtNode($1->line(), $1->col(), $1);
+         $$ = new PostIncStmtNode($1->line(), $1->col(), $1);
      }
      | FROMCONSOLE lval SEMICOLON
      {
-		 $$ = new FromConsoleStmtNode($1->line(), $1->col(), $2);
+         $$ = new FromConsoleStmtNode($1->line(), $1->col(), $2);
      }
      | TOCONSOLE exp SEMICOLON
      {
-	     $$ = new ToConsoleStmtNode($1->line(), $1->col(), $2);
+         $$ = new ToConsoleStmtNode($1->line(), $1->col(), $2);
      }
      | IF LPAREN exp RPAREN LCURLY stmtList RCURLY
      {
@@ -433,51 +436,51 @@ exp : assignExp
     }
     | exp DASH exp
     {
-	    $$ = new MinusNode($1->line(), $1->col(), $1, $3);
+        $$ = new MinusNode($1->line(), $1->col(), $1, $3);
     }
     | exp CROSS exp
     {
-	    $$ = new PlusNode($1->line(), $1->col(), $1, $3);
+        $$ = new PlusNode($1->line(), $1->col(), $1, $3);
     }
     | exp STAR exp
     {
-	    $$ = new TimesNode($1->line(), $1->col(), $1, $3);
+        $$ = new TimesNode($1->line(), $1->col(), $1, $3);
     }
     | exp SLASH exp
     {
-	    $$ = new DivideNode($1->line(), $1->col(), $1, $3);
+        $$ = new DivideNode($1->line(), $1->col(), $1, $3);
     }
     | exp AND exp
     {
-	    $$ = new AndNode($1->line(), $1->col(), $1, $3);
+        $$ = new AndNode($1->line(), $1->col(), $1, $3);
     }
     | exp OR exp
     {
-	    $$ = new OrNode($1->line(), $1->col(), $1, $3);
+        $$ = new OrNode($1->line(), $1->col(), $1, $3);
     }
     | exp EQUALS exp
     {
-	    $$ = new EqualsNode($1->line(), $1->col(), $1, $3);
+        $$ = new EqualsNode($1->line(), $1->col(), $1, $3);
     }
     | exp NOTEQUALS exp
     {
-	    $$ = new NotEqualsNode($1->line(), $1->col(), $1, $3);
+        $$ = new NotEqualsNode($1->line(), $1->col(), $1, $3);
     }
     | exp GREATER exp
     {
-	    $$ = new GreaterNode($1->line(), $1->col(), $1, $3);
+        $$ = new GreaterNode($1->line(), $1->col(), $1, $3);
     }
     | exp GREATEREQ exp
     {
-	    $$ = new GreaterEqNode($1->line(), $1->col(), $1, $3);
+        $$ = new GreaterEqNode($1->line(), $1->col(), $1, $3);
     }
     | exp LESS exp
     {
-	    $$ = new LessNode($1->line(), $1->col(), $1, $3);
+        $$ = new LessNode($1->line(), $1->col(), $1, $3);
     }
     | exp LESSEQ exp
     {
-	    $$ = new LessEqNode($1->line(), $1->col(), $1, $3);
+        $$ = new LessEqNode($1->line(), $1->col(), $1, $3);
     }
     | NOT exp
     {
@@ -494,22 +497,22 @@ exp : assignExp
 
 assignExp : lval ASSIGN exp
           {
-		      $$ = new AssignExpNode($3->line(), $3->col(), $1, $3);
+              $$ = new AssignExpNode($1->line(), $1->col(), $1, $3);
           }
 
 callExp : id LPAREN RPAREN
         {
-		    $$ = new CallExpNode($1->line(), $1->col(), $1, nullptr);
+            $$ = new CallExpNode($1->line(), $1->col(), $1, nullptr);
         }
         | id LPAREN actualsList RPAREN
         {
-		    $$ = new CallExpNode($1->line(), $1->col(), $1, $3);
+            $$ = new CallExpNode($1->line(), $1->col(), $1, $3);
         }
 
 actualsList : exp
             {
-			    $$ = new std::list<ExpNode*>();
-				$$->push_back($1);
+                $$ = new std::list<ExpNode*>();
+                $$->push_back($1);
             }
             | actualsList COMMA exp
             {
@@ -519,27 +522,34 @@ actualsList : exp
 
 term : lval
      {
+         $$ = $1;
      }
      | callExp
      {
      }
      | NULLPTR
      {
+         $$ = new NullPtrNode($1->line(), $1->col());
      }
      | INTLITERAL
      {
+         $$ = new IntLitNode($1->line(), $1->col(), $1->num());
      }
      | STRLITERAL
      {
+         $$ = new StrLitNode($1->line(), $1->col(), $1->str());
      }
      | CHARLIT
      {
+         $$ = new CharLitNode($1->line(), $1->col(), $1->val());
      }
      | TRUE
      {
+         $$ = new TrueNode($1->line(), $1->col());
      }
      | FALSE
      {
+         $$ = new FalseNode($1->line(), $1->col());
      }
      | LPAREN exp RPAREN
      {
@@ -547,19 +557,19 @@ term : lval
 
 lval : id
      {
-	     $$ = $1;
+       $$ = $1;
      }
      | id LBRACE exp RBRACE
      {
-	     $$ = new IndexNode($1->line(), $1->col(), $1, $3);
+       $$ = new IndexNode($1, $3);
      }
      | AT id
-     { 
-	     $$ = new DerefNode($1->line(), $1->col(), $2, nullptr);
+     {
+       $$ = new DerefNode($2, nullptr);
      }
      | CARAT id
      {
-	     $$ = new RefNode($1->line(), $1->col(), $2, nullptr);
+       $$ = new RefNode($2, nullptr);
      }
 
 id : ID
