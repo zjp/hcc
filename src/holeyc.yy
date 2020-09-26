@@ -337,56 +337,72 @@ stmt : varDecl SEMICOLON
 
 exp : assignExp
     {
+        $$ = new AssignExpNode($1, $3);
     }
     | exp DASH exp
     {
+        $$ = new MinusNode($1, $3);
     }
     | exp CROSS exp
     {
+        $$ = new PlusNode($1, $3);
     }
     | exp STAR exp
     {
+        $$ = new MultNode($1, $3);
     }
     | exp SLASH exp
     {
+        $$ = new DivideNode($1, $3);
     }
     | exp AND exp
     {
+        $$ = new AndNode($1, $3);
     }
     | exp OR exp
     {
+        $$ = new OrNode($1, $3);
     }
     | exp EQUALS exp
     {
+        $$ = new EqualsNode($1, $3);
     }
     | exp NOTEQUALS exp
     {
+        $$ = new NotEqualsNode($1, $3);
     }
     | exp GREATER exp
     {
+        $$ = new GreaterNode($1, $3);
     }
     | exp GREATEREQ exp
     {
+        $$ = new GreaterEqNode($1, $3);
     }
     | exp LESS exp
     {
+        $$ = new LessNode($1, $3);
     }
     | exp LESSEQ exp
     {
+        $$ = new LessEqNode($1, $3);
     }
     | NOT exp
     {
+        $$ = new NotNode($2);
     }
     | DASH term
     {
+        $$ = new NegNode($2);
     }
     | term
     {
+       $$ = $1; 
     }
 
 assignExp : lval ASSIGN exp
-          {
-          }
+      {
+      }
 
 callExp : id LPAREN RPAREN
         {

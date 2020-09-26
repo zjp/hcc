@@ -42,6 +42,7 @@ void ProgramNode::unparse(std::ostream& out, int indent) {
 }
 
 void DeclNode::unparse(std::ostream& out, int indent) {
+    
 }
 
 void VarDeclNode::unparse(std::ostream& out, int indent) {
@@ -79,6 +80,68 @@ void BoolTypeNode::unparse(std::ostream& out, int indent) {
 
 void VoidTypeNode::unparse(std::ostream& out, int indent) {
 	out << "void";
+}
+
+void AndNode::unparse(std::ostream& out, int indent) { 
+    myArm1->unparse(out, indent);
+    out << " && ";
+    myArm2->unparse(out, indent);
+}
+void DivideNode::unparse(std::ostream& out, int indent) { 
+    myArm1->unparse(out, indent);
+    out << " / ";
+    myArm2->unparse(out, indent);
+}
+void EqualsNode::unparse(std::ostream& out, int indent) { 
+    myArm1->unparse(out, indent);
+    out << " == ";
+    myArm2->unparse(out, indent);
+}
+void GreaterNode::unparse(std::ostream& out, int indent) { 
+    myArm1->unparse(out, indent);
+    out << " > ";
+    myArm2->unparse(out, indent);
+}
+
+void GreaterEqNode::unparse(std::ostream& out, int indent) { 
+    myArm1->unparse(out, indent);
+    out << " >= ";
+    myArm2->unparse(out, indent);
+}
+void LessEqNode::unparse(std::ostream& out, int indent) { 
+    myArm1->unparse(out, indent);
+    out << " <= ";
+    myArm2->unparse(out, indent);
+}
+void LessNode::unparse(std::ostream& out, int indent) { 
+    myArm1->unparse(out, indent);
+    out << " < ";
+    myArm2->unparse(out, indent);
+}
+void MinusNode::unparse(std::ostream& out, int indent) { 
+    myArm1->unparse(out, indent);
+    out << " - ";
+    myArm2->unparse(out, indent);
+}
+void NotEqualsNode::unparse(std::ostream& out, int indent) { 
+    myArm1->unparse(out, indent);
+    out << " != ";
+    myArm2->unparse(out, indent);
+}
+void OrNode::unparse(std::ostream& out, int indent) { 
+    myArm1->unparse(out, indent);
+    out << " || ";
+    myArm2->unparse(out, indent);
+}
+void TimesNode::unparse(std::ostream& out, int indent) { 
+    myArm1->unparse(out, indent);
+    out << " * ";
+    myArm2->unparse(out, indent);
+}
+void PlusNode::unparse(std::ostream& out, int indent) { 
+    myArm1->unparse(out, indent);
+    out << " + ";
+    myArm2->unparse(out, indent);
 }
 
 } // End namespace holeyc

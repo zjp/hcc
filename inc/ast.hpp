@@ -116,6 +116,7 @@ protected:
 	ExpNode(size_t line, size_t col)
 		: ASTNode(line, col){
 	}
+	void unparse(std::ostream& out, int indent) override = 0;
 };
 
 class IDNode : public ExpNode {
@@ -131,13 +132,104 @@ private:
 };
 
 class BinaryExpNode : public ExpNode {
+	protected:
+	ExpNode(size_t line, size_t col)
+		: ASTNode(line, col){
+	}
+    ExpNode * myArm1, myArm2;
+	void unparse(std::ostream& out, int indent) override = 0;
 };
 
 class AndNode : public BinaryExpNode {
+public:
+	virtual void unparse(std::ostream& out, int indent);
+private:
+    ExpNode * myArm1, myArm2;
 };
 
 class DivideNode : public BinaryExpNode {
+public:
+	virtual void unparse(std::ostream& out, int indent);
+private:
+    ExpNode * myArm1, myArm2;
 };
+class AndNode : public BinaryExpNode {
+public:
+	virtual void unparse(std::ostream& out, int indent);
+private:
+    ExpNode * myArm1, myArm2;
+};
+
+class EqualsNode : public BinaryExpNode {
+public:
+	virtual void unparse(std::ostream& out, int indent);
+private:
+    ExpNode * myArm1, myArm2;
+};
+
+class GreaterNode : public BinaryExpNode {
+public:
+	virtual void unparse(std::ostream& out, int indent);
+private:
+    ExpNode * myArm1, myArm2;
+};
+
+class GreaterEqNode : public BinaryExpNode {
+public:
+	virtual void unparse(std::ostream& out, int indent);
+private:
+    ExpNode * myArm1, myArm2;
+};
+
+class LessNode : public BinaryExpNode {
+public:
+	virtual void unparse(std::ostream& out, int indent);
+private:
+    ExpNode * myArm1, myArm2;
+};
+
+class LessEqNode : public BinaryExpNode {
+public:
+	virtual void unparse(std::ostream& out, int indent);
+private:
+    ExpNode * myArm1, myArm2;
+};
+
+class MinusNode : public BinaryExpNode {
+public:
+	virtual void unparse(std::ostream& out, int indent);
+private:
+    ExpNode * myArm1, myArm2;
+};
+
+class NotEqualsNode : public BinaryExpNode {
+public:
+	virtual void unparse(std::ostream& out, int indent);
+private:
+    ExpNode * myArm1, myArm2;
+};
+
+class OrNode : public BinaryExpNode {
+public:
+	virtual void unparse(std::ostream& out, int indent);
+private:
+    ExpNode * myArm1, myArm2;
+};
+
+class PlusNode : public BinaryExpNode {
+public:
+	virtual void unparse(std::ostream& out, int indent);
+private:
+    ExpNode * myArm1, myArm2;
+};
+
+class TimesNode : public BinaryExpNode {
+public:
+	virtual void unparse(std::ostream& out, int indent);
+private:
+    ExpNode * myArm1, myArm2;
+};
+
 /*
  * A variable declaration. Note that this class is intended to
  * represent a global or local variable of any type (including a struct
