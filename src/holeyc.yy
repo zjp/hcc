@@ -184,79 +184,25 @@ create new translation value types
 *  the names defined in the %union directive above
 */
 /*    (attribute type)    (nonterminal)    */
-/*
-%type <transToken>
-%type <transIDToken>
-*/
 %type <transDeclList>       globals
 %type <transFormalDeclList> formals
 %type <transFormalDeclList> formalsList
 %type <transStmtList>       fnBody
 %type <transStmtList>       stmtList
 %type <transActualsList>    actualsList
-/*
-%type <transDivide>
-%type <transEquals>
-%type <transGreaterEq>
-%type <transGreater>
-%type <transLessEq>
-%type <transLess>
-%type <transMinus>
-%type <transNotEquals>
-%type <transOr>
-%type <transPlus>
-%type <transTimes>
-%type <transDeref>
-*/
-%type <transID> id
-/*
-%type <transIndex>
-%type <transRef>
-%type <transNeg>
-%type <transNot>
-*/
-%type <transFnDecl>     fnDecl
-%type <transFormalDecl> formalDecl
-%type <transVarDecl>    varDecl
-%type <transAssignExp>  assignExp
-/*
-%type <transBinaryExp>
-*/
-%type <transCallExp> callExp
-/*
-%type <transCharLit>
-%type <transFalse>
-%type <transIntLit>
-*/
-%type <transLVal> lval
-/*
-%type <transNullPtr>
-%type <transStrLit>
-%type <transTrue>
-%type <transUnaryExp>
-%type <transAssignStmt>
-%type <transCallStmt>
-*/
-%type <transDecl> decl
-/*
-%type <transFromConsoleStmt>
-%type <transIfElseStmt>
-%type <transIfStmt>
-%type <transPostDecStmt>
-%type <transPostIncStmt>
-%type <transReturnStmt>
-%type <transToConsoleStmt>
-%type <transWhileStmt>
-%type <transBoolType>
-%type <transCharType>
-%type <transIntType>
-%type <transVoidType>
-*/
-%type <transExp> exp
-%type <transExp> term
-%type <transProgram> program
-%type <transStmt> stmt
-%type <transType> type
+%type <transID>             id
+%type <transFnDecl>         fnDecl
+%type <transFormalDecl>     formalDecl
+%type <transVarDecl>        varDecl
+%type <transAssignExp>      assignExp
+%type <transCallExp>        callExp
+%type <transLVal>           lval
+%type <transDecl>           decl
+%type <transExp>            exp
+%type <transExp>            term
+%type <transProgram>        program
+%type <transStmt>           stmt
+%type <transType>           type
 
 %right ASSIGN
 %left OR
@@ -417,7 +363,7 @@ stmt : varDecl SEMICOLON
      }
      | IF LPAREN exp RPAREN LCURLY stmtList RCURLY ELSE LCURLY stmtList RCURLY
      {
-        $$ = new IfStmtNode($1->line(), $1->col(), $3, $6, $10); 
+        $$ = new IfElseStmtNode($1->line(), $1->col(), $3, $6, $10); 
      }
      | WHILE LPAREN exp RPAREN LCURLY stmtList RCURLY
      {
@@ -433,7 +379,7 @@ stmt : varDecl SEMICOLON
      }
      | callExp SEMICOLON
      {
-        $$ = new CallExpNode($1->line(), $1->col(), $1, NULL); //unsure about sending NULL but what else is there to be sent?
+        $$ = new CallStmtNode($1->line(), $1->col(), $1);
      }
 
 exp : assignExp
@@ -532,7 +478,7 @@ term : lval
      }
      | callExp
      {
-        $$ = new CallExpNode($1->line(), $1->col());
+        $$ = $1;
      }
      | NULLPTR
      {
@@ -560,7 +506,7 @@ term : lval
      }
      | LPAREN exp RPAREN
      {
-        $$ = new ExpNode($1->line(), $1->col());
+        $$ = $2;
      }
 
 lval : id

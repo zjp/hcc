@@ -1,6 +1,6 @@
 void main(){
 	int age;
-	TOONSOLE "enter your age: ";
+	TOCONSOLE "enter your age: ";
 	FROMCONSOLE age;
 	TOCONSOLE "\nyour age is";
 	TOCONSOLE age;

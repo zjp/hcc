@@ -39,6 +39,7 @@ void ProgramNode::unparse(std::ostream& out, int indent) {
 		 */
 		global->unparse(out, indent);
 	}
+	out << "\n";
 }
 
 //void DeclNode::unparse(std::ostream& out, int indent) {
@@ -120,9 +121,19 @@ void WhileStmtNode::unparse(std::ostream& out, int indent) {
 }
 
 void FromConsoleStmtNode::unparse(std::ostream& out, int indent) {
+	doIndent(out, indent);
+	out << "FROMCONSOLE ";
+	this->myExpr->unparse(out, indent);
+	out << ";\n";
 }
+
 void ToConsoleStmtNode::unparse(std::ostream& out, int indent) {
+	doIndent(out, indent);
+	out << "TOCONSOLE ";
+	this->myExpr->unparse(out, indent);
+	out << ";\n";
 }
+
 void PostIncStmtNode::unparse(std::ostream& out, int indent) {
 	doIndent(out, indent);
 	this->myExpr->unparse(out, indent);
@@ -174,6 +185,23 @@ void BoolTypeNode::unparse(std::ostream& out, int indent) {
 	if(this->isRef) {
 		out << "ptr";
 	}
+}
+
+void ReturnStmtNode::unparse(std::ostream& out, int indent) {
+	doIndent(out, indent);
+	if(myExpr == nullptr) {
+		out << "return;\n";
+	} else {
+		out << "return ";
+		this->myExpr->unparse(out, indent);
+		out << ";\n";
+	}
+}
+
+void CallStmtNode::unparse(std::ostream& out, int indent) {
+	doIndent(out, indent);
+	this->myCallExpr->unparse(out, indent);
+	out << ";\n";
 }
 
 void CallExpNode::unparse(std::ostream& out, int indent) {
