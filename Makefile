@@ -77,7 +77,7 @@ clean:
 -include $(DEPS)
 
 holeycc: pre-build $(OBJ_SRCS)
-	$(CXX) -g -std=c++14 -I$(INCDIR) -o $@ $(OBJ_SRCS)
+	$(CXX) -g -std=c++14 $(FLAGS) -I$(INCDIR) -o $@ $(OBJ_SRCS)
 
 pre-build:
 	@ echo "Attempting to make object directory..."
@@ -94,7 +94,7 @@ lsp-refs: clean
 	bear make
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	$(CXX) -g -std=c++14 -I$(INCDIR) -I$(INCLUDES) -MMD -MP -c -o $@ $<
+	$(CXX) -g -std=c++14 $(FLAGS) -I$(INCDIR) -I$(INCLUDES) -MMD -MP -c -o $@ $<
 
 
 $(OBJDIR)/parser.o: $(SRCDIR)/parser.cc

@@ -1,34 +1,28 @@
-#include <iostream>
-#include <cstdlib>
-#include <cstring>
 #include <fstream>
+#include <string.h>
+
 #include "errors.hpp"
 #include "scanner.hpp"
+#include "ast.hpp"
+#include "name_analysis.hpp"
 
 using namespace holeyc;
 
 static void usageAndDie(){
 	std::cerr << "Usage: holeycc <infile> <options>\n"
-	<< " [-u <unparseFile>]: Unparse to <unparseFile>\n"
-	<< " [-p]: Parse the input to check syntax\n"
 	<< " [-t <tokensFile>]: Output tokens to <tokensFile>\n"
+	<< " [-p]: Parse the input to check syntax\n"
+	<< " [-u <unparseFile>]: Unparse to <unparseFile>\n"
+	<< " [-n]\n"
+	<< "\n"
 	;
+	std::cout << std::flush;
+	std::cerr << std::flush;
 	exit(1);
 }
 
-static void writeTokenStream(const char * inPath, const char * outPath){
-	std::ifstream inStream(inPath);
-	if (!inStream.good()){
-		std::string msg = "Bad input stream";
-		msg += inPath;
-		throw new InternalError(msg.c_str());
-	}
-	if (outPath == nullptr){
-		std::string msg = "No tokens output file given";
-		throw new InternalError(msg.c_str());
-	}
-
-	Scanner scanner(&inStream);
+static void doTokenization(std::ifstream * input, const char * outPath){
+	holeyc::Scanner scanner(input);
 	if (strcmp(outPath, "--") == 0){
 		scanner.outputTokens(std::cout);
 	} else {
@@ -36,51 +30,42 @@ static void writeTokenStream(const char * inPath, const char * outPath){
 		if (!outStream.good()){
 			std::string msg = "Bad output file ";
 			msg += outPath;
-			throw new InternalError(msg.c_str());
+			throw new holeyc::InternalError(msg.c_str());
 		}
 		scanner.outputTokens(outStream);
-		outStream.close();
 	}
 }
 
-static bool parse(const char * inFile){
-	std::ifstream inStream(inFile);
-	if (!inStream.good()){
-		std::string msg = "Bad input stream ";
-		msg += inFile;
-		throw new InternalError(msg.c_str());
+static holeyc::ProgramNode * syntacticAnalysis(std::ifstream * input){
+	if (input == nullptr){
+		return nullptr;
 	}
 
 	holeyc::ProgramNode * root = nullptr;
-	holeyc::Scanner scanner(&inStream);
+
+	holeyc::Scanner scanner(input);
+	#if 1
 	holeyc::Parser parser(scanner, &root);
+	#else
+	holeyc::Parser parser(scanner);
+	#endif
+
 	int errCode = parser.parse();
-	if (errCode != 0){ return false; }
-
-	return true;
-}
-
-static holeyc::ProgramNode * syntacticAnalysis(const char * inFile){
-	std::ifstream inStream(inFile);
-	if (!inStream.good()){
-		std::string msg = "Bad input stream ";
-		msg += inFile;
-		throw new InternalError(msg.c_str());
+	if (errCode != 0) { 
+		return nullptr; 
 	}
-
-	holeyc::ProgramNode * root = nullptr;
-	holeyc::Scanner scanner(&inStream);
-	holeyc::Parser parser(scanner, &root);
-	int errCode = parser.parse();
-	if (errCode != 0){ return nullptr; }
-
+	
 	return root;
 }
 
-static void doUnparsing(holeyc::ProgramNode * ast, const char * outPath){
-	if (outPath == nullptr){ 
-		std::cerr << "No output path\n"; 
-		return;
+static bool doUnparsing(std::ifstream * input, const char * outPath){
+	holeyc::ProgramNode * ast = syntacticAnalysis(input);
+	if (ast == nullptr){ 
+		std::cerr << "No AST built\n";
+		return false;
+	}
+	if (input == nullptr){ 
+		return false; 
 	}
 
 	if (strcmp(outPath, "--") == 0){
@@ -94,90 +79,96 @@ static void doUnparsing(holeyc::ProgramNode * ast, const char * outPath){
 		}
 		ast->unparse(outStream, 0);
 	}
+	return true;
 }
 
-int 
-main( const int argc, const char **argv )
-{
-	if (argc == 0){
+static holeyc::NameAnalysis * doNameAnalysis(std::ifstream * input){
+	holeyc::ProgramNode * ast = syntacticAnalysis(input);
+	if (ast == nullptr){ return nullptr; }
+
+	return holeyc::NameAnalysis::build(ast);
+}
+
+int main(int argc, char * argv[]){
+	if (argc <= 1){ usageAndDie(); }
+	std::ifstream * input = new std::ifstream(argv[1]);
+	if (input == NULL){ usageAndDie(); }
+	if (!input->good()){
+		std::cerr << "Bad path " <<  argv[1] << std::endl;
 		usageAndDie();
 	}
-	const char * inFile = NULL;
-	const char * tokensFile = NULL;
-	bool checkParse = false;
-	const char * unparseFile = NULL;
-	bool useful = false;
-	int i = 1;
-	for (int i = 1 ; i < argc ; i++){
+
+	const char * tokensFile = nullptr; // Output file if 
+	                                   // printing tokens
+	bool checkParse = false;	   // Flag set if doing 
+					   // syntactic analysis
+	const char * unparseFile = NULL;   // Output file if 
+	                                   // unparsing
+	const char * nameFile = NULL;	   // Output file if doing
+					   // name analysis
+	bool useful = false; // Check whether the command is 
+                         // a no-op
+	for (int i = 1; i < argc; i++){
 		if (argv[i][0] == '-'){
 			if (argv[i][1] == 't'){
 				i++;
+				if (i >= argc){ usageAndDie(); }
 				tokensFile = argv[i];
 				useful = true;
 			} else if (argv[i][1] == 'p'){
+				i++;
 				checkParse = true;
 				useful = true;
 			} else if (argv[i][1] == 'u'){
 				i++;
+				if (i >= argc){ usageAndDie(); }
 				unparseFile = argv[i];
 				useful = true;
+			} else if (argv[i][1] == 'n'){
+				i++;
+				if (i >= argc){ usageAndDie(); }
+				nameFile = argv[i];
+				useful = true;
 			} else {
-				std::cerr << "Unrecognized argument: ";
-				std::cerr << argv[i] << std::endl;
-				usageAndDie();
-			}
-		} else {
-			if (inFile == NULL){
-				inFile = argv[i];
-			} else {
-				std::cerr << "Only 1 input file allowed";
-				std::cerr << argv[i] << std::endl;
+				std::cerr << "Unknown option"
+				  << " " << argv[i] << "\n";
 				usageAndDie();
 			}
 		}
 	}
-	if (inFile == nullptr){
-		usageAndDie();
-	}
-	if (!useful){
-		std::cerr << "Whoops, you didn't tell holeycc what to do!\n";
+
+	if (useful == false){
+		std::cerr << "You didn't specify an operation to do!\n";
 		usageAndDie();
 	}
 
-	if (tokensFile != nullptr){
-		try {
-			writeTokenStream(inFile, tokensFile);
-		} catch (InternalError * e){
-			std::cerr << "Error: " << e->msg() << std::endl;
+
+	try {
+		if (tokensFile != nullptr){
+			doTokenization(input, tokensFile);
 		}
-	}
-
-	if (checkParse){
-		try {
-			bool parsed = parse(inFile);
-			if (!parsed){
+		if (checkParse){
+			if (!syntacticAnalysis(input)){
 				std::cerr << "Parse failed";
 			}
-		} catch (ToDoError * e){
-			std::cerr << "ToDo: " << e->msg() << std::endl;
-			exit(1);
 		}
+		if (unparseFile != nullptr){
+			doUnparsing(input, unparseFile);
+		}
+		if (nameFile){
+			if (doNameAnalysis(input) != nullptr){
+				return 0;
+			}
+			std::cout << "Type Analysis Failed\n";
+			return 1;
+		}
+	} catch (holeyc::ToDoError * e){
+		std::cerr << "ToDoError: " << e->msg() << "\n";
+		return 1;
+	} catch (holeyc::InternalError * e){
+		std::cerr << "InternalError: " << e->msg() << "\n";
+		return 1;
 	}
 
-	if (unparseFile != nullptr){
-		try {
-			ProgramNode * ast = syntacticAnalysis(inFile);
-			if (ast){
-				doUnparsing(ast, unparseFile);
-			}
-		} catch (InternalError * e){
-			std::cerr << "Error: " << e->msg() << std::endl;
-			exit(1);
-		} catch (ToDoError * e){
-			std::cerr << "ToDo: " << e->msg() << std::endl;
-			exit(1);
-		}
-	}
-	
 	return 0;
 }
