@@ -11,3 +11,7 @@ src/parser.cc
 inc/grammar.hh
 parser.output
 *.backup
+/.clangd/
+/.projectile
+/a
+/b
