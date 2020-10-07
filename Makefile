@@ -25,6 +25,7 @@ CPP_SRCS := $(wildcard $(SRCDIR)/*.cpp)
 
 OBJ_SRCS := $(OBJDIR)/parser.o $(OBJDIR)/lexer.o $(CPP_SRCS:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
+SYMBOL_TABLE_TESTS := $(wildcard $(TESTDIR)/symbol-table/*.holeyc)
 LEXER_TESTS := $(wildcard $(TESTDIR)/lexer/*.holeyc)
 PARSER_TESTS := $(wildcard $(TESTDIR)/parser/*.holeyc)
 
@@ -119,9 +120,29 @@ else
 endif
 	$(CXX) -g -std=c++14 -I$(INCDIR) -I$(INCLUDES) -c $(SRCDIR)/lexer.yy.cc -o $(OBJDIR)/lexer.o
 
-test: test-parser
+test: test-symbol-table
 
-testall: test-lexer test-parser
+testall: test-lexer test-parser test-symbol-table
+
+test-symbol-table:
+	@ echo ""
+	@ echo "Testing $*.holeyc"
+	for file in $(SYMBOL_TABLE_TESTS); \
+	do \
+		echo ""; \
+		echo $$file; \
+		touch $${file%.*}.out; \
+		touch $${file%.*}.err; \
+	 	./holeycc $$file -n $${file%.*}.out 2> $${file%.*}.err ;\
+		PROG_EXIT_CODE=$$?;\
+		echo "Diff of output";\
+		diff --text $${file%.*}.out $${file%.*}.out.expected; \
+		OUT_EXIT_CODE=$$?;\
+		echo "Diff error";\
+		diff --text $${file%.*}.err $${file%.*}.err.expected; \
+		ERR_EXIT_CODE=$$?;\
+		exit $$PROG_EXIT_CODE && $$OUT_EXIT_CODE && $$ERR_EXIT_CODE; \
+	done 
 
 test-parser:
 	@ echo ""
@@ -149,7 +170,13 @@ test-lexer:
 		diff --text $${file%.*}.err $${file%.*}.err.expected; \
 	done
 
-cleantest: clean-parser-test
+cleantest: clean-symbol-table-test
+
+clean-symbol-table-test:
+	for file in $(PARSER_TESTS); \
+	do \
+		rm -f $${file%.*}.err; \
+	done
 
 clean-parser-test:
 	for file in $(PARSER_TESTS); \
@@ -163,4 +190,4 @@ clean-lexer-test:
 		rm -f $${file%.*}.out $${file%.*}.err; \
 	done
 
-cleanalltest: clean-parser-test clean-lexer-test
+cleanalltest: clean-parser-test clean-lexer-test clean-symbol-table-test
