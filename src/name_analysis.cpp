@@ -2,18 +2,16 @@
 #include "symbol_table.hpp"
 #include "errors.hpp"
 
-namespace holeyc{
+namespace holeyc {
 
-//TODO here is a subset of the nodes needed to do nameAnalysis, 
-// you should add the rest to allow for a complete treatment
-// of any AST
+//TODO: Add the rest of the nodes for nameAnalysis
 
-bool ASTNode::nameAnalysis(SymbolTable * symTab){
+bool ASTNode::nameAnalysis(SymbolTable* symTab){
 	throw new ToDoError("This function should have"
 		"been overriden in the subclass!");
 }
 
-bool ProgramNode::nameAnalysis(SymbolTable * symTab){
+bool ProgramNode::nameAnalysis(SymbolTable* symTab){
 	bool res = true;
 	for (auto global : *myGlobals){
 		res = global->nameAnalysis(symTab) && res;
@@ -21,22 +19,23 @@ bool ProgramNode::nameAnalysis(SymbolTable * symTab){
 	return res;
 }
 
-bool VarDeclNode::nameAnalysis(SymbolTable * symTab){
+bool VarDeclNode::nameAnalysis(SymbolTable* symTab){
 	bool nameAnalysisOk = true;
 	throw new ToDoError("[DELETE ME] I'm a varDecl"
-		" you should add the information from my"	
-		" subtree to the symbolTable as a new"	
+		" you should add the information from my"
+		" subtree to the symbolTable as a new"
 		" entry in the current scope table"
 	);
 	return nameAnalysisOk;
 }
 
-bool FnDeclNode::nameAnalysis(SymbolTable * symTab){
+bool FnDeclNode::nameAnalysis(SymbolTable* symTab){
 	bool nameAnalysisOk = true;
 	throw new ToDoError("[DELETE ME] I'm an fnDecl."
-		" you should add and make current a new"	
+		" you should add and make current a new"
 		" scope table for my body"
 	);
 	return nameAnalysisOk;
 }
+
 }

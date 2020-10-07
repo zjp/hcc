@@ -6,11 +6,11 @@
 
 namespace holeyc{
 
-class NameAnalysis{
+class NameAnalysis {
 public:
-	static NameAnalysis * build(ProgramNode * astIn){
-		NameAnalysis * nameAnalysis = new NameAnalysis;
-		SymbolTable * symTab = new SymbolTable();
+	static NameAnalysis* build(ProgramNode* astIn){
+		NameAnalysis* nameAnalysis = new NameAnalysis;
+		SymbolTable* symTab = new SymbolTable();
 		bool res = astIn->nameAnalysis(symTab);
 		delete symTab;
 		if (!res){ return nullptr; }
@@ -19,7 +19,7 @@ public:
 		return nameAnalysis;
 	}
 
-	ProgramNode * ast;
+	ProgramNode* ast;
 
 private:
 	NameAnalysis(){
