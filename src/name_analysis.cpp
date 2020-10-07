@@ -13,6 +13,7 @@ bool ASTNode::nameAnalysis(SymbolTable* symTab){
 
 bool ProgramNode::nameAnalysis(SymbolTable* symTab){
 	bool res = true;
+	symTab->add_scope();
 	for (auto global : *myGlobals){
 		res = global->nameAnalysis(symTab) && res;
 	}
