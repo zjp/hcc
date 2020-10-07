@@ -82,9 +82,9 @@ static bool doUnparsing(std::ifstream * input, const char * outPath){
 	return true;
 }
 
-static holeyc::NameAnalysis * doNameAnalysis(std::ifstream * input){
-	holeyc::ProgramNode * ast = syntacticAnalysis(input);
-	if (ast == nullptr){ return nullptr; }
+static holeyc::NameAnalysis* doNameAnalysis(std::ifstream * input){
+	holeyc::ProgramNode* ast = syntacticAnalysis(input);
+	if (ast == nullptr) { return nullptr; }
 
 	return holeyc::NameAnalysis::build(ast);
 }

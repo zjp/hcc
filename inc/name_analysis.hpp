@@ -4,7 +4,7 @@
 #include "ast.hpp"
 #include "symbol_table.hpp"
 
-namespace holeyc{
+namespace holeyc {
 
 class NameAnalysis {
 public:
@@ -22,8 +22,8 @@ public:
 	ProgramNode* ast;
 
 private:
-	NameAnalysis(){
-	}
+	NameAnalysis(){}
+
 };
 
 }

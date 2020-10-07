@@ -1,10 +1,15 @@
 #include "ast.hpp"
+#include "symbol_table.hpp"
 #include "errors.hpp"
 
 namespace holeyc{
 
 static void doIndent(std::ostream& out, int indent){
 	for (int k = 0 ; k < indent; k++){ out << "\t"; }
+}
+
+void SemSymbol::unparse(std::ostream& out) {
+	out << type;
 }
 
 void ProgramNode::unparse(std::ostream& out, int indent){

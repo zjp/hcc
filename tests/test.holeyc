@@ -1,5 +1,0 @@
-int main(){
-    int five = 2 + 3;
-    return 0;
-
-}
