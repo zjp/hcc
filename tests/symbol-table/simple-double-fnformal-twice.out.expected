@@ -1,0 +1,9 @@
+bool glob;
+int main(int b){
+	int a;
+	glob(bool) = a(int);
+}
+int maintwo(int b){
+	int a;
+	glob(bool) = a(int);
+}
