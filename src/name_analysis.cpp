@@ -60,6 +60,7 @@ bool FnDeclNode::nameAnalysis(SymbolTable* symTab) {
 }
 
 bool WhileStmtNode::nameAnalysis(SymbolTable* symTab) {
+	bool nameAnalysisOk = true;
     nameAnalysisOk = condIn->nameAnalysis(symTab) && nameAnalysisOk;
 	symTab->add_scope();
 	for (auto statement: *bodyIn) {
@@ -70,6 +71,7 @@ bool WhileStmtNode::nameAnalysis(SymbolTable* symTab) {
 }
 
 bool IfElseStmtNode::nameAnalysis(SymbolTable* symTab) {
+	bool nameAnalysisOk = true;
 	nameAnalysisOk = condIn->nameAnalysis(symTab) && nameAnalysisOk;
 	symTab->add_scope();
 	for (auto statement: *bodyTrueIn) {
@@ -85,6 +87,7 @@ return nameAnalysisOk;
 }
 
 bool IfStmtNode::nameAnalysis(SymbolTable* symTab) {
+	bool nameAnalysisOk = true;
     nameAnalysisOk = condIn->nameAnalysis(symTab) && nameAnalysisOk;
 	symTab->add_scope();
 	for (auto statement: *bodyIn) {
@@ -92,6 +95,13 @@ bool IfStmtNode::nameAnalysis(SymbolTable* symTab) {
 	}
 	symTab->drop_scope();
 	return nameAnalysisOk;
+}
+bool BinaryExpNode::nameAnalysis(SymbolTable* symTab){
+	bool nameAnalysisOk = true;
+    nameAnalysisOk = myExp1->nameAnalysis(symTab) && myExp2->nameAnalysis(symTab) && nameAnalysisOk;
+	return nameAnalysisOk;
+
+
 }
 
 bool IDNode::nameAnalysis(SymbolTable* symTab) {
