@@ -44,20 +44,28 @@ bool VarDeclNode::nameAnalysis(SymbolTable* symTab) {
         return nameAnalysisOk;
 }
 
+/*
+ * During name analysis, if a function name is doubly declared then we still need
+ *
+ */
 bool FnDeclNode::nameAnalysis(SymbolTable* symTab) {
+	bool nameAnalysisOk = true;
+	// Check whether this function is already in the symbol table
 	if(symTab->lookup(myID->getName())) {
 		std::cout << "Was true" << std::endl;
 		symTab->errMultDef(myID->line(), myID->col());
 	}
-	//for (auto formal : myFormals ) {
-	//	nameAnalysisOk = formal->nameAnalysis(symTab) && nameAnalysisOk;
-	//}
+	// Allocate a new scope table for the function
+	symTab->add_scope();
+	for (auto formal : *myFormals ) {
+		nameAnalysisOk = formal->nameAnalysis(symTab) && nameAnalysisOk;
+	}
 	// Add scope for functio
 	//symTab->add_scope();
 	//for (auto stmt : myBody) {
 	//	nameAnalysisOk = stmt->nameAnalysis(symTab) && nameAnalysisOk;
 	//}
-	return true;
+	return nameAnalysisOk;
 }
 
 bool WhileStmtNode::nameAnalysis(SymbolTable* symTab) {
