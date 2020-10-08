@@ -60,15 +60,38 @@ bool FnDeclNode::nameAnalysis(SymbolTable* symTab) {
 }
 
 bool WhileStmtNode::nameAnalysis(SymbolTable* symTab) {
-	return true;
+    nameAnalysisOk = condIn->nameAnalysis(symTab) && nameAnalysisOk;
+	symTab->add_scope();
+	for (auto statement: *bodyIn) {
+		nameAnalysisOk = statement->nameAnalysis(symTab) && nameAnalysisOk;
+	}
+	symTab->drop_scope();
+	return nameAnalysisOk;
 }
 
 bool IfElseStmtNode::nameAnalysis(SymbolTable* symTab) {
-	return true;
+	nameAnalysisOk = condIn->nameAnalysis(symTab) && nameAnalysisOk;
+	symTab->add_scope();
+	for (auto statement: *bodyTrueIn) {
+		nameAnalysisOk = statement->nameAnalysis(symTab) && nameAnalysisOk;
+	}
+	symTab->drop_scope();
+    symTab->add_scope();
+	for (auto statement: *bodyFalseIn) {
+		nameAnalysisOk = statement->nameAnalysis(symTab) && nameAnalysisOk;
+	}
+	symTab->drop_scope();
+return nameAnalysisOk;
 }
 
 bool IfStmtNode::nameAnalysis(SymbolTable* symTab) {
-	return true;
+    nameAnalysisOk = condIn->nameAnalysis(symTab) && nameAnalysisOk;
+	symTab->add_scope();
+	for (auto statement: *bodyIn) {
+		nameAnalysisOk = statement->nameAnalysis(symTab) && nameAnalysisOk;
+	}
+	symTab->drop_scope();
+	return nameAnalysisOk;
 }
 
 bool IDNode::nameAnalysis(SymbolTable* symTab) {
