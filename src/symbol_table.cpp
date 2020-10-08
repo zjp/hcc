@@ -8,9 +8,9 @@ ScopeTable::ScopeTable() {
 bool ScopeTable::is_in_table(std::string name) {
 	auto search = symbols->find(name);
 	if(!(search == symbols->end())) {
-		return false;
+		return true;
 	}
-	return true;
+	return false;
 }
 
 void ScopeTable::insert(SemSymbol* symbol) {
