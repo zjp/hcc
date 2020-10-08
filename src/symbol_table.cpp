@@ -30,26 +30,31 @@ SymbolTable::SymbolTable(){
 }
 
 void SymbolTable::add_scope() {
-	scopeTableChain->push_back(new ScopeTable());
+	scopeTableChain->push_front(new ScopeTable());
 }
 
 void SymbolTable::drop_scope() {
-	scopeTableChain->pop_back();
+	scopeTableChain->pop_front();
 }
 
 void SymbolTable::insert(SemSymbol* symbol) {
-	scopeTableChain->back()->insert(symbol);
+	scopeTableChain->front()->insert(symbol);
 }
 
-SemSymbol* SymbolTable::lookup(std::string name) {
+SemSymbol* SymbolTable::lookup_any(std::string name) {
 	SemSymbol* search = nullptr;
 	for(auto it = scopeTableChain->begin(); it != scopeTableChain->end(); ++it) {
 		SemSymbol* temp = (*it)->is_in_table(name);
 		if(temp != nullptr) {
 			search = temp;
+			break;
 		}
 	}
 	return search;
+}
+
+SemSymbol *SymbolTable::lookup_front(std::string name) {
+	return (*scopeTableChain->begin())->is_in_table(name);
 }
 
 }

@@ -97,9 +97,10 @@ public:
 
 	void del();
 
-	SemSymbol* lookup(std::string name);
+        SemSymbol *lookup_front(std::string name);
+        SemSymbol *lookup_any(std::string name);
 
-	void set_attr();
+        void set_attr();
 
 	void get_attr();
 

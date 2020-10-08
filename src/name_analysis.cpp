@@ -28,7 +28,7 @@ bool VarDeclNode::nameAnalysis(SymbolTable* symTab) {
 		nameAnalysisOk = false;
 		need_to_add = false;
 	}
-        if ((symTab->lookup(myID->getName()) == nullptr) && need_to_add) {
+        if ((symTab->lookup_front(myID->getName()) == nullptr) && need_to_add) {
           symTab->insert(new VarSymbol(myType->getType(), myID->getName()));
         } else {
           symTab->errMultDef(myID->line(), myID->col());
@@ -46,7 +46,7 @@ bool FnDeclNode::nameAnalysis(SymbolTable* symTab) {
 	// Don't add the function name to the symbol table if it's doubly declared
 	bool need_to_add = true;
 	// Check whether this function is already in the symbol table
-	if(symTab->lookup(myID->getName()) != nullptr) {
+	if(symTab->lookup_front(myID->getName()) != nullptr) {
 		symTab->errMultDef(myID->line(), myID->col());
 		need_to_add = false;
 	}
@@ -108,7 +108,7 @@ bool IfStmtNode::nameAnalysis(SymbolTable* symTab) {
 
 bool IDNode::nameAnalysis(SymbolTable* symTab) {
 	bool nameAnalysisOk = true;
-	SemSymbol* mySemanticSymbol = symTab->lookup(this->getName());
+	SemSymbol* mySemanticSymbol = symTab->lookup_any(this->getName());
 	if (mySemanticSymbol == nullptr) {
 		symTab->errUndec(this->line(), this->col());
 		nameAnalysisOk = false;
