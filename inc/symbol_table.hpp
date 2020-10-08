@@ -33,8 +33,8 @@ public:
 	std::string getType() { return type; }
 	std::string getName() { return name; }
 
-	void setType(TYPE type) { this->type = type; }
-	void setDeclType(DECL_TYPE decl_type) { this->decl_type = decl_type; }
+	void setType(std::string type) { this->type = type; }
+	void setDeclType(std::string decl_type) { this->decl_type = decl_type; }
 	void setName(std::string name) { this->name = name; }
 	void unparse(std::ostream& out);
 
