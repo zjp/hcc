@@ -116,6 +116,7 @@ class TypeNode : public ASTNode{
 public:
 	TypeNode(size_t l, size_t c) : ASTNode(l, c){ }
 	void unparse(std::ostream&, int) override = 0;
+	virtual std::string getType() = 0;
 };
 
 class CharTypeNode : public TypeNode{
@@ -123,6 +124,8 @@ public:
 	CharTypeNode(size_t lIn, size_t cIn, bool isPtrIn)
 	: TypeNode(lIn, cIn), isPtr(isPtrIn){}
 	void unparse(std::ostream& out, int indent) override;
+	std::string getType() override { return "char"; }
+	bool isPointer() { return isPtr; }
 private:
 	bool isPtr;
 };
@@ -410,12 +413,15 @@ class VoidTypeNode : public TypeNode{
 public:
 	VoidTypeNode(size_t l, size_t c) : TypeNode(l, c){}
 	void unparse(std::ostream& out, int indent) override;
+	std::string getType() override { return "void"; }
 };
 
 class IntTypeNode : public TypeNode{
 public:
 	IntTypeNode(size_t l, size_t c, bool ptrIn): TypeNode(l, c), isPtr(ptrIn){}
 	void unparse(std::ostream& out, int indent) override;
+	std::string getType() override { return "int"; }
+	bool isPointer() { return isPtr; }
 private:
 	const bool isPtr;
 };
@@ -424,8 +430,10 @@ class BoolTypeNode : public TypeNode{
 public:
 	BoolTypeNode(size_t l, size_t c, bool ptrIn): TypeNode(l, c), isPtr(ptrIn) { }
 	void unparse(std::ostream& out, int indent) override;
-private:
-	const bool isPtr;
+        std::string getType() override { return "bool"; }
+        bool isPointer() { return isPtr; }
+      private:
+        const bool isPtr;
 };
 
 class AssignExpNode : public ExpNode{
