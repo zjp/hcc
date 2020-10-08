@@ -1,4 +1,4 @@
-int f(int arg1,bool arg2){
+int f(int arg1, bool arg2){
 }
 void g(){
 	int a;

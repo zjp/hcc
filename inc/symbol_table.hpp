@@ -36,7 +36,7 @@ public:
 	void setType(std::string type) { this->type = type; }
 	void setDeclType(std::string decl_type) { this->decl_type = decl_type; }
 	void setName(std::string name) { this->name = name; }
-	void unparse(std::ostream& out);
+	virtual void unparse(std::ostream& out) = 0;
 
 private:
 	std::string decl_type;
@@ -48,12 +48,16 @@ class FnSymbol : public SemSymbol {
 public:
 	FnSymbol(std::string type, std::string name)
 		: SemSymbol("func", type, name) {}
+	void unparse(std::ostream &out) override;
+private:
+	std::list<std::string> formalTypes;
 };
 
 class VarSymbol : public SemSymbol {
 public:
 	VarSymbol(std::string type, std::string name)
 		: SemSymbol("var", type, name) {}
+        void unparse(std::ostream &out) override;
 };
 //A single scope. The symbol table is broken down into a
 // chain of scope tables, and each scope table holds
@@ -68,7 +72,7 @@ public:
 	// and/or returning information to indicate
 	// that the symbol does not exist within the
 	// current scope.
-	bool is_in_table(std::string name);
+	SemSymbol* is_in_table(std::string name);
 
 	void insert(SemSymbol* symbol);
 private:
@@ -93,7 +97,7 @@ public:
 
 	void del();
 
-	bool lookup(std::string name);
+	SemSymbol* lookup(std::string name);
 
 	void set_attr();
 

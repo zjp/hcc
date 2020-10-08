@@ -51,25 +51,25 @@ static holeyc::ProgramNode * syntacticAnalysis(std::ifstream * input){
 	#endif
 
 	int errCode = parser.parse();
-	if (errCode != 0) { 
-		return nullptr; 
+	if (errCode != 0) {
+		return nullptr;
 	}
-	
+
 	return root;
 }
 
 static bool doUnparsing(std::ifstream * input, const char * outPath){
 	holeyc::ProgramNode * ast = syntacticAnalysis(input);
-	if (ast == nullptr){ 
+	if (ast == nullptr){
 		std::cerr << "No AST built\n";
 		return false;
 	}
-	if (input == nullptr){ 
-		return false; 
+	if (input == nullptr){
+		return false;
 	}
 
 	if (strcmp(outPath, "--") == 0){
-		ast->unparse(std::cout, 0);
+		ast->unparse(std::cout, 0, false);
 	} else {
 		std::ofstream outStream(outPath);
 		if (!outStream.good()){
@@ -77,14 +77,16 @@ static bool doUnparsing(std::ifstream * input, const char * outPath){
 			msg += outPath;
 			throw new holeyc::InternalError(msg.c_str());
 		}
-		ast->unparse(outStream, 0);
+		ast->unparse(outStream, 0, false);
 	}
 	return true;
 }
 
 static holeyc::NameAnalysis* doNameAnalysis(std::ifstream * input){
 	holeyc::ProgramNode* ast = syntacticAnalysis(input);
-	if (ast == nullptr) { return nullptr; }
+	if (ast == nullptr) {
+		return nullptr;
+	}
 	return holeyc::NameAnalysis::build(ast);
 }
 
@@ -97,17 +99,17 @@ int main(int argc, char * argv[]){
 		usageAndDie();
 	}
 
-	const char * tokensFile = nullptr; // Output file if 
+	const char * tokensFile = nullptr; // Output file if
 	                                   // printing tokens
-	bool checkParse = false;	   // Flag set if doing 
+	bool checkParse = false;	   // Flag set if doing
 					   // syntactic analysis
-	const char * unparseFile = NULL;   // Output file if 
+	const char * unparseFile = NULL;   // Output file if
 	                                   // unparsing
 	const char * nameFile = NULL;	   // Output file if doing
 					   // name analysis
-	bool useful = false; // Check whether the command is 
+	bool useful = false; // Check whether the command is
                          // a no-op
-	
+
 	for (int i = 1; i < argc; i++){
 		if (argv[i][0] == '-'){
 			if (argv[i][1] == 't'){
@@ -141,7 +143,7 @@ int main(int argc, char * argv[]){
 		std::cerr << "You didn't specify an operation to do!\n";
 		usageAndDie();
 	}
-	
+
 	try {
 		if (tokensFile != nullptr){
 			doTokenization(input, tokensFile);
@@ -154,14 +156,26 @@ int main(int argc, char * argv[]){
 		if (unparseFile != nullptr){
 			doUnparsing(input, unparseFile);
 		}
-		if (nameFile){
-			if (doNameAnalysis(input) != nullptr) {
-				return 0;
+		if (nameFile) {
+			holeyc::NameAnalysis* na = doNameAnalysis(input);
+			if (na != nullptr) {
+				if (strcmp(nameFile, "--") == 0) {
+					na->ast->unparse(std::cout, 0, false);
+				} else {
+					std::ofstream outStream(nameFile);
+					if (!outStream.good()) {
+						std::string msg = "Bad output file ";
+						msg += nameFile;
+						throw new holeyc::InternalError(msg.c_str());
+					}
+					na->ast->unparse(outStream, 0, true);
+				}
+			} else {
+				std::cerr << "Name Analysis Failed\n";
+				return 1;
 			}
-			std::cerr << "Name Analysis Failed\n";
-			return 1;
 		}
-	} catch (holeyc::ToDoError * e){
+        } catch (holeyc::ToDoError * e){
 		std::cerr << "ToDoError: " << e->msg() << "\n";
 		return 1;
 	} catch (holeyc::InternalError * e){

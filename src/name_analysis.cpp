@@ -26,7 +26,7 @@ bool VarDeclNode::nameAnalysis(SymbolTable* symTab) {
 		symTab->errBadTpe(myType->line(), myType->col());
 		nameAnalysisOk = false;
 	}
-	if(symTab->lookup(myID->getName())) {
+	if(symTab->lookup(myID->getName()) != nullptr) {
 		symTab->errMultDef(myID->line(), myID->col());
 		nameAnalysisOk = false;
 	} else {
@@ -42,7 +42,7 @@ bool VarDeclNode::nameAnalysis(SymbolTable* symTab) {
 bool FnDeclNode::nameAnalysis(SymbolTable* symTab) {
 	bool nameAnalysisOk = true;
 	// Check whether this function is already in the symbol table
-	if(symTab->lookup(myID->getName())) {
+	if(symTab->lookup(myID->getName()) != nullptr) {
 		std::cout << "Was true" << std::endl;
 		symTab->errMultDef(myID->line(), myID->col());
 	}
@@ -69,6 +69,19 @@ bool IfElseStmtNode::nameAnalysis(SymbolTable* symTab) {
 
 bool IfStmtNode::nameAnalysis(SymbolTable* symTab) {
 	return true;
+}
+
+bool IDNode::nameAnalysis(SymbolTable* symTab) {
+	std::cout << "I was called" << std::endl;
+	bool nameAnalysisOk = true;
+	SemSymbol* mySemanticSymbol = symTab->lookup(this->getName());
+	if (mySemanticSymbol == nullptr) {
+		symTab->errUndec(this->line(), this->col());
+		nameAnalysisOk = false;
+	} else {
+		this->setSymbol(mySemanticSymbol);
+	}
+	return nameAnalysisOk;
 }
 
 }

@@ -5,12 +5,12 @@ ScopeTable::ScopeTable() {
 	symbols = new HashMap<std::string, SemSymbol*> ();
 }
 
-bool ScopeTable::is_in_table(std::string name) {
+SemSymbol* ScopeTable::is_in_table(std::string name) {
 	auto search = symbols->find(name);
-	if(!(search == symbols->end())) {
-		return true;
+	if(search != symbols->end()) {
+		return search->second;
 	}
-	return false;
+	return nullptr;
 }
 
 void ScopeTable::insert(SemSymbol* symbol) {
@@ -41,8 +41,8 @@ void SymbolTable::insert(SemSymbol* symbol) {
 	scopeTableChain->back()->insert(symbol);
 }
 
-bool SymbolTable::lookup(std::string name) {
-	bool search = false;
+SemSymbol* SymbolTable::lookup(std::string name) {
+	SemSymbol* search = nullptr;
 	for(auto it = scopeTableChain->begin(); it != scopeTableChain->end(); ++it) {
 		search = (*it)->is_in_table(name);
 	}
