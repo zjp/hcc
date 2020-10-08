@@ -6,7 +6,7 @@ void f() {
 void g() {
 	TOCONSOLE "BBBBBBBBBBBB";
 }
-int main(int c) {
+int main(int a) {
 	if(b) {
 		f();
 	} else {
