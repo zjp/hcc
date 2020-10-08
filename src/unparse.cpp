@@ -10,9 +10,16 @@ static void doIndent(std::ostream& out, int indent){
 
 void FnSymbol::unparse(std::ostream& out) {
 	out << "(";
-	for(auto type : formalTypes) {
-	}
-	out << "->";
+        bool firstFormal = true;
+        for(auto type : *formals) {
+            if (firstFormal) {
+              firstFormal = false;
+            } else {
+              out << ",";
+            }
+            out << type;
+          }
+        out << "->";
 	out << this->getType(); // return type
 	out << ")";
 }
@@ -163,7 +170,6 @@ void CallExpNode::unparse(std::ostream& out, int indent, bool na) {
 	doIndent(out, indent);
 	myID->unparse(out, 0, na);
 	out << "(";
-
 	bool firstArg = true;
 	for(auto arg : *myArgs){
 		if (firstArg) { firstArg = false; }

@@ -53,11 +53,15 @@ bool FnDeclNode::nameAnalysis(SymbolTable* symTab) {
 	// Even if the function is doubly declared, we're still going to evaluate
 	// the body
 	// Allocate a new scope table for the function
-	symTab->add_scope();
-	for (auto formal : *myFormals ) {
-		nameAnalysisOk = formal->nameAnalysis(symTab) && nameAnalysisOk;
+	std::list<std::string>* formalsList = new std::list<std::string>();
+        FnSymbol *newFn = new FnSymbol(myRetType->getType(), myID->getName(), formalsList);
+        symTab->insert(newFn);
+        symTab->add_scope();
+        for (auto formal : *myFormals) {
+		formalsList->push_back(formal->getTypeNode()->getType());
+          nameAnalysisOk = formal->nameAnalysis(symTab) && nameAnalysisOk;
 	}
-	for (auto stmt : *myBody) {
+        for (auto stmt : *myBody) {
 		nameAnalysisOk = stmt->nameAnalysis(symTab) && nameAnalysisOk;
 	}
 	symTab->drop_scope();
@@ -135,7 +139,11 @@ bool RefNode::nameAnalysis(SymbolTable* symTab) {
 	return myID->nameAnalysis(symTab);
 }
 bool CallExpNode::nameAnalysis(SymbolTable* symTab) {
-	return true;
+	bool nameAnalysisOk = myID->nameAnalysis(symTab);
+	for(auto entry : *myArgs) {
+		nameAnalysisOk = nameAnalysisOk && entry->nameAnalysis(symTab);
+	}
+	return nameAnalysisOk;
 }
 bool ReturnStmtNode::nameAnalysis(SymbolTable* symTab) {
 	return myExp->nameAnalysis(symTab);

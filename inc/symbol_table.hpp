@@ -46,11 +46,11 @@ private:
 
 class FnSymbol : public SemSymbol {
 public:
-	FnSymbol(std::string type, std::string name)
-		: SemSymbol("func", type, name) {}
+	FnSymbol(std::string type, std::string name, std::list<std::string>* formals)
+		: SemSymbol("func", type, name), formals(formals) {}
 	void unparse(std::ostream &out) override;
 private:
-	std::list<std::string> formalTypes;
+	std::list<std::string>* formals;
 };
 
 class VarSymbol : public SemSymbol {
