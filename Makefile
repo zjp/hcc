@@ -134,7 +134,7 @@ test-symbol-table:
 		echo $$file; \
 		touch $${file%.*}.out; \
 		touch $${file%.*}.err; \
-	 	./holeycc $$file -n $${file%.*.out} 1> $${file%.*}.out 2> $${file%.*}.err ;\
+	 	./holeycc $$file -n $${file%.*}.out 2> $${file%.*}.err ;\
 		echo "Diff of output";\
 		diff --text $${file%.*}.out $${file%.*}.out.expected; \
 		echo "Diff error";\
