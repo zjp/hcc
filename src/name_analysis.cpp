@@ -30,7 +30,7 @@ bool VarDeclNode::nameAnalysis(SymbolTable* symTab) {
 	// symTab->errBadType(this->line(), this->col())
 	// }
 	bool nameAnalysisOk = true;
-        if(this->myType->getType() == "void") {
+        if(myType->getType() == "void") {
 		symTab->errBadTpe(myType->line(), myType->col());
 		nameAnalysisOk = false;
 	}
@@ -39,7 +39,7 @@ bool VarDeclNode::nameAnalysis(SymbolTable* symTab) {
 		symTab->errMultDef(myID->line(), myID->col());
 		nameAnalysisOk = false;
 	} else {
-          symTab->insert(new VarSymbol("int", myID->getName()));
+		symTab->insert(new VarSymbol(myType->getType(), myID->getName()));
         }
         return nameAnalysisOk;
 }
