@@ -170,9 +170,9 @@ test-lexer:
 cleantest: clean-symbol-table-test
 
 clean-symbol-table-test:
-	for file in $(PARSER_TESTS); \
+	for file in $(SYMBOL_TABLE_TESTS); \
 	do \
-		rm -f $${file%.*}.err; \
+		rm -f $${file%.*}.out $${file%.*}.err; \
 	done
 
 clean-parser-test:
