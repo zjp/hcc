@@ -35,15 +35,10 @@ bool VarDeclNode::nameAnalysis(SymbolTable* symTab) {
 		nameAnalysisOk = false;
 	}
 	if(symTab->lookup(myID->getName())) {
-		std::cout << "Was true" << std::endl;
 		// Issue a multiple definition error
 		symTab->errMultDef(myID->line(), myID->col());
 		nameAnalysisOk = false;
 	} else {
-		std::cout << "Was false" << std::endl;
-		symTab->insert(new VarSymbol("int", myID->getName()));
-	}
-	return true;
           symTab->insert(new VarSymbol("int", myID->getName()));
         }
         return nameAnalysisOk;
