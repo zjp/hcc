@@ -124,7 +124,13 @@ public:
 	CharTypeNode(size_t lIn, size_t cIn, bool isPtrIn)
 	: TypeNode(lIn, cIn), isPtr(isPtrIn){}
 	void unparse(std::ostream& out, int indent) override;
-	std::string getType() override { return "char"; }
+	std::string getType() override {
+		if(this->isPointer()) {
+			return "charpt";
+		} else {
+			return "char";
+		}
+	}
 	bool isPointer() { return isPtr; }
 private:
 	bool isPtr;
@@ -420,7 +426,14 @@ class IntTypeNode : public TypeNode{
 public:
 	IntTypeNode(size_t l, size_t c, bool ptrIn): TypeNode(l, c), isPtr(ptrIn){}
 	void unparse(std::ostream& out, int indent) override;
-	std::string getType() override { return "int"; }
+	std::string getType() override {
+		if(this->isPointer()) {
+			return "intptr";
+		} else {
+			return "int";
+		}
+	}
+
 	bool isPointer() { return isPtr; }
 private:
 	const bool isPtr;
@@ -430,7 +443,14 @@ class BoolTypeNode : public TypeNode{
 public:
 	BoolTypeNode(size_t l, size_t c, bool ptrIn): TypeNode(l, c), isPtr(ptrIn) { }
 	void unparse(std::ostream& out, int indent) override;
-        std::string getType() override { return "bool"; }
+        std::string getType() override {
+		if(this->isPointer()) {
+			return "boolptr";
+
+		} else {
+			return "bool";
+		}
+	}
         bool isPointer() { return isPtr; }
       private:
         const bool isPtr;
