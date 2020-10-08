@@ -60,7 +60,7 @@ void FnDeclNode::unparse(std::ostream& out, int indent, bool na) {
 	bool firstFormal = true;
 	for(auto formal : *myFormals){
 		if (firstFormal) { firstFormal = false; }
-		else { out << ","; }
+		else { out << ", "; }
 		formal->unparse(out, 0, na);
 	}
 	out << "){\n";
