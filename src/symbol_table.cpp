@@ -44,7 +44,10 @@ void SymbolTable::insert(SemSymbol* symbol) {
 SemSymbol* SymbolTable::lookup(std::string name) {
 	SemSymbol* search = nullptr;
 	for(auto it = scopeTableChain->begin(); it != scopeTableChain->end(); ++it) {
-		search = (*it)->is_in_table(name);
+		SemSymbol* temp = (*it)->is_in_table(name);
+		if(temp != nullptr) {
+			search = temp;
+		}
 	}
 	return search;
 }

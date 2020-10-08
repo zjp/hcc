@@ -335,7 +335,7 @@ void LValNode::unparseNested(std::ostream& out, bool na){
 void IDNode::unparse(std::ostream& out, int indent, bool na) {
 	doIndent(out, indent);
 	out << name;
-	if (na && mySymbol != nullptr) {
+	if (na && (mySymbol != nullptr)) {
 		mySymbol->unparse(out);
 	}
 }

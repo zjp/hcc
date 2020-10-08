@@ -175,10 +175,10 @@ int main(int argc, char * argv[]){
 				return 1;
 			}
 		}
-        } catch (holeyc::ToDoError * e){
+    } catch (holeyc::ToDoError * e) {
 		std::cerr << "ToDoError: " << e->msg() << "\n";
 		return 1;
-	} catch (holeyc::InternalError * e){
+	} catch (holeyc::InternalError * e) {
 		std::cerr << "InternalError: " << e->msg() << "\n";
 		return 1;
 	}
