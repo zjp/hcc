@@ -20,22 +20,13 @@ bool ProgramNode::nameAnalysis(SymbolTable* symTab){
 	return res;
 }
 
-/**
- * If a declaration is both bad (e.g. non function declared void) and is multiply declared,
- * report the bad declaration error first, then the multiply declared error
- */
 bool VarDeclNode::nameAnalysis(SymbolTable* symTab) {
-	// If this var is already in the symbol table, then:
-	// if the type of this VarDeclNode is void {
-	// symTab->errBadType(this->line(), this->col())
-	// }
 	bool nameAnalysisOk = true;
         if(myType->getType() == "void") {
 		symTab->errBadTpe(myType->line(), myType->col());
 		nameAnalysisOk = false;
 	}
 	if(symTab->lookup(myID->getName())) {
-		// Issue a multiple definition error
 		symTab->errMultDef(myID->line(), myID->col());
 		nameAnalysisOk = false;
 	} else {

@@ -71,6 +71,7 @@ endif
 all:
 	@ echo "Compiling for $(HOST_SYS)"
 	make holeycc
+	@- rm parser.output
 
 clean:
 	rm -rf *.output $(OBJDIR) $(INCDIR)/*.hh $(SRCDIR)/*.cc $(SRCDIR)/*.hh $(DEPS) $(BINNAME)
