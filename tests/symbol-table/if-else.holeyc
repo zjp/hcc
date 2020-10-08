@@ -1,0 +1,15 @@
+int a;
+bool b;
+void f() {
+	TOCONSOLE "AAAAAAAAAAAA";
+}
+void g() {
+	TOCONSOLE "BBBBBBBBBBBB";
+}
+int main(int c) {
+	if(b) {
+		f();
+	} else {
+		g();
+	}
+}

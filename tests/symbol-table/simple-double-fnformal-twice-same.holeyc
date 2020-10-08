@@ -1,0 +1,10 @@
+bool glob;
+int b;
+int main(int b){
+	int a;
+	glob = a;
+}
+int maintwo(int b){
+	int a;
+	glob = a;
+}
