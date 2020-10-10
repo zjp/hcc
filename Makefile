@@ -25,6 +25,7 @@ CPP_SRCS := $(wildcard $(SRCDIR)/*.cpp)
 
 OBJ_SRCS := $(OBJDIR)/parser.o $(OBJDIR)/lexer.o $(CPP_SRCS:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
+TYPE_ANALYZER_TESTS := $(wildcard $(TESTDIR)/type-analysis/*.holeyc)
 SYMBOL_TABLE_TESTS := $(wildcard $(TESTDIR)/symbol-table/*.holeyc)
 LEXER_TESTS := $(wildcard $(TESTDIR)/lexer/*.holeyc)
 PARSER_TESTS := $(wildcard $(TESTDIR)/parser/*.holeyc)
@@ -121,9 +122,25 @@ else
 endif
 	$(CXX) -g -std=c++14 -I$(INCDIR) -I$(INCLUDES) -c $(SRCDIR)/lexer.yy.cc -o $(OBJDIR)/lexer.o
 
-test: test-symbol-table
+test: test-type-analyzer
 
-testall: test-lexer test-parser test-symbol-table
+testall: test-lexer test-parser test-symbol-table test-type-analyzer
+
+test-type-analyzer:
+	@ echo ""
+	@ echo "Testing $*.holeyc"
+	for file in $(TYPE_ANALYZER_TESTS); \
+	do \
+		echo "";\
+		echo $$file;\
+		touch $${file%.*}.out; \
+		touch $${file%.*}.err; \
+		./holeycc $$file -c $${file%.*}.out 2> $${file%.*}.err ;\
+		echo "Diff of output";\
+		diff --text $${file%.*}.out $${file%.*}.out.expected; \
+		echo "Diff of error";\
+		diff --text $${file%.*}.err $${file%.*}.err.expected; \
+	done
 
 test-symbol-table:
 	@ echo ""
@@ -137,7 +154,7 @@ test-symbol-table:
 	 	./holeycc $$file -n $${file%.*}.out 2> $${file%.*}.err ;\
 		echo "Diff of output";\
 		diff --text $${file%.*}.out $${file%.*}.out.expected; \
-		echo "Diff error";\
+		echo "Diff of error";\
 		diff --text $${file%.*}.err $${file%.*}.err.expected; \
 	done 
 
@@ -167,7 +184,13 @@ test-lexer:
 		diff --text $${file%.*}.err $${file%.*}.err.expected; \
 	done
 
-cleantest: clean-symbol-table-test
+cleantest: clean-type-analysis-test
+
+clean-type-analysis-test:
+	for file in $(TYPE_ANALZER_TESTS); \
+	do \
+		rm -f $${file%.*}.out $${file%.*}.err; \
+	done
 
 clean-symbol-table-test:
 	for file in $(SYMBOL_TABLE_TESTS); \

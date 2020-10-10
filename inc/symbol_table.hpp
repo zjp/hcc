@@ -3,123 +3,109 @@
 #include <string>
 #include <unordered_map>
 #include <list>
-
-#include "errors.hpp"
+#include "types.hpp"
 
 //Use an alias template so that we can use
 // "HashMap" and it means "std::unordered_map"
 template <typename K, typename V>
 using HashMap = std::unordered_map<K, V>;
 
+using ArgsType = std::list<const holeyc::DataType *>;
+
 using namespace std;
 
-namespace holeyc {
+namespace holeyc{
 
-//A semantic symbol, which represents a single
-// variable, function, etc. Semantic symbols
-// exist for the lifetime of a scope in the
-// symbol table.
-class SemSymbol {
-public:
-
-	//TODO add the fields that
-	// each semantic symbol should track
-	// (i.e. the kind of the symbol (either a variable or function)
-	// and functions to get/set those fields
-	SemSymbol(std::string decl_type, std::string type, std::string name)
-		: decl_type(decl_type), type(type), name(name) {}
-
-	std::string getDeclType() { return decl_type; }
-	std::string getType() { return type; }
-	std::string getName() { return name; }
-
-	void setType(std::string type) { this->type = type; }
-	void setDeclType(std::string decl_type) { this->decl_type = decl_type; }
-	void setName(std::string name) { this->name = name; }
-	virtual void unparse(std::ostream& out) = 0;
-
-private:
-	std::string decl_type;
-	std::string type;
-	std::string name;
+enum SymbolKind {
+	VAR, FN
 };
 
-class FnSymbol : public SemSymbol {
+//A semantic symbol, which represents a single
+// variable, function, etc. Semantic symbols 
+// exist for the lifetime of a scope in the 
+// symbol table. 
+class SemSymbol {
 public:
-	FnSymbol(std::string type, std::string name, std::list<std::string>* formals)
-		: SemSymbol("func", type, name), formals(formals) {}
-	void unparse(std::ostream &out) override;
+	SemSymbol(std::string nameIn, DataType * typeIn) 
+	: myName(nameIn), myType(typeIn){ }
+	virtual std::string toString();
+	std::string getName() const { return myName; }
+	virtual SymbolKind getKind() const = 0;
+
+	virtual DataType * getDataType() const{
+		return myType;
+	}
+	static std::string kindToString(SymbolKind symKind) { 
+		switch(symKind){
+			case VAR: return "var";
+			case FN: return "fn";
+		}
+		return "UNKNOWN KIND";
+	} 
 private:
-	std::list<std::string>* formals;
+	std::string myName;
+	DataType * myType;
 };
 
 class VarSymbol : public SemSymbol {
 public:
-	VarSymbol(std::string type, std::string name)
-		: SemSymbol("var", type, name) {}
-        void unparse(std::ostream &out) override;
+	VarSymbol(std::string name, DataType * type) 
+	: SemSymbol(name, type) { }
+	virtual SymbolKind getKind() const override { return VAR; } 
 };
-//A single scope. The symbol table is broken down into a
-// chain of scope tables, and each scope table holds
+
+class FnSymbol : public SemSymbol{
+public:
+	FnSymbol(std::string name, FnType * fnType)
+	: SemSymbol(name, fnType){ }
+	virtual SymbolKind getKind() const { return FN; }
+	SymbolKind getKind(){ return FN; } 
+};
+
+//A single scope. The symbol table is broken down into a 
+// chain of scope tables, and each scope table holds 
 // semantic symbols for a single scope. For example,
 // the globals scope will be represented by a ScopeTable,
 // and the contents of each function can be represented by
 // a ScopeTable.
 class ScopeTable {
-public:
-	ScopeTable();
-	//TODO: add functions for looking up symbols
-	// and/or returning information to indicate
-	// that the symbol does not exist within the
-	// current scope.
-	SemSymbol* is_in_table(std::string name);
-
-	void insert(SemSymbol* symbol);
-private:
-	HashMap<std::string, SemSymbol*>* symbols;
+	public:
+		ScopeTable();
+		SemSymbol * lookup(std::string name);
+		bool insert(SemSymbol * symbol);
+		bool clash(std::string name);
+		std::string toString();
+		void addVar(std::string name, DataType * type){
+			insert(new VarSymbol(name, type));
+		}
+		void addFn(std::string name, FnType * type){
+			insert(new FnSymbol(name, type));
+		}
+	private:
+		HashMap<std::string, SemSymbol *> * symbols;
 };
 
-class SymbolTable {
-public:
-	SymbolTable();
-	//TODO: add functions to create a new ScopeTable
-	// when a new scope is entered, drop a ScopeTable
-	// when a scope is exited, etc.
-
-	// Allocate a new empty scope table
-	void add_scope();
-
-	// Remove all entries from the last scope and free it
-	void drop_scope();
-
-	// Insert into the last scope
-	void insert(SemSymbol* symbol);
-
-	void del();
-
-        SemSymbol *lookup_front(std::string name);
-        SemSymbol *lookup_any(std::string name);
-
-        void set_attr();
-
-	void get_attr();
-
-	void errMultDef(size_t l, size_t c) {
-		Report::fatal(l, c, "Multiply declared identifier");
-	}
-
-	void errUndec(size_t l, size_t c) {
-		Report::warn(l, c, "Undeclared identifier");
-	}
-
-	void errBadTpe(size_t l, size_t c) {
-		Report::fatal(l, c, "Invalid type in declaration");
-	}
-
-private:
-	std::list<ScopeTable*>* scopeTableChain;
+class SymbolTable{
+	public:
+		SymbolTable();
+		ScopeTable * enterScope();
+		void leaveScope();
+		ScopeTable * getCurrentScope();
+		bool insert(SemSymbol * symbol);
+		SemSymbol * find(std::string varName);
+		bool clash(std::string name);
+		void addVar(std::string name, DataType * type){
+			getCurrentScope()->addVar(name, type);
+		}
+		void addFn(std::string name, FnType * type){
+			getCurrentScope()->addFn(name, type);
+		}
+		void print();
+	private:
+		std::list<ScopeTable *> * scopeTableChain;
 };
 
+	
 }
 
 #endif

@@ -1,60 +1,104 @@
 #include "symbol_table.hpp"
-namespace holeyc {
+#include "errors.hpp"
+#include "types.hpp"
+namespace holeyc{
 
-ScopeTable::ScopeTable() {
-	symbols = new HashMap<std::string, SemSymbol*> ();
+SymbolTable::SymbolTable(){
+	scopeTableChain = new std::list<ScopeTable *>();
 }
 
-SemSymbol* ScopeTable::is_in_table(std::string name) {
-	auto search = symbols->find(name);
-	if(search != symbols->end()) {
-		return search->second;
+void SymbolTable::print(){
+	for(auto scope : *scopeTableChain){
+		std::cout << "--- scope ---\n";
+		std::cout << scope->toString();
+	}
+}
+
+ScopeTable * SymbolTable::enterScope(){
+	ScopeTable * newScope = new ScopeTable();
+	scopeTableChain->push_front(newScope);
+	return newScope;
+}
+
+void SymbolTable::leaveScope(){
+	if (scopeTableChain->empty()){
+		throw new InternalError("Attempt to pop"
+			"empty symbol table");
+	}
+	scopeTableChain->pop_front();
+}
+
+ScopeTable * SymbolTable::getCurrentScope(){
+	return scopeTableChain->front();
+}
+
+bool SymbolTable::clash(std::string varName){
+	bool hasClash = getCurrentScope()->clash(varName);
+	return hasClash;
+}
+
+SemSymbol * SymbolTable::find(std::string varName){
+	for (ScopeTable * scope : *scopeTableChain){
+		SemSymbol * sym = scope->lookup(varName);
+		if (sym != nullptr) { return sym; }
 	}
 	return nullptr;
 }
 
-void ScopeTable::insert(SemSymbol* symbol) {
-	if(!is_in_table(symbol->getName())) {
-		this->symbols->insert({symbol->getName(), symbol});
+bool SymbolTable::insert(SemSymbol * symbol){
+	return scopeTableChain->front()->insert(symbol);
+}
+
+ScopeTable::ScopeTable(){
+	symbols = new HashMap<std::string, SemSymbol *>();
+}
+
+std::string ScopeTable::toString(){
+	std::string result = "";
+	for (auto entry : *symbols){
+		result += entry.second->toString();
+		result += "\n";
 	}
+	return result;
 }
 
-SymbolTable::SymbolTable(){
-	//TODO: implement the list of hashtables approach
-	// to building a symbol table:
-	// Upon entry to a scope a new scope table will be
-	// entered into the front of the chain and upon exit the
-	// latest scope table will be removed from the front of
-	// the chain.
-	scopeTableChain = new std::list<ScopeTable*>();
-}
-
-void SymbolTable::add_scope() {
-	scopeTableChain->push_front(new ScopeTable());
-}
-
-void SymbolTable::drop_scope() {
-	scopeTableChain->pop_front();
-}
-
-void SymbolTable::insert(SemSymbol* symbol) {
-	scopeTableChain->front()->insert(symbol);
-}
-
-SemSymbol* SymbolTable::lookup_any(std::string name) {
-	SemSymbol* search = nullptr;
-	for(auto it = scopeTableChain->begin(); it != scopeTableChain->end(); ++it) {
-		SemSymbol* temp = (*it)->is_in_table(name);
-		if(temp != nullptr) {
-			search = temp;
-			break;
-		}
+bool ScopeTable::clash(std::string varName){
+	SemSymbol * found = lookup(varName);
+	if (found != nullptr){
+		return true;
 	}
-	return search;
+	return false;
 }
 
-SemSymbol *SymbolTable::lookup_front(std::string name) {
-	return (*scopeTableChain->begin())->is_in_table(name);
+SemSymbol * ScopeTable::lookup(std::string name){
+	auto found = symbols->find(name);
+	if (found == symbols->end()){
+		return NULL;
+	}
+	return found->second;
+}
+
+bool ScopeTable::insert(SemSymbol * symbol){
+	std::string symName = symbol->getName();
+	bool alreadyInScope = (this->lookup(symName) != NULL);
+	if (alreadyInScope){
+		return false;
+	}
+	this->symbols->insert(std::make_pair(symName, symbol));
+	return true;
+}
+
+std::string SemSymbol::toString(){
+	std::string result = "";
+	result += "name: " + this->getName();
+	result += "\nkind: " + kindToString(this->getKind());
+	DataType * type = this->getDataType();
+	if (type == nullptr){
+		result += "\ntype: NULL";
+	} else {
+		result += "\ntype: " + this->getDataType()->getString();
+	}
+	return result + "\n";
 }
 
 }
