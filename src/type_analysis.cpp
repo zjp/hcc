@@ -45,21 +45,31 @@ void ExpNode::typeAnalysis(TypeAnalysis * ta){
 	TODO("Override me in the subclass");
 }
 
-void LValNode::typeAnalysis(TypeAnalysis * ta) {}
+void LValNode::typeAnalysis(TypeAnalysis * ta) {
+	TODO("Override me in the subclass");
+}
 
 void IDNode::typeAnalysis(TypeAnalysis * ta){
 	// IDs never fail type analysis and always
 	// yield the type of their symbol (which
 	// depends on their definition)
 	ta->nodeType(this, this->getSymbol()->getDataType());
+
 }
 
-void RefNode::typeAnalysis(TypeAnalysis * ta) {}
-void DerefNode::typeAnalysis(TypeAnalysis * ta) {}
-void IndexNode::typeAnalysis(TypeAnalysis * ta) {}
-void TypeNode::typeAnalysis(TypeAnalysis * ta) {}
+void RefNode::typeAnalysis(TypeAnalysis * ta) {
+}
+void DerefNode::typeAnalysis(TypeAnalysis * ta) {
+}
+void IndexNode::typeAnalysis(TypeAnalysis * ta) {
+}
+void TypeNode::typeAnalysis(TypeAnalysis * ta) {
+}
 
-void StmtNode::typeAnalysis(TypeAnalysis * ta){
+void CharTypeNode::typeAnalysis(TypeAnalysis * ta) {
+}
+
+void StmtNode::typeAnalysis(TypeAnalysis * ta) {
 	TODO("Implement me in the subclass");
 }
 
@@ -67,14 +77,17 @@ void DeclNode::typeAnalysis(TypeAnalysis * ta) {
 	TODO("Override me in the subclass");
 }
 
-void VarDeclNode::typeAnalysis(TypeAnalysis * ta){
+void VarDeclNode::typeAnalysis(TypeAnalysis * ta) {
 	// VarDecls always pass type analysis, since they 
 	// are never used in an expression. You may choose
 	// to type them void (like this), as discussed in class
 	ta->nodeType(this, BasicType::produce(VOID));
 }
 
-void FnDeclNode::typeAnalysis(TypeAnalysis * ta){
+void FormalDeclNode::typeAnalysis(TypeAnalysis * ta) {
+}
+
+void FnDeclNode::typeAnalysis(TypeAnalysis * ta) {
 
 	//HINT: you might want to change the signature for
 	// typeAnalysis on FnBodyNode to take a second
@@ -88,8 +101,10 @@ void FnDeclNode::typeAnalysis(TypeAnalysis * ta){
 	for (auto stmt : *myBody){
 		stmt->typeAnalysis(ta);
 	}
+
 }
-void AssignStmtNode::typeAnalysis(TypeAnalysis * ta){
+
+void AssignStmtNode::typeAnalysis(TypeAnalysis * ta) {
 	myExp->typeAnalysis(ta);
 
 	//It can be a bit of a pain to write 
@@ -108,24 +123,191 @@ void AssignStmtNode::typeAnalysis(TypeAnalysis * ta){
 	}
 }
 
-void FromConsoleStmtNode::typeAnalysis(TypeAnalysis * ta) {}
-void ToConsoleStmtNode::typeAnalysis(TypeAnalysis * ta) {}
-void PostDecStmtNode::typeAnalysis(TypeAnalysis * ta) {}
-void PostIncStmtNode::typeAnalysis(TypeAnalysis * ta) {}
-void IfStmtNode::typeAnalysis(TypeAnalysis * ta) {}
-void IfElseStmtNode::typeAnalysis(TypeAnalysis * ta) {}
-void WhileStmtNode::typeAnalysis(TypeAnalysis * ta) {}
-void ReturnStmtNode::typeAnalysis(TypeAnalysis * ta) {}
-void CallExpNode::typeAnalysis(TypeAnalysis * ta) {}
-void BinaryExpNode::typeAnalysis(TypeAnalysis * ta) {}
-void UnaryExpNode::typeAnalysis(TypeAnalysis * ta) {}
-void NegNode::typeAnalysis(TypeAnalysis * ta) {}
-void NotNode::typeAnalysis(TypeAnalysis * ta) {}
+void FromConsoleStmtNode::typeAnalysis(TypeAnalysis * ta) {
+	TODO("FromConsoleStmtNode: Check type of myDst");
+	TODO("FromConsoleStmtNode: Check type of incoming data");
+}
+
+void ToConsoleStmtNode::typeAnalysis(TypeAnalysis * ta) {
+	TODO("ToConsoleStmtNode: Ensure type of mySrc is int, bool, or char");
+}
+
+void PostDecStmtNode::typeAnalysis(TypeAnalysis * ta) {
+	TODO("PostDecStmtNode: Ensure myLVal is int");
+}
+
+void PostIncStmtNode::typeAnalysis(TypeAnalysis * ta) {
+	TODO("PostIncStmtNode: Ensure myLVal is int");
+}
+
+void IfStmtNode::typeAnalysis(TypeAnalysis * ta) {
+	myCond->typeAnalysis(ta);
+	TODO("Ensure the condition is bool in IfStmtNode");
+	for(auto stmt : *myBody) {
+		stmt->typeAnalysis(ta);
+	}
+}
+
+void IfElseStmtNode::typeAnalysis(TypeAnalysis * ta) {
+	myCond->typeAnalysis(ta);
+	TODO("Ensure the condition is bool in IfElseStmtNode");
+	for(auto stmt : *myBodyTrue) {
+		stmt->typeAnalysis(ta);
+	}
+	for(auto stmt : *myBodyFalse) {
+		stmt->typeAnalysis(ta);
+	}
+}
+
+void WhileStmtNode::typeAnalysis(TypeAnalysis * ta) {
+	myCond->typeAnalysis(ta);
+	TODO("Ensure the condition is bool in WhileStmtNode");
+	for(auto stmt : *myBody) {
+		stmt->typeAnalysis(ta);
+	}
+}
+
+void ReturnStmtNode::typeAnalysis(TypeAnalysis * ta) {
+	myExp->typeAnalysis(ta);
+}
+
+void CallExpNode::typeAnalysis(TypeAnalysis * ta) {
+	myID->typeAnalysis(ta);
+	TODO("Check whether myID is a function");
+	// if not myID is a function:
+	// else
+	int i = 0;
+	for(auto argt : *myArgs) {
+		argt->typeAnalysis(ta);
+		++i;
+	}
+	TODO("Check whether there are as many args as function requires");
+}
+
+/**
+ * Binary Expression Block
+ *
+ * Arithmetic Expressions must have int on both sides 
+ * Logical expressions must have bool on both sides ! && ||
+ * Equality != ==
+ * Relational >= <= > < 
+ * Assignment = 
+ *
+ */
+
+void BinaryExpNode::typeAnalysis(TypeAnalysis * ta) {
+}
+
+void PlusNode::typeAnalysis(TypeAnalysis * ta) {
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+	TODO("Check that both types are integer in PlusNode");
+	ta->nodeType(this, BasicType::produce(INT));
+}
+
+void MinusNode::typeAnalysis(TypeAnalysis * ta) {
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+	TODO("Check that both types are integer in MinusNode");
+	ta->nodeType(this, BasicType::produce(INT));
+}
+
+void TimesNode::typeAnalysis(TypeAnalysis * ta) {
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+	TODO("Check that both types are integer in TimesNode");
+	ta->nodeType(this, BasicType::produce(INT));
+}
+
+void DivideNode::typeAnalysis(TypeAnalysis * ta) {
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+	TODO("Check that both types are integer in DivideNode");
+	ta->nodeType(this, BasicType::produce(INT));
+}
+
+void AndNode::typeAnalysis(TypeAnalysis * ta) {
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+	TODO("Check that both types are boolean in AndNode");
+	ta->nodeType(this, BasicType::produce(BOOL));
+}
+
+void OrNode::typeAnalysis(TypeAnalysis * ta) {
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+	TODO("Check that both types are boolean in OrNode");
+	ta->nodeType(this, BasicType::produce(BOOL));
+}
+
+void EqualsNode::typeAnalysis(TypeAnalysis * ta) {
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+	TODO("Check that both types are the same type in EqualsNode");
+	ta->nodeType(this, BasicType::produce(BOOL));
+}
+
+void NotEqualsNode::typeAnalysis(TypeAnalysis * ta) {
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+	TODO("Check that both types are the same type in NotEqualsNode");
+	ta->nodeType(this, BasicType::produce(BOOL));
+}
+
+void LessNode::typeAnalysis(TypeAnalysis * ta) {
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+	TODO("Check that both types are the same type in LessNode");
+	ta->nodeType(this, BasicType::produce(BOOL));
+}
+
+void LessEqNode::typeAnalysis(TypeAnalysis * ta) {
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+	TODO("Check that both types are the same type in LessEqNode");
+	ta->nodeType(this, BasicType::produce(BOOL));
+}
+
+void GreaterNode::typeAnalysis(TypeAnalysis * ta) {
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+	TODO("Check that both types are the same type in GreaterNode");
+	ta->nodeType(this, BasicType::produce(BOOL));
+}
+
+void GreaterEqNode::typeAnalysis(TypeAnalysis * ta) {
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+	TODO("Check that both types are the same type in GreaterEqNode");
+	ta->nodeType(this, BasicType::produce(BOOL));
+}
+
+void UnaryExpNode::typeAnalysis(TypeAnalysis * ta) {
+}
+
+void NegNode::typeAnalysis(TypeAnalysis * ta) {
+	myExp->typeAnalysis(ta);
+	TODO("Check that the type of NegNode's exp is integer");
+	ta->nodeType(this, BasicType::produce(INT));
+}
+
+void NotNode::typeAnalysis(TypeAnalysis * ta) {
+	myExp->typeAnalysis(ta);
+	TODO("Check that the type of NotNode's exp is boolean");
+	ta->nodeType(this, BasicType::produce(BOOL));
+}
+
+void VoidTypeNode::typeAnalysis(TypeAnalysis * ta) {
+}
+
+void IntTypeNode::typeAnalysis(TypeAnalysis * ta) {
+}
+
+void BoolTypeNode::typeAnalysis(TypeAnalysis * ta) {
+
+}
 
 void AssignExpNode::typeAnalysis(TypeAnalysis * ta){
-	//TODO: Note that this function is incomplete. 
-	// and needs additional code
-
 	//Do typeAnalysis on the subexpressions
 	myDst->typeAnalysis(ta);
 	mySrc->typeAnalysis(ta);
@@ -138,7 +320,10 @@ void AssignExpNode::typeAnalysis(TypeAnalysis * ta){
 	// it is usually ok to do the assignment. One
 	// exception is that if both types are function
 	// names, it should fail type analysis
-	if (tgtType == srcType){
+	if (tgtType == srcType) {
+		TODO("AssignExpNode: Check whether tgtType and srcType are functions");
+		// if one or both are functions
+		// then ta->bad
 		ta->nodeType(this, tgtType);
 		return;
 	}
@@ -163,11 +348,29 @@ void IntLitNode::typeAnalysis(TypeAnalysis * ta){
 	ta->nodeType(this, BasicType::produce(INT));
 }
 
-void StrLitNode::typeAnalysis(TypeAnalysis * ta) {}
-void CharLitNode::typeAnalysis(TypeAnalysis * ta) {}
-void NullPtrNode::typeAnalysis(TypeAnalysis * ta) {}
-void TrueNode::typeAnalysis(TypeAnalysis * ta) {}
-void FalseNode::typeAnalysis(TypeAnalysis * ta) {}
-void CallStmtNode::typeAnalysis(TypeAnalysis * ta) {}
+// Level?
+void StrLitNode::typeAnalysis(TypeAnalysis * ta) {
+	ta->nodeType(this, PtrType::produce(BasicType::produce(CHAR), 1));
+}
+
+void CharLitNode::typeAnalysis(TypeAnalysis * ta) {
+	// StrLits should never fail type analysis either
+	ta->nodeType(this, BasicType::produce(CHAR));
+}
+
+void NullPtrNode::typeAnalysis(TypeAnalysis * ta) {
+	ta->nodeType(this, PtrType::produce(BasicType::produce(VOID), 1));
+}
+
+void TrueNode::typeAnalysis(TypeAnalysis * ta) {
+	ta->nodeType(this, BasicType::produce(BOOL));
+}
+
+void FalseNode::typeAnalysis(TypeAnalysis * ta) {
+	ta->nodeType(this, BasicType::produce(BOOL));
+}
+
+void CallStmtNode::typeAnalysis(TypeAnalysis * ta) {
+}
 
 }

@@ -149,6 +149,7 @@ public:
 	: TypeNode(lIn, cIn), isPtr(isPtrIn){}
 	void unparse(std::ostream& out, int indent) override;
 	virtual DataType * getType() override;
+	void typeAnalysis(TypeAnalysis * ta) override;
 private:
 	bool isPtr;
 };
@@ -186,6 +187,7 @@ public:
 	FormalDeclNode(size_t lIn, size_t cIn, TypeNode * type, IDNode * id) 
 	: VarDeclNode(lIn, cIn, type, id){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis * ta) override;
 };
 
 class FnDeclNode : public DeclNode{
@@ -351,6 +353,7 @@ public:
 	PlusNode(size_t l, size_t c, ExpNode * e1, ExpNode * e2)
 	: BinaryExpNode(l, c, e1, e2){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis * ta) override;
 };
 
 class MinusNode : public BinaryExpNode{
@@ -358,6 +361,7 @@ public:
 	MinusNode(size_t l, size_t c, ExpNode * e1, ExpNode * e2)
 	: BinaryExpNode(l, c, e1, e2){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis * ta) override;
 };
 
 class TimesNode : public BinaryExpNode{
@@ -365,6 +369,7 @@ public:
 	TimesNode(size_t l, size_t c, ExpNode * e1In, ExpNode * e2In)
 	: BinaryExpNode(l, c, e1In, e2In){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis * ta) override;
 };
 
 class DivideNode : public BinaryExpNode{
@@ -372,6 +377,7 @@ public:
 	DivideNode(size_t lIn, size_t cIn, ExpNode * e1, ExpNode * e2)
 	: BinaryExpNode(lIn, cIn, e1, e2){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis * ta) override;
 };
 
 class AndNode : public BinaryExpNode{
@@ -379,6 +385,7 @@ public:
 	AndNode(size_t l, size_t c, ExpNode * e1, ExpNode * e2)
 	: BinaryExpNode(l, c, e1, e2){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis * ta) override;
 };
 
 class OrNode : public BinaryExpNode{
@@ -386,6 +393,7 @@ public:
 	OrNode(size_t l, size_t c, ExpNode * e1, ExpNode * e2)
 	: BinaryExpNode(l, c, e1, e2){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis * ta) override;
 };
 
 class EqualsNode : public BinaryExpNode{
@@ -393,6 +401,7 @@ public:
 	EqualsNode(size_t l, size_t c, ExpNode * e1, ExpNode * e2)
 	: BinaryExpNode(l, c, e1, e2){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis * ta) override;
 };
 
 class NotEqualsNode : public BinaryExpNode{
@@ -400,6 +409,7 @@ public:
 	NotEqualsNode(size_t l, size_t c, ExpNode * e1, ExpNode * e2)
 	: BinaryExpNode(l, c, e1, e2){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis * ta) override;
 };
 
 class LessNode : public BinaryExpNode{
@@ -408,6 +418,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lineIn, colIn, exp1, exp2){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis * ta) override;
 };
 
 class LessEqNode : public BinaryExpNode{
@@ -415,6 +426,7 @@ public:
 	LessEqNode(size_t l, size_t c, ExpNode * e1, ExpNode * e2)
 	: BinaryExpNode(l, c, e1, e2){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis * ta) override;
 };
 
 class GreaterNode : public BinaryExpNode{
@@ -423,6 +435,7 @@ public:
 		ExpNode * exp1, ExpNode * exp2)
 	: BinaryExpNode(lineIn, colIn, exp1, exp2){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis * ta) override;
 };
 
 class GreaterEqNode : public BinaryExpNode{
@@ -430,6 +443,7 @@ public:
 	GreaterEqNode(size_t l, size_t c, ExpNode * e1, ExpNode * e2)
 	: BinaryExpNode(l, c, e1, e2){ }
 	void unparse(std::ostream& out, int indent) override;
+	void typeAnalysis(TypeAnalysis * ta) override;
 };
 
 class UnaryExpNode : public ExpNode {
@@ -470,6 +484,7 @@ public:
 	virtual DataType * getType() override { 
 		return BasicType::VOID(); 
 	}
+	void typeAnalysis(TypeAnalysis * ta) override;
 };
 
 class IntTypeNode : public TypeNode{
@@ -477,6 +492,7 @@ public:
 	IntTypeNode(size_t l, size_t c, bool ptrIn): TypeNode(l, c), isPtr(ptrIn){}
 	void unparse(std::ostream& out, int indent) override;
 	virtual DataType * getType() override;
+	void typeAnalysis(TypeAnalysis * ta) override;
 private:
 	const bool isPtr;
 };
@@ -486,6 +502,7 @@ public:
 	BoolTypeNode(size_t l, size_t c, bool ptrIn): TypeNode(l, c), isPtr(ptrIn) { }
 	void unparse(std::ostream& out, int indent) override;
 	virtual DataType * getType() override;
+	void typeAnalysis(TypeAnalysis * ta) override;
 private:
 	const bool isPtr;
 };

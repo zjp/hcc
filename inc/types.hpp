@@ -75,8 +75,11 @@ private:
 };
 
 //DataType subclass for all scalar types 
-class BasicType : public DataType{
+class BasicType : public DataType {
 public:
+	const BasicType * asBasic() const override {
+		return this;
+	}
 	static BasicType * VOID(){
 		return produce(BaseType::VOID);
 	}
@@ -139,6 +142,7 @@ public:
 	}
 	virtual BaseType getBaseType() const { return myBaseType; }
 	virtual std::string getString() const override;
+
 private:
 	BasicType(BaseType base) 
 	: myBaseType(base){ }
