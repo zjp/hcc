@@ -245,17 +245,37 @@ void ReturnStmtNode::typeAnalysis(TypeAnalysis * ta) {
 }
 
 void CallExpNode::typeAnalysis(TypeAnalysis * ta) {
-	myID->typeAnalysis(ta);
-	// TODO Check whether myID is a function ?
-	// if not myID is a function:
-	// else
-	int i = 0;
-	for(auto argt : *myArgs) {
-		argt->typeAnalysis(ta);
-		++i;
-	}
-	// TODO("Check whether there are as many args as function requires");
-	ta->nodeType(this, BasicType::produce(VOID));
+    myID->typeAnalysis(ta);
+    const DataType * myType = ta->nodeType(myID);
+    if(myType.asFn()){
+        std::string result = "";
+        bool first = true;
+        for (auto elt : myType->getFormalTypes){
+            if (first) { first = false; }
+            else { result += ","; }
+            result += elt->getString();
+        }
+        result += "->";
+        result += myID->getReturnType->getString();
+        for(auto argt : *myArgs) {
+            argt->typeAnalysis(ta);
+        }
+        if(result == myID->getString()){
+            ta->nodeType(this, BasicType::produce(myID->getReturnType()->getString()));
+        }
+        else if(myID->getFormalTypes()->size() != myArgs->size(){
+            ta->badArgCount(myCond->line(), myCond->col());
+            ta->nodeType(this, ErrorType::produce());
+        }    
+        else if(result.size() != myID->getString()){
+            ta->badArgMatch(myCond->line(), myCond->col());
+            ta->nodeType(this, ErrorType::produce());
+        }
+    }
+    else{
+        ta->badCallee(myCond->line(), myCond->col());
+        ta->nodeType(this, ErrorType::produce());
+    }
 }
 
 /**
