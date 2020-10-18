@@ -59,12 +59,15 @@ void IDNode::typeAnalysis(TypeAnalysis * ta){
 }
 
 void RefNode::typeAnalysis(TypeAnalysis * ta) {
+	ta->nodeType(this, BasicType::produce(VOID));
 }
 
 void DerefNode::typeAnalysis(TypeAnalysis * ta) {
+	ta->nodeType(this, BasicType::produce(VOID));
 }
 
 void IndexNode::typeAnalysis(TypeAnalysis * ta) {
+	ta->nodeType(this, BasicType::produce(VOID));
 }
 
 void TypeNode::typeAnalysis(TypeAnalysis * ta) {
@@ -72,6 +75,7 @@ void TypeNode::typeAnalysis(TypeAnalysis * ta) {
 }
 
 void CharTypeNode::typeAnalysis(TypeAnalysis * ta) {
+	ta->nodeType(this, BasicType::produce(CHAR));
 }
 
 void StmtNode::typeAnalysis(TypeAnalysis * ta) {
@@ -90,7 +94,8 @@ void VarDeclNode::typeAnalysis(TypeAnalysis * ta) {
 }
 
 void FormalDeclNode::typeAnalysis(TypeAnalysis * ta) {
-	TODO("Do FormalDeclNodes need to be checked against the function's formalDecls?");
+	// Do FormalDeclNodes need to be checked against the function's formalDecls? 
+	ta->nodeType(this, BasicType::produce(VOID));
 }
 
 void FnDeclNode::typeAnalysis(TypeAnalysis * ta) {
@@ -112,6 +117,7 @@ void FnDeclNode::typeAnalysis(TypeAnalysis * ta) {
 		stmt->typeAnalysis(ta);
 	}
 
+	ta->nodeType(this, BasicType::produce(VOID));
 
 }
 
@@ -132,6 +138,7 @@ void AssignStmtNode::typeAnalysis(TypeAnalysis * ta) {
 	} else {
 		ta->nodeType(this, BasicType::produce(VOID));
 	}
+	ta->nodeType(this, BasicType::produce(VOID));
 }
 
 void FromConsoleStmtNode::typeAnalysis(TypeAnalysis * ta) {
@@ -139,6 +146,7 @@ void FromConsoleStmtNode::typeAnalysis(TypeAnalysis * ta) {
 	const DataType * myType = ta->nodeType(myDst);
 	if(myType == BasicType::produce(VOID)) {
 	}
+	ta->nodeType(this, BasicType::produce(VOID));
 }
 
 void ToConsoleStmtNode::typeAnalysis(TypeAnalysis * ta) {
@@ -148,6 +156,7 @@ void ToConsoleStmtNode::typeAnalysis(TypeAnalysis * ta) {
 		ta->nodeType(this, ErrorType::produce());
 		return;
 	}
+	ta->nodeType(this, BasicType::produce(VOID));
 }
 
 void PostDecStmtNode::typeAnalysis(TypeAnalysis * ta) {
@@ -158,6 +167,7 @@ void PostDecStmtNode::typeAnalysis(TypeAnalysis * ta) {
 		ta->nodeType(this, ErrorType::produce());
 		return;
 	}
+	ta->nodeType(this, BasicType::produce(VOID));
 }
 
 void PostIncStmtNode::typeAnalysis(TypeAnalysis * ta) {
@@ -168,6 +178,7 @@ void PostIncStmtNode::typeAnalysis(TypeAnalysis * ta) {
 		ta->nodeType(this, ErrorType::produce());
 		return;
 	}
+	ta->nodeType(this, BasicType::produce(VOID));
 }
 
 void IfStmtNode::typeAnalysis(TypeAnalysis * ta) {
@@ -182,6 +193,7 @@ void IfStmtNode::typeAnalysis(TypeAnalysis * ta) {
 		stmt->typeAnalysis(ta);
 	}
 	// TODO: IfStmtNode: Does this node type need to be set to anything?
+	ta->nodeType(this, BasicType::produce(VOID));
 }
 
 void IfElseStmtNode::typeAnalysis(TypeAnalysis * ta) {
@@ -199,6 +211,7 @@ void IfElseStmtNode::typeAnalysis(TypeAnalysis * ta) {
 		stmt->typeAnalysis(ta);
 	}
 	// TODO: IfStmtNode: Does this node type need to be set to anything?
+	ta->nodeType(this, BasicType::produce(VOID));
 }
 
 void WhileStmtNode::typeAnalysis(TypeAnalysis * ta) {
@@ -213,6 +226,7 @@ void WhileStmtNode::typeAnalysis(TypeAnalysis * ta) {
 		stmt->typeAnalysis(ta);
 	}
 	// TODO: WhileStmtNode: Does this node type need to be set to anything?
+	ta->nodeType(this, BasicType::produce(VOID));
 }
 
 // Currently causes a segfault
@@ -227,11 +241,12 @@ void ReturnStmtNode::typeAnalysis(TypeAnalysis * ta) {
 	//	return;
 	//}
 	//ta->badRetValue(myExp->line(), myExp->col());
+	ta->nodeType(this, BasicType::produce(VOID));
 }
 
 void CallExpNode::typeAnalysis(TypeAnalysis * ta) {
 	myID->typeAnalysis(ta);
-	TODO("Check whether myID is a function");
+	// TODO Check whether myID is a function ?
 	// if not myID is a function:
 	// else
 	int i = 0;
@@ -239,7 +254,8 @@ void CallExpNode::typeAnalysis(TypeAnalysis * ta) {
 		argt->typeAnalysis(ta);
 		++i;
 	}
-	TODO("Check whether there are as many args as function requires");
+	// TODO("Check whether there are as many args as function requires");
+	ta->nodeType(this, BasicType::produce(VOID));
 }
 
 /**
@@ -490,6 +506,7 @@ void GreaterEqNode::typeAnalysis(TypeAnalysis * ta) {
 }
 
 void UnaryExpNode::typeAnalysis(TypeAnalysis * ta) {
+	ta->nodeType(this, BasicType::produce(VOID));
 }
 
 void NegNode::typeAnalysis(TypeAnalysis * ta) {
@@ -605,6 +622,7 @@ void FalseNode::typeAnalysis(TypeAnalysis * ta) {
 }
 
 void CallStmtNode::typeAnalysis(TypeAnalysis * ta) {
+	ta->nodeType(this, BasicType::produce(VOID));
 }
 
 }
