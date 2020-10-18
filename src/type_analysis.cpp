@@ -196,10 +196,10 @@ void CallExpNode::typeAnalysis(TypeAnalysis * ta) {
  */
 
 void BinaryExpNode::typeAnalysis(TypeAnalysis * ta){
-	bool resultLHS = myExp1->typeAnalysis(ta);
-	bool resultRHS = myExp2->typeAnalysis(ta);
-    const DataType * LHSType = ta->nodeType(resultLHS);
-	const DataType * RHSType = ta->nodeType(resultRHS);
+	myExp1->typeAnalysis(ta);
+	myExp2->typeAnalysis(ta);
+    const DataType * LHSType = ta->nodeType(myExp1);
+	const DataType * RHSType = ta->nodeType(myExp2);
 
 	//While incomplete, this gives you one case for 
 	// assignment: if the types are exactly the same
