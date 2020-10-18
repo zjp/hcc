@@ -146,7 +146,31 @@ void IntLitNode::typeAnalysis(TypeAnalysis * ta){
 void BinaryExpNode::typeAnalysis(TypeAnalysis * ta){
 	bool resultLHS = myExp1->typeAnalysis(ta);
 	bool resultRHS = myExp2->typeAnalysis(ta);
-	return resultLHS && resultRHS;
+    const DataType * LHSType = ta->nodeType(resultLHS);
+	const DataType * RHSType = ta->nodeType(resultRHS);
+
+	//While incomplete, this gives you one case for 
+	// assignment: if the types are exactly the same
+	// it is usually ok to do the assignment. One
+	// exception is that if both types are function
+	// names, it should fail type analysis
+	if (LHSType == RHSType){
+		ta->nodeType(this, LHSType);
+		return;
+	}
+	
+	//Some functions are already defined for you to
+	// report type errors. Note that these functions
+	// also tell the typeAnalysis object that the
+	// analysis has failed, meaning that main.cpp
+	// will print "Type check failed" at the end
+	ta->badAssignOpr(this->line(), this->col());
+
+
+	//Note that reporting an error does not set the
+	// type of the current node, so setting the node
+	// type must be done
+	ta->nodeType(this, ErrorType::produce());
 }
 
 }
