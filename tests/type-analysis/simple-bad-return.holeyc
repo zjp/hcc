@@ -1,0 +1,6 @@
+int glob;
+void main(){
+	int a;
+	glob = a;
+	return a;
+}
