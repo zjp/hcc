@@ -214,17 +214,18 @@ void WhileStmtNode::typeAnalysis(TypeAnalysis * ta) {
 	// TODO: WhileStmtNode: Does this node type need to be set to anything?
 }
 
+// Currently causes a segfault
 void ReturnStmtNode::typeAnalysis(TypeAnalysis * ta) {
-	const auto currFnType = ta->getCurrentFnType();
-	if(currFnType->asBasic() == BasicType::produce(VOID)) {
-		ta->extraRetValue(myExp->line(), myExp->col());
-	}
-	myExp->typeAnalysis(ta);
-	const DataType * myType = ta->nodeType(myExp);
-	if(myType == currFnType) {
-		return;
-	}
-	ta->badRetValue(myExp->line(), myExp->col());
+	//const auto currFnType = ta->getCurrentFnType();
+	//if(currFnType->asBasic() == BasicType::produce(VOID)) {
+	//	ta->extraRetValue(myExp->line(), myExp->col());
+	//}
+	//myExp->typeAnalysis(ta);
+	//const DataType * myType = ta->nodeType(myExp);
+	//if(myType == currFnType) {
+	//	return;
+	//}
+	//ta->badRetValue(myExp->line(), myExp->col());
 }
 
 void CallExpNode::typeAnalysis(TypeAnalysis * ta) {
@@ -341,7 +342,7 @@ void NotEqualsNode::typeAnalysis(TypeAnalysis * ta) {
         ta->nodeType(this, BasicType::produce(BOOL));
         }
     else{
-        ta->badRelation(this->line(), this->col());
+        ta->badRelOpd(this->line(), this->col());
         ta->nodeType(this, ErrorType::produce());
     }
 }
@@ -352,10 +353,10 @@ void LessNode::typeAnalysis(TypeAnalysis * ta) {
 	const DataType * exp1Type = ta->nodeType(myExp1);
 	const DataType * exp2Type = ta->nodeType(myExp2);
 	TODO("Double check that the correct error is thrown");
-    if((exp1Type.isInt())&&(exp2Type.isInt()))
+    if((exp1Type->isInt())&&(exp2Type->isInt()))
         ta->nodeType(this, BasicType::produce(BOOL));
     else{
-        ta->badRelation(this->line(), this->col());
+        ta->badRelOpd(this->line(), this->col());
         ta->nodeType(this, ErrorType::produce());
     }
 }
@@ -366,12 +367,13 @@ void LessEqNode::typeAnalysis(TypeAnalysis * ta) {
 	const DataType * exp1Type = ta->nodeType(myExp1);
 	const DataType * exp2Type = ta->nodeType(myExp2);
 	TODO("Double check that the correct error is thrown");
-    if((exp1Type.isInt())&&(exp2Type.isInt()))
+    if((exp1Type->isInt())&&(exp2Type->isInt()))
         ta->nodeType(this, BasicType::produce(BOOL));
     else{
-        ta->badRelation(this->line(), this->col());
+        ta->badRelOpd(this->line(), this->col());
         ta->nodeType(this, ErrorType::produce());
-    a->nodeType(this, BasicType::produce(BOOL));
+    ta->nodeType(this, BasicType::produce(BOOL));
+	}
 }
 
 void GreaterNode::typeAnalysis(TypeAnalysis * ta) {
@@ -380,12 +382,13 @@ void GreaterNode::typeAnalysis(TypeAnalysis * ta) {
 	const DataType * exp1Type = ta->nodeType(myExp1);
 	const DataType * exp2Type = ta->nodeType(myExp2);
 	TODO("Double check that the correct error is thrown");
-    if((exp1Type.isInt())&&(exp2Type.isInt()))
+    if((exp1Type->isInt())&&(exp2Type->isInt()))
         ta->nodeType(this, BasicType::produce(BOOL));
     else{
-        ta->badRelation(this->line(), this->col());
+        ta->badRelOpd(this->line(), this->col());
         ta->nodeType(this, ErrorType::produce());
-    }}
+    }
+}
 
 void GreaterEqNode::typeAnalysis(TypeAnalysis * ta) {
 	myExp1->typeAnalysis(ta);
@@ -393,13 +396,12 @@ void GreaterEqNode::typeAnalysis(TypeAnalysis * ta) {
 	const DataType * exp1Type = ta->nodeType(myExp1);
 	const DataType * exp2Type = ta->nodeType(myExp2);
 	TODO("Double check that the correct error is thrown");
-    if((exp1Type.isInt())&&(exp2Type.isInt()))
+    if((exp1Type->isInt())&&(exp2Type->isInt()))
         ta->nodeType(this, BasicType::produce(BOOL));
     else{
-        ta->badRelation(this->line(), this->col());
+        ta->badRelOpd(this->line(), this->col());
         ta->nodeType(this, ErrorType::produce());
     }
-
 }
 
 void UnaryExpNode::typeAnalysis(TypeAnalysis * ta) {
