@@ -240,52 +240,123 @@ void BinaryExpNode::typeAnalysis(TypeAnalysis * ta){
 }
 
 void PlusNode::typeAnalysis(TypeAnalysis * ta) {
-	myExp1->typeAnalysis(ta);
+    myExp1->typeAnalysis(ta);
 	myExp2->typeAnalysis(ta);
-	TODO("Check that both types are integer in PlusNode");
-	ta->nodeType(this, BasicType::produce(INT));
+	const DataType * exp1Type = ta->nodeType(myExp1);
+	const DataType * exp2Type = ta->nodeType(myExp2);
+    if(exp1Type.asError()||exp2Type.asError()){
+        ta->nodeType(this, ErrorType::produce());
+    }
+    else if((exp1Type.isInt())&&(exp2Type.isInt()))
+        ta->nodeType(this, BasicType::produce(INT));
+    else{
+        ta->badMath(this->line(), this->col());
+        ta->nodeType(this, ErrorType::produce());
+    }
 }
 
 void MinusNode::typeAnalysis(TypeAnalysis * ta) {
-	myExp1->typeAnalysis(ta);
+    myExp1->typeAnalysis(ta);
 	myExp2->typeAnalysis(ta);
-	TODO("Check that both types are integer in MinusNode");
-	ta->nodeType(this, BasicType::produce(INT));
+	const DataType * exp1Type = ta->nodeType(myExp1);
+	const DataType * exp2Type = ta->nodeType(myExp2);
+    if(exp1Type.asError()||exp2Type.asError()){
+        ta->nodeType(this, ErrorType::produce());
+    }
+    else if((exp1Type.isInt())&&(exp2Type.isInt()))
+        ta->nodeType(this, BasicType::produce(INT));
+    else{
+        ta->badMath(this->line(), this->col());
+        ta->nodeType(this, ErrorType::produce());
+    }
 }
 
 void TimesNode::typeAnalysis(TypeAnalysis * ta) {
-	myExp1->typeAnalysis(ta);
+    myExp1->typeAnalysis(ta);
 	myExp2->typeAnalysis(ta);
-	TODO("Check that both types are integer in TimesNode");
-	ta->nodeType(this, BasicType::produce(INT));
+	const DataType * exp1Type = ta->nodeType(myExp1);
+	const DataType * exp2Type = ta->nodeType(myExp2);
+    if(exp1Type.asError()||exp2Type.asError()){
+        ta->nodeType(this, ErrorType::produce());
+    }
+    else if((exp1Type.isInt())&&(exp2Type.isInt()))
+        ta->nodeType(this, BasicType::produce(INT));
+    else{
+        ta->badMath(this->line(), this->col());
+        ta->nodeType(this, ErrorType::produce());
+    }
 }
-
 void DivideNode::typeAnalysis(TypeAnalysis * ta) {
-	myExp1->typeAnalysis(ta);
+    myExp1->typeAnalysis(ta);
 	myExp2->typeAnalysis(ta);
-	TODO("Check that both types are integer in DivideNode");
-	ta->nodeType(this, BasicType::produce(INT));
+    const DataType * exp1Type = ta->nodeType(myExp1);
+    const DataType * exp2Type = ta->nodeType(myExp2);
+    if(exp1Type.asError()||exp2Type.asError()){
+        ta->nodeType(this, ErrorType::produce());
+    }
+    else if((exp1Type.isInt())&&(exp2Type.isInt()))
+        ta->nodeType(this, BasicType::produce(INT));
+    else{
+        ta->badMath(this->line(), this->col());
+        ta->nodeType(this, ErrorType::produce());
+    }
 }
 
 void AndNode::typeAnalysis(TypeAnalysis * ta) {
-	myExp1->typeAnalysis(ta);
+    myExp1->typeAnalysis(ta);
 	myExp2->typeAnalysis(ta);
-	TODO("Check that both types are boolean in AndNode");
-	ta->nodeType(this, BasicType::produce(BOOL));
+	const DataType * exp1Type = ta->nodeType(myExp1);
+	const DataType * exp2Type = ta->nodeType(myExp2);
+    if(exp1Type.asError()||exp2Type.asError()){
+        ta->nodeType(this, ErrorType::produce());
+    }
+    else if((exp1Type.isBool())&&(exp2Type.isBool()))
+        ta->nodeType(this, BasicType::produce(BOOL));
+    else{
+        ta->badLogic(this->line(), this->col());
+        ta->nodeType(this, ErrorType::produce());
+    }
 }
 
 void OrNode::typeAnalysis(TypeAnalysis * ta) {
-	myExp1->typeAnalysis(ta);
+    myExp1->typeAnalysis(ta);
 	myExp2->typeAnalysis(ta);
-	TODO("Check that both types are boolean in OrNode");
-	ta->nodeType(this, BasicType::produce(BOOL));
+	const DataType * exp1Type = ta->nodeType(myExp1);
+	const DataType * exp2Type = ta->nodeType(myExp2);
+    if(exp1Type.asError()||exp2Type.asError()){
+        ta->nodeType(this, ErrorType::produce());
+    }
+    else if((exp1Type.isBool())&&(exp2Type.isBool()))
+        ta->nodeType(this, BasicType::produce(BOOL));
+    else{
+        ta->badLogic(this->line(), this->col());
+        ta->nodeType(this, ErrorType::produce());
+    }
 }
 
 void EqualsNode::typeAnalysis(TypeAnalysis * ta) {
-	myExp1->typeAnalysis(ta);
-	myExp2->typeAnalysis(ta);
-	TODO("Check that both types are the same type in EqualsNode");
-	ta->nodeType(this, BasicType::produce(BOOL));
+    myExp1->typeAnalysis(ta);
+    myExp2->typeAnalysis(ta);
+    const DataType * exp1Type = ta->nodeType(myExp1);
+    const DataType * exp2Type = ta->nodeType(myExp2);
+    if(exp1Type.asFn()||exp2Type.asFn()){
+        ta->fnEq(this->line(), this->col());
+        ta->nodeType(this, ErrorType::produce());
+    }
+    else if(exp1Type.asError()||exp2Type.asError()){
+        ta->nodeType(this, ErrorType::produce());
+    }
+    else if(exp1Type.isVoid()||exp2Type.isVoid()){
+        ta->voidEq(this->line(), this->col());
+        ta->nodeType(this, ErrorType::produce());
+    }
+
+    else if(exp1Type.validVarType()&&exp2Type.validVarType()){
+        ta->nodeType(this, BasicType::produce(BOOL));
+    }
+    else{
+        TODO("This shouldn't reach this point unless we've decided to implement pointers.");
+    }
 }
 
 
@@ -294,13 +365,23 @@ void NotEqualsNode::typeAnalysis(TypeAnalysis * ta) {
 	myExp2->typeAnalysis(ta);
 	const DataType * exp1Type = ta->nodeType(myExp1);
 	const DataType * exp2Type = ta->nodeType(myExp2);
-	TODO("There should be an if-else chain here to determine which error to throw.");
-    if(exp1Type){
-        ta->nodeType(this, BasicType::produce(BOOL));
-        }
-    else{
-        ta->badRelation(this->line(), this->col());
+    if(exp1Type.asFn()||exp2Type.asFn()){
+        ta->fnEq(this->line(), this->col());
         ta->nodeType(this, ErrorType::produce());
+        }
+    else if(exp1Type.asError()||exp2Type.asError()){
+        ta->nodeType(this, ErrorType::produce());
+    }
+    else if(exp1Type.isVoid()||exp2Type.isVoid()){
+        ta->voidEq(this->line(), this->col());
+        ta->nodeType(this, ErrorType::produce());
+    }
+
+    else if(exp1Type.validVarType()&&exp2Type.validVarType()){
+        ta->nodeType(this, BasicType::produce(BOOL));
+    }
+    else{
+        TODO("This shouldn't reach this point unless we've decided to implement pointers.");
     }
 }
 
@@ -309,8 +390,10 @@ void LessNode::typeAnalysis(TypeAnalysis * ta) {
 	myExp2->typeAnalysis(ta);
 	const DataType * exp1Type = ta->nodeType(myExp1);
 	const DataType * exp2Type = ta->nodeType(myExp2);
-	TODO("Double check that the correct error is thrown");
-    if((exp1Type.isInt())&&(exp2Type.isInt()))
+    if(exp1Type.asError()||exp2Type.asError()){
+        ta->nodeType(this, ErrorType::produce());
+    }
+    else if((exp1Type.isInt())&&(exp2Type.isInt()))
         ta->nodeType(this, BasicType::produce(BOOL));
     else{
         ta->badRelation(this->line(), this->col());
@@ -323,8 +406,10 @@ void LessEqNode::typeAnalysis(TypeAnalysis * ta) {
 	myExp2->typeAnalysis(ta);
 	const DataType * exp1Type = ta->nodeType(myExp1);
 	const DataType * exp2Type = ta->nodeType(myExp2);
-	TODO("Double check that the correct error is thrown");
-    if((exp1Type.isInt())&&(exp2Type.isInt()))
+    if(exp1Type.asError()||exp2Type.asError()){
+        ta->nodeType(this, ErrorType::produce());
+    }
+    else if((exp1Type.isInt())&&(exp2Type.isInt()))
         ta->nodeType(this, BasicType::produce(BOOL));
     else{
         ta->badRelation(this->line(), this->col());
@@ -337,8 +422,10 @@ void GreaterNode::typeAnalysis(TypeAnalysis * ta) {
 	myExp2->typeAnalysis(ta);
 	const DataType * exp1Type = ta->nodeType(myExp1);
 	const DataType * exp2Type = ta->nodeType(myExp2);
-	TODO("Double check that the correct error is thrown");
-    if((exp1Type.isInt())&&(exp2Type.isInt()))
+    if(exp1Type.asError()||exp2Type.asError()){
+        ta->nodeType(this, ErrorType::produce());
+    }
+    else if((exp1Type.isInt())&&(exp2Type.isInt()))
         ta->nodeType(this, BasicType::produce(BOOL));
     else{
         ta->badRelation(this->line(), this->col());
@@ -350,8 +437,10 @@ void GreaterEqNode::typeAnalysis(TypeAnalysis * ta) {
 	myExp2->typeAnalysis(ta);
 	const DataType * exp1Type = ta->nodeType(myExp1);
 	const DataType * exp2Type = ta->nodeType(myExp2);
-	TODO("Double check that the correct error is thrown");
-    if((exp1Type.isInt())&&(exp2Type.isInt()))
+    if(exp1Type.asError()||exp2Type.asError()){
+        ta->nodeType(this, ErrorType::produce());
+    }
+    else if((exp1Type.isInt())&&(exp2Type.isInt()))
         ta->nodeType(this, BasicType::produce(BOOL));
     else{
         ta->badRelation(this->line(), this->col());
@@ -364,11 +453,14 @@ void UnaryExpNode::typeAnalysis(TypeAnalysis * ta) {
 }
 
 void NegNode::typeAnalysis(TypeAnalysis * ta) {
-	myExp->typeAnalysis(ta);
-	const DataType * expType = ta->nodeType(myExp);
-    if(myExp.isInt()){ 
+    myExp->typeAnalysis(ta);
+    const DataType * expType = ta->nodeType(myExp);
+    if(expType.asError()){
+        ta->nodeType(this, ErrorType::produce());
+    }
+    else if(expType.isInt()){ 
         ta->nodeType(this, BasicType::produce(INT));
-    {
+    }
     else{
         ta->badRelation(this->line(), this->col());
         ta->nodeType(this, ErrorType::produce());
@@ -376,11 +468,14 @@ void NegNode::typeAnalysis(TypeAnalysis * ta) {
 }
 
 void NotNode::typeAnalysis(TypeAnalysis * ta) {
-	myExp->typeAnalysis(ta);
-	const DataType * expType = ta->nodeType(myExp);
-    if(myExp.isBool()){ 
+    myExp->typeAnalysis(ta);
+    const DataType * expType = ta->nodeType(myExp);
+    if(expType.asError()){
+        ta->nodeType(this, ErrorType::produce());
+    }
+    else if(expType.isBool()){ 
         ta->nodeType(this, BasicType::produce(BOOL));
-    {
+    }
     else{
         ta->badLogic(this->line(), this->col());
         ta->nodeType(this, ErrorType::produce());
@@ -412,10 +507,16 @@ void AssignExpNode::typeAnalysis(TypeAnalysis * ta){
 	// it is usually ok to do the assignment. One
 	// exception is that if both types are function
 	// names, it should fail type analysis
-	if (tgtType == srcType) {
-		TODO("AssignExpNode: Check whether tgtType and srcType are functions");
+    if(tgtType.asError()||srcType.asError()){
+        ta->nodeType(this, ErrorType::produce());
+    }
+    else if(tgtType.asFn()||srcType.asFn()){
 		// if one or both are functions
 		// then ta->bad
+        ta->fnAssign(this->line(), this->col());
+        ta->nodeType(this, ErrorType::produce());
+    }
+	else if (tgtType == srcType) {
 		ta->nodeType(this, tgtType);
 		return;
 	}
