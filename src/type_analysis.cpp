@@ -59,11 +59,15 @@ void IDNode::typeAnalysis(TypeAnalysis * ta){
 
 void RefNode::typeAnalysis(TypeAnalysis * ta) {
 }
+
 void DerefNode::typeAnalysis(TypeAnalysis * ta) {
 }
+
 void IndexNode::typeAnalysis(TypeAnalysis * ta) {
 }
+
 void TypeNode::typeAnalysis(TypeAnalysis * ta) {
+	ta->nodeType(this, BasicType::produce(VOID));
 }
 
 void CharTypeNode::typeAnalysis(TypeAnalysis * ta) {
@@ -97,6 +101,7 @@ void FnDeclNode::typeAnalysis(TypeAnalysis * ta) {
 	// the current function
 
 	//Note: this function may need extra code
+	ta->setCurrentFnType(nullptr);
 
 	for (auto stmt : *myBody){
 		stmt->typeAnalysis(ta);
@@ -168,7 +173,16 @@ void WhileStmtNode::typeAnalysis(TypeAnalysis * ta) {
 }
 
 void ReturnStmtNode::typeAnalysis(TypeAnalysis * ta) {
+	const DataType * currFnType = ta->getCurrentFnType();
+	if(currFnType == BasicType::produce(VOID)) {
+		ta->extraRetValue(this->line(), this->col());
+	}
 	myExp->typeAnalysis(ta);
+	const DataType * myType = ta->nodeType(myExp);
+	if(myType == currFnType) {
+		return;
+	}
+	ta->badRetValue(this->line(), this->col());
 }
 
 void CallExpNode::typeAnalysis(TypeAnalysis * ta) {
@@ -325,13 +339,15 @@ void NotNode::typeAnalysis(TypeAnalysis * ta) {
 }
 
 void VoidTypeNode::typeAnalysis(TypeAnalysis * ta) {
+	ta->nodeType(this, BasicType::produce(VOID));
 }
 
 void IntTypeNode::typeAnalysis(TypeAnalysis * ta) {
+	ta->nodeType(this, BasicType::produce(VOID));
 }
 
 void BoolTypeNode::typeAnalysis(TypeAnalysis * ta) {
-
+	ta->nodeType(this, BasicType::produce(VOID));
 }
 
 void AssignExpNode::typeAnalysis(TypeAnalysis * ta){
