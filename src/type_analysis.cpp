@@ -246,8 +246,8 @@ void ReturnStmtNode::typeAnalysis(TypeAnalysis * ta) {
 
 void CallExpNode::typeAnalysis(TypeAnalysis * ta) {
     myID->typeAnalysis(ta);
-    const DataType * myType = ta->nodeType(myID);
-    if(myType.asFn()){
+    auto myType = ta->nodeType(myID);
+    if(myType->asFn()){
         std::string result = "";
         bool first = true;
         for (auto elt : myType->getFormalTypes){
@@ -256,24 +256,24 @@ void CallExpNode::typeAnalysis(TypeAnalysis * ta) {
             result += elt->getString();
         }
         result += "->";
-        result += myID->getReturnType->getString();
+        result += myType->getReturnType->getString();
         for(auto argt : *myArgs) {
             argt->typeAnalysis(ta);
         }
-        if(result == myID->getString()){
-            ta->nodeType(this, BasicType::produce(myID->getReturnType()->getString()));
+        if(result == myType->getString()){
+            ta->nodeType(this, BasicType::produce(myType->getReturnType()->getString()));
         }
-        else if(myID->getFormalTypes()->size() != myArgs->size(){
-            ta->badArgCount(myCond->line(), myCond->col());
+        else if(myType->getFormalTypes()->size() != myArgs->size()){
+            ta->badArgCount(myID->line(), myID->col());
             ta->nodeType(this, ErrorType::produce());
         }    
-        else if(result.size() != myID->getString()){
-            ta->badArgMatch(myCond->line(), myCond->col());
+        else {
+            ta->badArgMatch(myID->line(), myID->col());
             ta->nodeType(this, ErrorType::produce());
         }
     }
     else{
-        ta->badCallee(myCond->line(), myCond->col());
+        ta->badCallee(myID->line(), myID->col());
         ta->nodeType(this, ErrorType::produce());
     }
 }
