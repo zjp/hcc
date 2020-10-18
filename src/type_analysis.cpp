@@ -89,6 +89,7 @@ void VarDeclNode::typeAnalysis(TypeAnalysis * ta) {
 }
 
 void FormalDeclNode::typeAnalysis(TypeAnalysis * ta) {
+	TODO("Do FormalDeclNodes need to be checked against the function's formalDecls?");
 }
 
 void FnDeclNode::typeAnalysis(TypeAnalysis * ta) {
@@ -101,11 +102,15 @@ void FnDeclNode::typeAnalysis(TypeAnalysis * ta) {
 	// the current function
 
 	//Note: this function may need extra code
-	ta->setCurrentFnType(nullptr);
+	
+	for (auto formal : *myFormals) {
+		formal->typeAnalysis(ta);
+	}
 
 	for (auto stmt : *myBody){
 		stmt->typeAnalysis(ta);
 	}
+
 
 }
 
@@ -129,60 +134,97 @@ void AssignStmtNode::typeAnalysis(TypeAnalysis * ta) {
 }
 
 void FromConsoleStmtNode::typeAnalysis(TypeAnalysis * ta) {
-	TODO("FromConsoleStmtNode: Check type of myDst");
-	TODO("FromConsoleStmtNode: Check type of incoming data");
+	myDst->typeAnalysis(ta);
+	const DataType * myType = ta->nodeType(myDst);
+	if(myType == BasicType::produce(VOID)) {
+	}
 }
 
 void ToConsoleStmtNode::typeAnalysis(TypeAnalysis * ta) {
-	TODO("ToConsoleStmtNode: Ensure type of mySrc is int, bool, or char");
+	mySrc->typeAnalysis(ta);
+	const DataType * myType = ta->nodeType(mySrc);
+	if(myType == BasicType::produce(VOID)) {
+		ta->nodeType(this, ErrorType::produce());
+		return;
+	}
 }
 
 void PostDecStmtNode::typeAnalysis(TypeAnalysis * ta) {
-	TODO("PostDecStmtNode: Ensure myLVal is int");
+	myLVal->typeAnalysis(ta);
+	const DataType * myType = ta->nodeType(myLVal);
+	if(myType != BasicType::produce(INT)) {
+		ta->badMathOpr(this->line(), this->col());
+		ta->nodeType(this, ErrorType::produce());
+		return;
+	}
 }
 
 void PostIncStmtNode::typeAnalysis(TypeAnalysis * ta) {
-	TODO("PostIncStmtNode: Ensure myLVal is int");
+	myLVal->typeAnalysis(ta);
+	const DataType * myType = ta->nodeType(myLVal);
+	if(myType != BasicType::produce(INT)) {
+		ta->badMathOpr(this->line(), this->col());
+		ta->nodeType(this, ErrorType::produce());
+		return;
+	}
 }
 
 void IfStmtNode::typeAnalysis(TypeAnalysis * ta) {
 	myCond->typeAnalysis(ta);
-	TODO("Ensure the condition is bool in IfStmtNode");
+	const DataType * myCondType = ta->nodeType(myCond);
+	if(myCondType != BasicType::produce(BOOL)) {
+		ta->badIfCond(myCond->line(), myCond->col());
+		ta->nodeType(this, ErrorType::produce());
+		return;
+	}
 	for(auto stmt : *myBody) {
 		stmt->typeAnalysis(ta);
 	}
+	// TODO: IfStmtNode: Does this node type need to be set to anything?
 }
 
 void IfElseStmtNode::typeAnalysis(TypeAnalysis * ta) {
 	myCond->typeAnalysis(ta);
-	TODO("Ensure the condition is bool in IfElseStmtNode");
+	const DataType * myCondType = ta->nodeType(myCond);
+	if(myCondType != BasicType::produce(BOOL)) {
+		ta->badIfCond(myCond->line(), myCond->col());
+		ta->nodeType(this, ErrorType::produce());
+		return;
+	}
 	for(auto stmt : *myBodyTrue) {
 		stmt->typeAnalysis(ta);
 	}
 	for(auto stmt : *myBodyFalse) {
 		stmt->typeAnalysis(ta);
 	}
+	// TODO: IfStmtNode: Does this node type need to be set to anything?
 }
 
 void WhileStmtNode::typeAnalysis(TypeAnalysis * ta) {
 	myCond->typeAnalysis(ta);
-	TODO("Ensure the condition is bool in WhileStmtNode");
+	const DataType * myCondType = ta->nodeType(myCond);
+	if(myCondType != BasicType::produce(BOOL)) {
+		ta->badWhileCond(myCond->line(), myCond->col());
+		ta->nodeType(this, ErrorType::produce());
+		return;
+	}
 	for(auto stmt : *myBody) {
 		stmt->typeAnalysis(ta);
 	}
+	// TODO: WhileStmtNode: Does this node type need to be set to anything?
 }
 
 void ReturnStmtNode::typeAnalysis(TypeAnalysis * ta) {
-	const DataType * currFnType = ta->getCurrentFnType();
-	if(currFnType == BasicType::produce(VOID)) {
-		ta->extraRetValue(this->line(), this->col());
+	const auto currFnType = ta->getCurrentFnType();
+	if(currFnType->asBasic() == BasicType::produce(VOID)) {
+		ta->extraRetValue(myExp->line(), myExp->col());
 	}
 	myExp->typeAnalysis(ta);
 	const DataType * myType = ta->nodeType(myExp);
 	if(myType == currFnType) {
 		return;
 	}
-	ta->badRetValue(this->line(), this->col());
+	ta->badRetValue(myExp->line(), myExp->col());
 }
 
 void CallExpNode::typeAnalysis(TypeAnalysis * ta) {
@@ -329,11 +371,11 @@ void UnaryExpNode::typeAnalysis(TypeAnalysis * ta) {
 void NegNode::typeAnalysis(TypeAnalysis * ta) {
 	myExp->typeAnalysis(ta);
 	const DataType * expType = ta->nodeType(myExp);
-    if(myExp.isInt()){ 
+    if(expType->isInt()){ 
         ta->nodeType(this, BasicType::produce(INT));
-    {
+	}
     else{
-        ta->badRelation(this->line(), this->col());
+        ta->badMathOpd(myExp->line(), myExp->col());
         ta->nodeType(this, ErrorType::produce());
     }
 }
@@ -341,11 +383,11 @@ void NegNode::typeAnalysis(TypeAnalysis * ta) {
 void NotNode::typeAnalysis(TypeAnalysis * ta) {
 	myExp->typeAnalysis(ta);
 	const DataType * expType = ta->nodeType(myExp);
-    if(myExp.isBool()){ 
+    if(expType->isBool()){ 
         ta->nodeType(this, BasicType::produce(BOOL));
-    {
+    }
     else{
-        ta->badLogic(this->line(), this->col());
+        ta->badLogicOpd(myExp->line(), myExp->col());
         ta->nodeType(this, ErrorType::produce());
     }
 }
@@ -376,7 +418,6 @@ void AssignExpNode::typeAnalysis(TypeAnalysis * ta){
 	// exception is that if both types are function
 	// names, it should fail type analysis
 	if (tgtType == srcType) {
-		TODO("AssignExpNode: Check whether tgtType and srcType are functions");
 		// if one or both are functions
 		// then ta->bad
 		ta->nodeType(this, tgtType);
