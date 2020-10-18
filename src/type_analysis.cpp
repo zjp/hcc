@@ -328,14 +328,26 @@ void UnaryExpNode::typeAnalysis(TypeAnalysis * ta) {
 
 void NegNode::typeAnalysis(TypeAnalysis * ta) {
 	myExp->typeAnalysis(ta);
-	TODO("Check that the type of NegNode's exp is integer");
-	ta->nodeType(this, BasicType::produce(INT));
+	const DataType * expType = ta->nodeType(myExp);
+    if(myExp.isInt()){ 
+        ta->nodeType(this, BasicType::produce(INT));
+    {
+    else{
+        ta->badRelation(this->line(), this->col());
+        ta->nodeType(this, ErrorType::produce());
+    }
 }
 
 void NotNode::typeAnalysis(TypeAnalysis * ta) {
 	myExp->typeAnalysis(ta);
-	TODO("Check that the type of NotNode's exp is boolean");
-	ta->nodeType(this, BasicType::produce(BOOL));
+	const DataType * expType = ta->nodeType(myExp);
+    if(myExp.isBool()){ 
+        ta->nodeType(this, BasicType::produce(BOOL));
+    {
+    else{
+        ta->badLogic(this->line(), this->col());
+        ta->nodeType(this, ErrorType::produce());
+    }
 }
 
 void VoidTypeNode::typeAnalysis(TypeAnalysis * ta) {
