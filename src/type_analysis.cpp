@@ -330,39 +330,76 @@ void EqualsNode::typeAnalysis(TypeAnalysis * ta) {
 	ta->nodeType(this, BasicType::produce(BOOL));
 }
 
+
 void NotEqualsNode::typeAnalysis(TypeAnalysis * ta) {
-	myExp1->typeAnalysis(ta);
+    myExp1->typeAnalysis(ta);
 	myExp2->typeAnalysis(ta);
-	TODO("Check that both types are the same type in NotEqualsNode");
-	ta->nodeType(this, BasicType::produce(BOOL));
+	const DataType * exp1Type = ta->nodeType(myExp1);
+	const DataType * exp2Type = ta->nodeType(myExp2);
+	TODO("There should be an if-else chain here to determine which error to throw.");
+    if(exp1Type){
+        ta->nodeType(this, BasicType::produce(BOOL));
+        }
+    else{
+        ta->badRelation(this->line(), this->col());
+        ta->nodeType(this, ErrorType::produce());
+    }
 }
 
 void LessNode::typeAnalysis(TypeAnalysis * ta) {
 	myExp1->typeAnalysis(ta);
 	myExp2->typeAnalysis(ta);
-	TODO("Check that both types are the same type in LessNode");
-	ta->nodeType(this, BasicType::produce(BOOL));
+	const DataType * exp1Type = ta->nodeType(myExp1);
+	const DataType * exp2Type = ta->nodeType(myExp2);
+	TODO("Double check that the correct error is thrown");
+    if((exp1Type.isInt())&&(exp2Type.isInt()))
+        ta->nodeType(this, BasicType::produce(BOOL));
+    else{
+        ta->badRelation(this->line(), this->col());
+        ta->nodeType(this, ErrorType::produce());
+    }
 }
 
 void LessEqNode::typeAnalysis(TypeAnalysis * ta) {
 	myExp1->typeAnalysis(ta);
 	myExp2->typeAnalysis(ta);
-	TODO("Check that both types are the same type in LessEqNode");
-	ta->nodeType(this, BasicType::produce(BOOL));
+	const DataType * exp1Type = ta->nodeType(myExp1);
+	const DataType * exp2Type = ta->nodeType(myExp2);
+	TODO("Double check that the correct error is thrown");
+    if((exp1Type.isInt())&&(exp2Type.isInt()))
+        ta->nodeType(this, BasicType::produce(BOOL));
+    else{
+        ta->badRelation(this->line(), this->col());
+        ta->nodeType(this, ErrorType::produce());
+    a->nodeType(this, BasicType::produce(BOOL));
 }
 
 void GreaterNode::typeAnalysis(TypeAnalysis * ta) {
 	myExp1->typeAnalysis(ta);
 	myExp2->typeAnalysis(ta);
-	TODO("Check that both types are the same type in GreaterNode");
-	ta->nodeType(this, BasicType::produce(BOOL));
-}
+	const DataType * exp1Type = ta->nodeType(myExp1);
+	const DataType * exp2Type = ta->nodeType(myExp2);
+	TODO("Double check that the correct error is thrown");
+    if((exp1Type.isInt())&&(exp2Type.isInt()))
+        ta->nodeType(this, BasicType::produce(BOOL));
+    else{
+        ta->badRelation(this->line(), this->col());
+        ta->nodeType(this, ErrorType::produce());
+    }}
 
 void GreaterEqNode::typeAnalysis(TypeAnalysis * ta) {
 	myExp1->typeAnalysis(ta);
 	myExp2->typeAnalysis(ta);
-	TODO("Check that both types are the same type in GreaterEqNode");
-	ta->nodeType(this, BasicType::produce(BOOL));
+	const DataType * exp1Type = ta->nodeType(myExp1);
+	const DataType * exp2Type = ta->nodeType(myExp2);
+	TODO("Double check that the correct error is thrown");
+    if((exp1Type.isInt())&&(exp2Type.isInt()))
+        ta->nodeType(this, BasicType::produce(BOOL));
+    else{
+        ta->badRelation(this->line(), this->col());
+        ta->nodeType(this, ErrorType::produce());
+    }
+
 }
 
 void UnaryExpNode::typeAnalysis(TypeAnalysis * ta) {
