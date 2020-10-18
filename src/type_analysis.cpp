@@ -41,6 +41,39 @@ void ProgramNode::typeAnalysis(TypeAnalysis * ta){
 	ta->nodeType(this, BasicType::produce(VOID));
 }
 
+void ExpNode::typeAnalysis(TypeAnalysis * ta){
+	TODO("Override me in the subclass");
+}
+
+void LValNode::typeAnalysis(TypeAnalysis * ta) {}
+
+void IDNode::typeAnalysis(TypeAnalysis * ta){
+	// IDs never fail type analysis and always
+	// yield the type of their symbol (which
+	// depends on their definition)
+	ta->nodeType(this, this->getSymbol()->getDataType());
+}
+
+void RefNode::typeAnalysis(TypeAnalysis * ta) {}
+void DerefNode::typeAnalysis(TypeAnalysis * ta) {}
+void IndexNode::typeAnalysis(TypeAnalysis * ta) {}
+void TypeNode::typeAnalysis(TypeAnalysis * ta) {}
+
+void StmtNode::typeAnalysis(TypeAnalysis * ta){
+	TODO("Implement me in the subclass");
+}
+
+void DeclNode::typeAnalysis(TypeAnalysis * ta) {
+	TODO("Override me in the subclass");
+}
+
+void VarDeclNode::typeAnalysis(TypeAnalysis * ta){
+	// VarDecls always pass type analysis, since they 
+	// are never used in an expression. You may choose
+	// to type them void (like this), as discussed in class
+	ta->nodeType(this, BasicType::produce(VOID));
+}
+
 void FnDeclNode::typeAnalysis(TypeAnalysis * ta){
 
 	//HINT: you might want to change the signature for
@@ -56,11 +89,6 @@ void FnDeclNode::typeAnalysis(TypeAnalysis * ta){
 		stmt->typeAnalysis(ta);
 	}
 }
-
-void StmtNode::typeAnalysis(TypeAnalysis * ta){
-	TODO("Implement me in the subclass");
-}
-
 void AssignStmtNode::typeAnalysis(TypeAnalysis * ta){
 	myExp->typeAnalysis(ta);
 
@@ -80,9 +108,19 @@ void AssignStmtNode::typeAnalysis(TypeAnalysis * ta){
 	}
 }
 
-void ExpNode::typeAnalysis(TypeAnalysis * ta){
-	TODO("Override me in the subclass");
-}
+void FromConsoleStmtNode::typeAnalysis(TypeAnalysis * ta) {}
+void ToConsoleStmtNode::typeAnalysis(TypeAnalysis * ta) {}
+void PostDecStmtNode::typeAnalysis(TypeAnalysis * ta) {}
+void PostIncStmtNode::typeAnalysis(TypeAnalysis * ta) {}
+void IfStmtNode::typeAnalysis(TypeAnalysis * ta) {}
+void IfElseStmtNode::typeAnalysis(TypeAnalysis * ta) {}
+void WhileStmtNode::typeAnalysis(TypeAnalysis * ta) {}
+void ReturnStmtNode::typeAnalysis(TypeAnalysis * ta) {}
+void CallExpNode::typeAnalysis(TypeAnalysis * ta) {}
+void BinaryExpNode::typeAnalysis(TypeAnalysis * ta) {}
+void UnaryExpNode::typeAnalysis(TypeAnalysis * ta) {}
+void NegNode::typeAnalysis(TypeAnalysis * ta) {}
+void NotNode::typeAnalysis(TypeAnalysis * ta) {}
 
 void AssignExpNode::typeAnalysis(TypeAnalysis * ta){
 	//TODO: Note that this function is incomplete. 
@@ -119,28 +157,17 @@ void AssignExpNode::typeAnalysis(TypeAnalysis * ta){
 	ta->nodeType(this, ErrorType::produce());
 }
 
-void DeclNode::typeAnalysis(TypeAnalysis * ta){
-	TODO("Override me in the subclass");
-}
-
-void VarDeclNode::typeAnalysis(TypeAnalysis * ta){
-	// VarDecls always pass type analysis, since they 
-	// are never used in an expression. You may choose
-	// to type them void (like this), as discussed in class
-	ta->nodeType(this, BasicType::produce(VOID));
-}
-
-void IDNode::typeAnalysis(TypeAnalysis * ta){
-	// IDs never fail type analysis and always
-	// yield the type of their symbol (which
-	// depends on their definition)
-	ta->nodeType(this, this->getSymbol()->getDataType());
-}
-
 void IntLitNode::typeAnalysis(TypeAnalysis * ta){
 	// IntLits never fail their type analysis and always
 	// yield the type INT
 	ta->nodeType(this, BasicType::produce(INT));
 }
+
+void StrLitNode::typeAnalysis(TypeAnalysis * ta) {}
+void CharLitNode::typeAnalysis(TypeAnalysis * ta) {}
+void NullPtrNode::typeAnalysis(TypeAnalysis * ta) {}
+void TrueNode::typeAnalysis(TypeAnalysis * ta) {}
+void FalseNode::typeAnalysis(TypeAnalysis * ta) {}
+void CallStmtNode::typeAnalysis(TypeAnalysis * ta) {}
 
 }
