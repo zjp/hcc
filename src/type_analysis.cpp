@@ -231,37 +231,41 @@ void WhileStmtNode::typeAnalysis(TypeAnalysis * ta) {
 
 // Currently causes a segfault
 void ReturnStmtNode::typeAnalysis(TypeAnalysis * ta) {
-	//const auto currFnType = ta->getCurrentFnType();
-	//if(currFnType->asBasic() == BasicType::produce(VOID)) {
-	//	ta->extraRetValue(myExp->line(), myExp->col());
-	//}
-	//myExp->typeAnalysis(ta);
-	//const DataType * myType = ta->nodeType(myExp);
-	//if(myType == currFnType) {
-	//	return;
-	//}
-	//ta->badRetValue(myExp->line(), myExp->col());
-	ta->nodeType(this, BasicType::produce(VOID));
+	const auto currFnType = ta->getCurrentFnType();
+	if(currFnType->asBasic() == BasicType::produce(VOID)) {
+		ta->extraRetValue(myExp->line(), myExp->col());
+	}
+	myExp->typeAnalysis(ta);
+	const DataType * myType = ta->nodeType(myExp);
+	if(myType == currFnType) {
+		return;
+	}
+	ta->badRetValue(myExp->line(), myExp->col());
+//	ta->nodeType(this, BasicType::produce(VOID));
 }
 
 void CallExpNode::typeAnalysis(TypeAnalysis * ta) {
     myID->typeAnalysis(ta);
-    auto myType = ta->nodeType(myID);
+	const auto myType = ta->getCurrentFnType();
+    //auto myType = ta->nodeType(myID);
     if(myType->asFn()){
         std::string result = "";
         bool first = true;
-        for (auto elt : myType->getFormalTypes){
+        for (auto elt : *myType->getFormalTypes()){
             if (first) { first = false; }
             else { result += ","; }
             result += elt->getString();
         }
         result += "->";
-        result += myType->getReturnType->getString();
+        result += myType->getReturnType()->getString();
         for(auto argt : *myArgs) {
             argt->typeAnalysis(ta);
         }
         if(result == myType->getString()){
-            ta->nodeType(this, BasicType::produce(myType->getReturnType()->getString()));
+           // ta->nodeType(this, DataType::produce(*myType->getReturnType()));
+            TODO("Fix typing for when args match signiture");
+            ta->nodeType(this, BasicType::produce(VOID));//temporary
+    
         }
         else if(myType->getFormalTypes()->size() != myArgs->size()){
             ta->badArgCount(myID->line(), myID->col());
@@ -275,7 +279,8 @@ void CallExpNode::typeAnalysis(TypeAnalysis * ta) {
     else{
         ta->badCallee(myID->line(), myID->col());
         ta->nodeType(this, ErrorType::produce());
-    }
+    } 
+//	ta->nodeType(this, BasicType::produce(VOID));
 }
 
 /**
@@ -295,27 +300,13 @@ void BinaryExpNode::typeAnalysis(TypeAnalysis * ta){
     const DataType * LHSType = ta->nodeType(myExp1);
 	const DataType * RHSType = ta->nodeType(myExp2);
 
-	//While incomplete, this gives you one case for 
-	// assignment: if the types are exactly the same
-	// it is usually ok to do the assignment. One
-	// exception is that if both types are function
-	// names, it should fail type analysis
-	if (LHSType == RHSType){
+		if (LHSType == RHSType){
 		ta->nodeType(this, LHSType);
 		return;
 	}
-	
-	//Some functions are already defined for you to
-	// report type errors. Note that these functions
-	// also tell the typeAnalysis object that the
-	// analysis has failed, meaning that main.cpp
-	// will print "Type check failed" at the end
 	ta->badAssignOpr(this->line(), this->col());
 
 
-	//Note that reporting an error does not set the
-	// type of the current node, so setting the node
-	// type must be done
 	ta->nodeType(this, ErrorType::produce());
 }
 
