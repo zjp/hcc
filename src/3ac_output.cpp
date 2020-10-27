@@ -94,7 +94,16 @@ Opd * RefNode::flatten(Procedure * proc){
 }
 
 Opd * CallExpNode::flatten(Procedure * proc){
-	TODO(Implement me)
+    size_t index = 1;
+    for (auto exp : *myArgs){
+        Opd* e = exp->flatten(proc);
+        SetArgQuad* a = new SetArgQuad(index, e);
+        index++;
+        proc->addQuad(a);
+    }
+    Label * l = new Label(myID->getName());
+    JmpQuad * j = new JmpQuad(l);
+	TODO(Verify Jump to proper label)
 }
 
 Opd * NegNode::flatten(Procedure * proc){
@@ -186,7 +195,8 @@ void WhileStmtNode::to3AC(Procedure * proc){
 }
 
 void CallStmtNode::to3AC(Procedure * proc){
-	TODO(Implement me)
+    myCallExp->flatten(proc);
+	TODO(Is this all it needs?)
 }
 
 void ReturnStmtNode::to3AC(Procedure * proc){
