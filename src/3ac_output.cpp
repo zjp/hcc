@@ -1,9 +1,19 @@
+#include <iterator> 
+
 #include "ast.hpp"
 
 #define MAKEBINOP(OPERATOR) \
 	Opd* tmp1 = myExp1->flatten(proc);\
 	Opd* tmp2 = myExp2->flatten(proc);\
 	Opd* dst = proc->makeTmp(QUADWORD);\
+	BinOpQuad* b = new BinOpQuad(dst, OPERATOR, tmp1, tmp2);\
+	proc->addQuad(b);\
+	return dst;
+
+#define MAKEVARWIDTHBINOP(OPERATOR) \
+	Opd* tmp1 = myExp1->flatten(proc);\
+	Opd* tmp2 = myExp2->flatten(proc);\
+	Opd* dst = proc->makeTmp(tmp1->getWidth());\
 	BinOpQuad* b = new BinOpQuad(dst, OPERATOR, tmp1, tmp2);\
 	proc->addQuad(b);\
 	return dst;
@@ -18,6 +28,9 @@
 #define MAKELITOPD(VALUE, TYPE)\
 	return new LitOpd(VALUE, TYPE);
 
+#define MAKEINTRINSICQUAD(TYPE, OP)\
+	return new LitOpd
+
 namespace holeyc{
 
 IRProgram * ProgramNode::to3AC(TypeAnalysis * ta){
@@ -29,14 +42,17 @@ IRProgram * ProgramNode::to3AC(TypeAnalysis * ta){
 }
 
 void FnDeclNode::to3AC(IRProgram * prog){
-    Procedure * p  = new Procedure(prog, myID->getName()); 
+    Procedure *p  = prog->makeProc(myID->getName()); 
+	size_t formalNumber = 0;
     for (auto child : *myFormals){
-        child->to3AC(p);
-    }
-    for (auto child : *myBody){
-        child->to3AC(p);
-    }
-    TODO(Verify me)
+		child->to3AC(p);
+		p->addQuad(
+				new GetArgQuad(
+					static_cast<size_t>(std::distance(*myFormals->begin(), child))
+					, p->getSymOpd(child->ID()->getSymbol())
+					)
+				);
+	}
 }
 
 /* Do Not Implement */
@@ -70,11 +86,11 @@ Opd * NullPtrNode::flatten(Procedure * proc){
 }
 
 Opd * TrueNode::flatten(Procedure * prog){
-	TODO(Implement me)
+	MAKELITOPD("1", BYTE);
 }
 
 Opd * FalseNode::flatten(Procedure * prog){
-	TODO(Implement me)
+	MAKELITOPD("0", BYTE);
 }
 
 Opd * AssignExpNode::flatten(Procedure * proc){
@@ -139,11 +155,11 @@ Opd * OrNode::flatten(Procedure * proc){
 }
 
 Opd * EqualsNode::flatten(Procedure * proc){
-	MAKEBINOP(EQ)
+	MAKEVARWIDTHBINOP(EQ)
 }
 
 Opd * NotEqualsNode::flatten(Procedure * proc){
-	MAKEBINOP(NEQ)
+	MAKEVARWIDTHBINOP(NEQ)
 }
 
 Opd * LessNode::flatten(Procedure * proc){
@@ -164,6 +180,7 @@ Opd * GreaterEqNode::flatten(Procedure * proc){
 
 void AssignStmtNode::to3AC(Procedure * proc){
 	TODO(Implement me)
+	//myExp->flatten(proc);
 }
 
 void PostIncStmtNode::to3AC(Procedure * proc){
