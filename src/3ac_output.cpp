@@ -77,11 +77,11 @@ Opd * NullPtrNode::flatten(Procedure * proc){
 }
 
 Opd * TrueNode::flatten(Procedure * prog){
-	TODO(Implement me)
+	MAKELITOPT("1", BYTE);
 }
 
 Opd * FalseNode::flatten(Procedure * prog){
-	TODO(Implement me)
+	MAKELITOPT("0", BYTE);
 }
 
 Opd * AssignExpNode::flatten(Procedure * proc){
