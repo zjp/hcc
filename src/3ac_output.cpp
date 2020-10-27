@@ -1,3 +1,5 @@
+#include <iterator> 
+
 #include "ast.hpp"
 
 #define MAKEBINOP(OPERATOR) \
@@ -26,6 +28,9 @@
 #define MAKELITOPD(VALUE, TYPE)\
 	return new LitOpd(VALUE, TYPE);
 
+#define MAKEINTRINSICQUAD(TYPE, OP)\
+	return new LitOpd
+
 namespace holeyc{
 
 IRProgram * ProgramNode::to3AC(TypeAnalysis * ta){
@@ -38,12 +43,16 @@ IRProgram * ProgramNode::to3AC(TypeAnalysis * ta){
 
 void FnDeclNode::to3AC(IRProgram * prog){
     Procedure *p  = prog->makeProc(myID->getName()); 
+	size_t formalNumber = 0;
     for (auto child : *myFormals){
-        child->to3AC(p);
-    }
-    for (auto child : *myBody){
-        child->to3AC(p);
-    }
+		child->to3AC(p);
+		p->addQuad(
+				new GetArgQuad(
+					static_cast<size_t>(std::distance(*myFormals->begin(), child))
+					, p->getSymOpd(child->ID()->getSymbol())
+					)
+				);
+	}
 }
 
 /* Do Not Implement */
@@ -162,6 +171,7 @@ Opd * GreaterEqNode::flatten(Procedure * proc){
 
 void AssignStmtNode::to3AC(Procedure * proc){
 	TODO(Implement me)
+	//myExp->flatten(proc);
 }
 
 void PostIncStmtNode::to3AC(Procedure * proc){
