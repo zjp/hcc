@@ -190,7 +190,9 @@ void CallStmtNode::to3AC(Procedure * proc){
 }
 
 void ReturnStmtNode::to3AC(Procedure * proc){
-	TODO(Implement me)
+	Opd* ret = myExp->flatten(proc);
+	SetRetQuad* r = new SetRetQuad(ret);
+	proc->addQuad(r);
 }
 
 void VarDeclNode::to3AC(Procedure * proc){
