@@ -8,6 +8,14 @@
 	proc->addQuad(b);\
 	return dst;
 
+#define MAKEVARWIDTHBINOP(OPERATOR) \
+	Opd* tmp1 = myExp1->flatten(proc);\
+	Opd* tmp2 = myExp2->flatten(proc);\
+	Opd* dst = proc->makeTmp(tmp1->getWidth());\
+	BinOpQuad* b = new BinOpQuad(dst, OPERATOR, tmp1, tmp2);\
+	proc->addQuad(b);\
+	return dst;
+
 #define MAKEUNOP(OPERATOR) \
 	Opd* dst = proc->makeTmp(QUADWORD);\
 	Opd* tmp = myExp->flatten(proc);\
@@ -29,14 +37,13 @@ IRProgram * ProgramNode::to3AC(TypeAnalysis * ta){
 }
 
 void FnDeclNode::to3AC(IRProgram * prog){
-    Procedure * p  = new Procedure(prog, myID->getName()); 
+    Procedure *p  = prog->makeProc(myID->getName()); 
     for (auto child : *myFormals){
         child->to3AC(p);
     }
     for (auto child : *myBody){
         child->to3AC(p);
     }
-    TODO(Verify me)
 }
 
 /* Do Not Implement */
@@ -130,11 +137,11 @@ Opd * OrNode::flatten(Procedure * proc){
 }
 
 Opd * EqualsNode::flatten(Procedure * proc){
-	MAKEBINOP(EQ)
+	MAKEVARWIDTHBINOP(EQ)
 }
 
 Opd * NotEqualsNode::flatten(Procedure * proc){
-	MAKEBINOP(NEQ)
+	MAKEVARWIDTHBINOP(NEQ)
 }
 
 Opd * LessNode::flatten(Procedure * proc){
