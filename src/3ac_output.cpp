@@ -11,7 +11,14 @@ IRProgram * ProgramNode::to3AC(TypeAnalysis * ta){
 }
 
 void FnDeclNode::to3AC(IRProgram * prog){
-	TODO(Implement me)
+    Procedure * p  = new Procedure(prog, myID->getName()); 
+    for (auto child : *myFormals){
+        child->to3AC(p);
+    }
+    for (auto child : *myBody){
+        child->to3AC(p);
+    }
+    TODO(Verify me)
 }
 
 /* Do Not Implement */
