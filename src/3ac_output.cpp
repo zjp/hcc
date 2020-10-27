@@ -1,5 +1,23 @@
 #include "ast.hpp"
 
+#define MAKEBINOP(OPERATOR) \
+	Opd* tmp1 = myExp1->flatten(proc);\
+	Opd* tmp2 = myExp2->flatten(proc);\
+	Opd* dst = proc->makeTmp(QUADWORD);\
+	BinOpQuad* b = new BinOpQuad(dst, OPERATOR, tmp1, tmp2);\
+	proc->addQuad(b);\
+	return dst;
+
+#define MAKEUNOP(OPERATOR) \
+	Opd* dst = proc->makeTmp(QUADWORD);\
+	Opd* tmp = myExp->flatten(proc);\
+	UnaryOpQuad* u = new UnaryOpQuad(dst, OPERATOR, tmp);\
+	proc->addQuad(u);\
+	return dst;
+
+#define MAKELITOPD(VALUE, TYPE)\
+	return new LitOpd(VALUE, TYPE);
+
 namespace holeyc{
 
 IRProgram * ProgramNode::to3AC(TypeAnalysis * ta){
@@ -34,21 +52,21 @@ void FormalDeclNode::to3AC(Procedure * proc){
 }
 
 Opd * IntLitNode::flatten(Procedure * proc){
-	return new LitOpd(std::to_string(myNum), QUADWORD);
+	MAKELITOPD(std::to_string(myNum), QUADWORD);
 }
 
 Opd * StrLitNode::flatten(Procedure * proc){
+	// MAKELITOPD(proc->getProg()->makeString(myStr), ??)
 	Opd * res = proc->getProg()->makeString(myStr);
 	return res;
 }
 
 Opd * CharLitNode::flatten(Procedure * proc){
-	TODO(Implement me)
+	MAKELITOPD(std::to_string(myVal), BYTE);
 }
 
 Opd * NullPtrNode::flatten(Procedure * proc){
-	return new LitOpd("0", ADDR);
-	TODO(Implement me)
+	MAKELITOPD("0", ADDR);
 }
 
 Opd * TrueNode::flatten(Procedure * prog){
@@ -80,59 +98,59 @@ Opd * CallExpNode::flatten(Procedure * proc){
 }
 
 Opd * NegNode::flatten(Procedure * proc){
-	TODO(Implement me)
+	MAKEUNOP(NEG);
 }
 
 Opd * NotNode::flatten(Procedure * proc){
-	TODO(Implement me)
+	MAKEUNOP(NOT);
 }
 
 Opd * PlusNode::flatten(Procedure * proc){
-	TODO(Implement me)
+	MAKEBINOP(ADD)
 }
 
 Opd * MinusNode::flatten(Procedure * proc){
-	TODO(Implement me)
+	MAKEBINOP(SUB)
 }
 
 Opd * TimesNode::flatten(Procedure * proc){
-	TODO(Implement me)
+	MAKEBINOP(MULT)
 }
 
 Opd * DivideNode::flatten(Procedure * proc){
-	TODO(Implement me)
+	MAKEBINOP(DIV)
 }
 
 Opd * AndNode::flatten(Procedure * proc){
-	TODO(Implement me)
+	MAKEBINOP(AND)
 }
 
 Opd * OrNode::flatten(Procedure * proc){
-	TODO(Implement me)
+	MAKEBINOP(OR)
 }
 
 Opd * EqualsNode::flatten(Procedure * proc){
-	TODO(Implement me)
+	MAKEBINOP(EQ)
 }
 
 Opd * NotEqualsNode::flatten(Procedure * proc){
-	TODO(Implement me)
+	MAKEBINOP(NEQ)
 }
 
 Opd * LessNode::flatten(Procedure * proc){
-	TODO(Implement me)
+	MAKEBINOP(LT)
 }
 
 Opd * GreaterNode::flatten(Procedure * proc){
-	TODO(Implement me)
+	MAKEBINOP(GT)
 }
 
 Opd * LessEqNode::flatten(Procedure * proc){
-	TODO(Implement me)
+	MAKEBINOP(LTE)
 }
 
 Opd * GreaterEqNode::flatten(Procedure * proc){
-	TODO(Implement me)
+	MAKEBINOP(GTE)
 }
 
 void AssignStmtNode::to3AC(Procedure * proc){

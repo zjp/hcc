@@ -208,9 +208,9 @@ public:
 	void typeAnalysis(TypeAnalysis * typing) override;
 	virtual void to3AC(Procedure * proc) override;
 	virtual void to3AC(IRProgram * prog) override;
-private:
+protected:
 	TypeNode * myType;
-	IDNode * myID;
+	IDNode* myID;
 };
 
 class FormalDeclNode : public VarDeclNode{

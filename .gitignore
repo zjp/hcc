@@ -16,3 +16,4 @@ parser.output
 /a
 /b
 /tests/symbol-table/.Makefile.swp
+*.3ac
