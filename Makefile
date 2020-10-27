@@ -25,6 +25,7 @@ CPP_SRCS := $(wildcard $(SRCDIR)/*.cpp)
 
 OBJ_SRCS := $(OBJDIR)/parser.o $(OBJDIR)/lexer.o $(CPP_SRCS:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
+3AC_TRANS_TESTS := $(wildcard $(TESTDIR)/3ac-translation/*.holeyc)
 TYPE_ANALYZER_TESTS := $(wildcard $(TESTDIR)/type-analysis/*.holeyc)
 SYMBOL_TABLE_TESTS := $(wildcard $(TESTDIR)/symbol-table/*.holeyc)
 LEXER_TESTS := $(wildcard $(TESTDIR)/lexer/*.holeyc)
@@ -122,9 +123,25 @@ else
 endif
 	$(CXX) -g -std=c++14 -I$(INCDIR) -I$(INCLUDES) -c $(SRCDIR)/lexer.yy.cc -o $(OBJDIR)/lexer.o
 
-test: test-type-analyzer
+test: test-3ac-translation
 
-testall: test-lexer test-parser test-symbol-table test-type-analyzer
+testall: test-lexer test-parser test-symbol-table test-type-analyzer test-3ac-translation
+
+test-3ac-translation:
+	@ echo ""
+	@ echo "Testing $*.holeyc"
+	for file in $(3AC_TRANS_TESTS); \
+	do \
+		echo "";\
+		echo $$file;\
+		touch $${file%.*}.3ac; \
+		touch $${file%.*}.err; \
+        ./holeycc $$file -a $${file%.*}.3ac 2> $${file%.*}.err ;\
+		echo "Diff of output";\
+		diff --text $${file%.*}.3ac $${file%.*}.3ac.expected; \
+		echo "Diff of error";\
+		diff --text $${file%.*}.err $${file%.*}.err.expected; \
+	done
 
 test-type-analyzer:
 	@ echo ""
@@ -184,7 +201,13 @@ test-lexer:
 		diff --text $${file%.*}.err $${file%.*}.err.expected; \
 	done
 
-cleantest: clean-type-analysis-test
+cleantest: clean-3ac-translation-test
+
+clean-3ac-translation-test:
+	for file in $(3AC_TRANS_TESTS); \
+	do \
+		rm -f $${file%.*}.out $${file%.*}.err; \
+	done
 
 clean-type-analysis-test:
 	for file in $(TYPE_ANALZER_TESTS); \
@@ -209,5 +232,3 @@ clean-lexer-test:
 	do \
 		rm -f $${file%.*}.out $${file%.*}.err; \
 	done
-
-cleanalltest: clean-parser-test clean-lexer-test clean-symbol-table-test

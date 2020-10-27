@@ -3,6 +3,7 @@
 
 #include <list>
 #include <sstream>
+#include "err.hpp"
 #include "errors.hpp"
 
 #include <unordered_map>
@@ -42,8 +43,10 @@ public:
 	virtual bool isVoid() const { return false; }
 	virtual bool isInt() const { return false; }
 	virtual bool isBool() const { return false; }
+	virtual bool isChar() const { return false; }
 	virtual bool isPtr() const { return false; }
 	virtual bool validVarType() const = 0 ;
+	virtual size_t getSize() const = 0;
 protected:
 };
 
@@ -65,6 +68,7 @@ public:
 		return "ERROR";
 	}
 	virtual bool validVarType() const override { return false; }
+	virtual size_t getSize() const override { return 0; }
 private:
 	ErrorType(){ 
 		/* private constructor, can only 
@@ -75,11 +79,8 @@ private:
 };
 
 //DataType subclass for all scalar types 
-class BasicType : public DataType {
+class BasicType : public DataType{
 public:
-	const BasicType * asBasic() const override {
-		return this;
-	}
 	static BasicType * VOID(){
 		return produce(BaseType::VOID);
 	}
@@ -122,14 +123,17 @@ public:
 		flyweights.push_back(newType);
 		return newType;
 	}
-	const BasicType * asVar() const {
+	const BasicType * asBasic() const override {
 		return this;
 	}
-	BasicType * asVar(){
+	BasicType * asBasic(){
 		return this;
 	}
 	bool isInt() const override {
 		return myBaseType == BaseType::INT;
+	}
+	bool isChar() const override {
+		return myBaseType == BaseType::CHAR;
 	}
 	bool isBool() const override {
 		return myBaseType == BaseType::BOOL;
@@ -142,7 +146,13 @@ public:
 	}
 	virtual BaseType getBaseType() const { return myBaseType; }
 	virtual std::string getString() const override;
-
+	virtual size_t getSize() const override { 
+		if (isBool()){ return 1; }
+		else if (isChar()){ return 1; }
+		else if (isVoid()){ return 8; }
+		else if (isInt()){ return 8; }
+		else { return 0; }
+	}
 private:
 	BasicType(BaseType base) 
 	: myBaseType(base){ }
@@ -188,11 +198,16 @@ public:
 	}
 
 	/* Remove a level of indirection to the pointer type */
-	DataType * decLevel() const{
-		return PtrType::produce(myBasicType, myLevel - 1);
+	const DataType * decLevel() const{
+		int newLevel = myLevel - 1;
+		if (newLevel == 0){
+			return myBasicType;
+		} else {
+			return PtrType::produce(myBasicType, newLevel);
+		}
 	}
 
-	static DataType * derefType(const DataType * type){
+	static const DataType * derefType(const DataType * type){
 		if (type->asError()){ 
 			return ErrorType::produce();
 		} else if (const PtrType * t = type->asPtr()){ 
@@ -221,6 +236,7 @@ public:
 	bool isPtr() const override { return true; } 
 	const PtrType * asPtr() const override { return this; }
 	int getLevel(){ return myLevel; }
+	virtual size_t getSize() const override { return 8; }
 	
 private:
 	PtrType(const BasicType * basicType, int level)
@@ -262,6 +278,7 @@ public:
 		return myFormalTypes;
 	}
 	virtual bool validVarType() const override { return false; }
+	virtual size_t getSize() const override { return 0; }
 private:
 	const std::list<const DataType *> * myFormalTypes;
 	const DataType * myRetType;

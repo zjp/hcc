@@ -16,6 +16,7 @@ static void usageAndDie(){
 	<< " [-u <unparseFile>]: Unparse to <unparseFile>\n"
 	<< " [-n <nameFile]: Output name analysis to <namesFile>\n"
 	<< " [-c]: Do type checking\n"
+	<< " [-a <3ACFile>]: Output 3AC program to <3ACFile>\n"
 	<< "\n"
 	;
 	std::cout << std::flush;
@@ -90,14 +91,37 @@ static bool doUnparsing(std::ifstream * input, const char * outPath){
 
 static holeyc::NameAnalysis * doNameAnalysis(std::ifstream * input){
 	holeyc::ProgramNode * ast = syntacticAnalysis(input);
-	if (ast == nullptr) { return nullptr; }
+	if (ast == nullptr){ return nullptr; }
+
 	return holeyc::NameAnalysis::build(ast);
 }
 
 static holeyc::TypeAnalysis * doTypeAnalysis(std::ifstream * input){
 	holeyc::NameAnalysis * nameAnalysis = doNameAnalysis(input);
-	if (nameAnalysis == nullptr) { return nullptr; }
+	if (nameAnalysis == nullptr){ return nullptr; }
+
 	return holeyc::TypeAnalysis::build(nameAnalysis);
+}
+
+static holeyc::IRProgram * do3AC(std::ifstream * input){
+	holeyc::TypeAnalysis * typeAnalysis = doTypeAnalysis(input);
+	if (typeAnalysis == nullptr){ return nullptr; }
+
+	return typeAnalysis->ast->to3AC(typeAnalysis);
+}
+
+static void write3AC(holeyc::IRProgram * prog, const char * outPath){
+	if (outPath == nullptr){
+		throw new InternalError("Null 3AC file given");
+	}
+	std::string flatProg = prog->toString();
+	if (strcmp(outPath, "--") == 0){
+		std::cout << flatProg << std::endl;
+	} else {
+		std::ofstream outStream(outPath);
+		outStream << flatProg << std::endl;
+		outStream.close();
+	}
 }
 
 int main(int argc, char * argv[]){
@@ -121,6 +145,8 @@ int main(int argc, char * argv[]){
                          // a no-op
 	bool checkTypes = false;	   // Flag set if doing 
 					   // syntactic analysis
+	const char * threeACFile = NULL;	   // Output file if doing
+					   // 3AC conversion
 	for (int i = 1; i < argc; i++){
 		if (argv[i][0] == '-'){
 			if (argv[i][1] == 't'){
@@ -145,6 +171,11 @@ int main(int argc, char * argv[]){
 			} else if (argv[i][1] == 'c'){
 				i++;
 				checkTypes = true;
+				useful = true;
+			} else if (argv[i][1] == 'a'){
+				i++;
+				if (i >= argc){ usageAndDie(); }
+				threeACFile = argv[i];
 				useful = true;
 			} else {
 				std::cerr << "Unknown option"
@@ -173,7 +204,7 @@ int main(int argc, char * argv[]){
 			doUnparsing(input, unparseFile);
 		}
 		if (nameFile){
-			holeyc::NameAnalysis* na;
+			holeyc::NameAnalysis * na;
 			na = doNameAnalysis(input); 
 			if (na != nullptr){
 				outputAST(na->ast, nameFile);
@@ -183,6 +214,16 @@ int main(int argc, char * argv[]){
 			return 1;
 		}
 		if (checkTypes){
+			if (doTypeAnalysis(input) != nullptr){
+				return 0;
+			}
+			std::cerr << "Type Analysis Failed\n";
+			return 1;
+		}
+		if (threeACFile){
+			if (auto prog = do3AC(input)){
+				write3AC(prog, threeACFile);
+			}
 			if (doTypeAnalysis(input) != nullptr){
 				return 0;
 			}

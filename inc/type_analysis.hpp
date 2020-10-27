@@ -1,5 +1,5 @@
-#ifndef XXLANG_TYPE_ANALYSIS
-#define XXLANG_TYPE_ANALYSIS
+#ifndef HOLEYC_TYPE_ANALYSIS
+#define HOLEYC_TYPE_ANALYSIS
 
 #include "ast.hpp"
 #include "symbol_table.hpp"
@@ -67,11 +67,57 @@ public:
 	//The following functions all report and error and 
 	// tell the object that the analysis has failed. 
 
+	void badWriteFn(size_t line, size_t col){
+		hasError = true;
+		Report::fatal(line, col,
+			"Attempt to output a function");
+	}
+
+	void badWriteVoid(size_t line, size_t col){
+		hasError = true;
+		Report::fatal(line, col, 
+			"Attempt to write void");
+	}
+
+	void badReadFn(size_t line, size_t col){
+		hasError = true;
+		Report::fatal(line, col,
+			"Attempt to read a function");
+	}
+
+	void badCallee(size_t line, size_t col){
+		hasError = true;
+		Report::fatal(line, col,
+			"Attempt to call a "
+			"non-function");
+	}
+	void badArgCount(size_t line, size_t col){
+		hasError = true;
+		Report::fatal(line, col,
+			"Function call with wrong"
+			" number of args");
+	}
 	void badArgMatch(size_t line, size_t col){
 		hasError = true;
 		Report::fatal(line, col, 
 			"Type of actual does not match"
 			" type of formal");
+	}
+	void badNoRet(size_t line, size_t col){
+		hasError = true;
+		Report::fatal(line, col, 
+			"Missing return value");
+	}
+	void extraRetValue(size_t line, size_t col){
+		hasError = true;
+		Report::fatal(line, col, 
+			"Return with a value in void"
+			" function");
+	}
+	void badRetValue(size_t line, size_t col){
+		hasError = true;
+		Report::fatal(line, col, 
+			"Bad return value");
 	}
 	void badMathOpd(size_t line, size_t col){
 		hasError = true;
@@ -85,37 +131,29 @@ public:
 			"Arithmetic operator applied"
 			" to incompatible operands");
 	}
-	void badIndex(size_t line, size_t col){
-		hasError = true;
-		Report::fatal(line, col, "Bad index type");
-	}
-	void badPtrBase(size_t line, size_t col){
-		hasError = true;
-		Report::fatal(line, col, "Attempt to index"
-		  "a non-pointer type"
-		);
-	}
-	void badArgCount(size_t line, size_t col){
+	void badRelOpd(size_t line, size_t col){
 		hasError = true;
 		Report::fatal(line, col,
-			"Function call with wrong"
-			" number of args");
+			"Relational operator applied to"
+			" non-numeric operand");
 	}
-	void badCallee(size_t line, size_t col){
+	void badLogicOpd(size_t line, size_t col){
 		hasError = true;
 		Report::fatal(line, col,
-			"Attempt to call a "
-			"non-function");
+			"Logical operator applied to"
+			" non-bool operand");
 	}
-	void badAssignOpr(size_t line, size_t col){
+	void badIfCond(size_t line, size_t col){
 		hasError = true;
 		Report::fatal(line, col, 
-			"Invalid assignment operation");
+			"Non-bool expression used as"
+			" an if condition");
 	}
-	void badAssignOpd(size_t line, size_t col){
+	void badWhileCond(size_t line, size_t col){
 		hasError = true;
-		Report::fatal(line, col, 
-			"Invalid assignment operand");
+		Report::fatal(line, col,
+			"Non-bool expression used as"
+			" a while condition");
 	}
 	void badEqOpd(size_t line, size_t col){
 		hasError = true;
@@ -127,68 +165,43 @@ public:
 		Report::fatal(line, col, 
 			"Invalid equality operation");
 	}
-	void badLogicOpd(size_t line, size_t col){
-		hasError = true;
-		Report::fatal(line, col,
-			"Logical operator applied to"
-			" non-bool operand");
-	}
-	void badNoRet(size_t line, size_t col){
+	void badAssignOpr(size_t line, size_t col){
 		hasError = true;
 		Report::fatal(line, col, 
-			"Missing return value");
+			"Invalid assignment operation");
 	}
-	void badRelOpd(size_t line, size_t col){
-		hasError = true;
-		Report::fatal(line, col,
-			"Relational operator applied to"
-			" non-numeric operand");
-	}
-	void badWriteVoid(size_t line, size_t col){
+	void badAssignOpd(size_t line, size_t col){
 		hasError = true;
 		Report::fatal(line, col, 
-			"Attempt to write void");
+			"Invalid assignment operand");
 	}
 
-	void badWhileCond(size_t line, size_t col){
+	void badWritePtr(size_t line, size_t col){
 		hasError = true;
 		Report::fatal(line, col,
-			"Non-bool expression used as"
-			" a while condition");
+			"Attempt to write a raw pointer");
 	}
-	void badIfCond(size_t line, size_t col){
-		hasError = true;
-		Report::fatal(line, col, 
-			"Non-bool expression used as"
-			" an if condition");
-	}
-	void badRetValue(size_t line, size_t col){
-		hasError = true;
-		Report::fatal(line, col, 
-			"Bad return value");
-	}
-	void extraRetValue(size_t line, size_t col){
-		hasError = true;
-		Report::fatal(line, col, 
-			"Return with a value in void"
-			" function");
-	}
-	void writeFn(size_t line, size_t col){
-		hasError = true;
-		Report::fatal(line, col,
-			"Attempt to write a function");
-	}
+
 	
-	void readFn(size_t line, size_t col){
-		hasError = true;
-		Report::fatal(line, col,
-			"Attempt to read a function");
-	}
 	void fnDeref(size_t line, size_t col){
 		hasError = true;
 		Report::fatal(line, col,
 			"Attempt to dereference a function");
 	}
+	void badIndex(size_t line, size_t col){
+		hasError = true;
+		Report::fatal(line, col, "Bad index type");
+	}
+	void badPtrBase(size_t line, size_t col){
+		hasError = true;
+		Report::fatal(line, col, "Attempt to index"
+		  "a non-pointer type"
+		);
+	}
+	void badRefOpd(size_t line, size_t col){
+		Report::fatal(line, col, "Invalid ref operand");
+	}
+
 private:
 	HashMap<const ASTNode *, const DataType *> nodeToType;
 	const FnType * currentFnType;
