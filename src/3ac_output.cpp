@@ -28,8 +28,8 @@
 #define MAKELITOPD(VALUE, TYPE)\
 	return new LitOpd(VALUE, TYPE);
 
-#define MAKEINTRINSICQUAD(TYPE, OP)\
-	return new LitOpd
+//#define MAKEINTRINSICQUAD(TYPE, OP)\
+	//return new LitOpd
 
 namespace holeyc{
 
@@ -202,14 +202,21 @@ void ToConsoleStmtNode::to3AC(Procedure * proc){
 
 void IfStmtNode::to3AC(Procedure * proc){
 	TODO(Implement me)
+	// JumpQuad 
+	// JumpIfQuad
 }
 
 void IfElseStmtNode::to3AC(Procedure * proc){
 	TODO(Implement me)
+	// JumpIfQuad if statement is true
+	// else JumpQuad to else label
 }
 
 void WhileStmtNode::to3AC(Procedure * proc){
 	TODO(Implement me)
+	// LabelTopOfStatement
+	// Statement Body
+	// If statement is still true then JumpIfQuad
 }
 
 void CallStmtNode::to3AC(Procedure * proc){
@@ -218,6 +225,7 @@ void CallStmtNode::to3AC(Procedure * proc){
 //	proc->addQuad(c);
   //  GetRetQuad * gret = new GetRetQuad(s);
 //	proc->addQuad(gret);
+//
 	TODO(fix me)
 
 }
