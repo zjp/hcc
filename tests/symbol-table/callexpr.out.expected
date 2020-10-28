@@ -1,6 +1,0 @@
-int b;
-bool a;
-void func(int f, int b, bool c){
-	int a;
-	a(int) = (func(int,int,bool->void)(7, "hello"));
-}

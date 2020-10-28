@@ -1,3 +1,0 @@
-FATAL [2,1]: String literal with bad escape sequence ignored
-FATAL [4,1]: Unterminated string literal ignored
-FATAL [5,1]: Unterminated string literal  with bad escape sequence ignored

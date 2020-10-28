@@ -1,8 +1,0 @@
-""
-"&!88"
-"use \n to denote a newline character"
-"use \" to  for a quote and \\ for a backslash"
-"unterminated
-"also unterminated \"
-"backslash followed by space: \ is not allowed"
-"bad escaped character: \a AND not terminated

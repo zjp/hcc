@@ -1,5 +1,0 @@
-boolptr glob;
-int main(){
-	int a;
-	glob(boolptr) = a(int);
-}

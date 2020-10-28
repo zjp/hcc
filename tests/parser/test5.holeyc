@@ -1,9 +1,0 @@
-int a;
-intptr b;
-int c;
-int fn(){
-a = 1;
-c = 9;
-b = ^c;
-b[0] = a;
-}

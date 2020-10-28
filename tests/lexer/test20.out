@@ -1,3 +1,0 @@
-STRINGLIT:"one\n" [1,1]
-STRINGLIT:"three" [3,1]
-EOF [6,1]

@@ -1,8 +1,0 @@
-[BEGIN GLOBALS]
-[END GLOBALS]
-[BEGIN fn LOCALS]
-a (local)
-[END fn LOCALS]
-lbl_fun_fn: enter fn
-            [a] := 4
-lbl_0:      leave fn

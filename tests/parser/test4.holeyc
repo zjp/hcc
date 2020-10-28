@@ -1,7 +1,0 @@
-void main() {
-	int age;
-	TOCONSOLE "enter your age: ";
-	FROMCONSOLE age;
-	TOCONSOLE "\nyour age is";
-	TOCONSOLE age;
-}
