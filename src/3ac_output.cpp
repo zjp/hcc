@@ -28,7 +28,7 @@
 #define MAKELITOPD(VALUE, TYPE)\
 	return new LitOpd(VALUE, TYPE);
 
-//#define MAKEINTRINSICQUAD(TYPE, OP)\
+//#define MAKEINTRINSICQUAD(TYPE, OP)
 	//return new LitOpd
 
 namespace holeyc{
@@ -43,8 +43,7 @@ IRProgram * ProgramNode::to3AC(TypeAnalysis * ta){
 
 void FnDeclNode::to3AC(IRProgram * prog){
     Procedure *p  = prog->makeProc(myID->getName()); 
-	size_t formalNumber = 0;
-    for (auto child : *myFormals){
+    for (auto child : *myFormals) {
 		child->to3AC(p);
 		p->addQuad(
 				new GetArgQuad(
@@ -52,6 +51,9 @@ void FnDeclNode::to3AC(IRProgram * prog){
 					, p->getSymOpd(child->ID()->getSymbol())
 					)
 				);
+	}
+	for (auto statement : *myBody) {
+		statement->to3AC(p);
 	}
 }
 
@@ -72,7 +74,6 @@ Opd * IntLitNode::flatten(Procedure * proc){
 }
 
 Opd * StrLitNode::flatten(Procedure * proc){
-	// MAKELITOPD(proc->getProg()->makeString(myStr), ??)
 	Opd * res = proc->getProg()->makeString(myStr);
 	return res;
 }
@@ -94,12 +95,15 @@ Opd * FalseNode::flatten(Procedure * prog){
 }
 
 Opd * AssignExpNode::flatten(Procedure * proc){
-	TODO(Implement me)
+	Opd* src = mySrc->flatten(proc);
+	Opd* dst = myDst->flatten(proc);
+	proc->addQuad(new AssignQuad(dst, src));
+	return dst;
 }
 
-Opd * LValNode::flatten(Procedure * proc){
-	TODO(Implement me)
-}
+//Opd * LValNode::flatten(Procedure * proc){
+//	TODO(Implement me)
+//}
 
 Opd * DerefNode::flatten(Procedure * proc){
 	TODO(Implement me)
@@ -110,7 +114,7 @@ Opd * RefNode::flatten(Procedure * proc){
 }
 
 Opd * CallExpNode::flatten(Procedure * proc){
-/*    size_t index = 1;
+    size_t index = 1;
     for (auto exp : *myArgs){
         Opd* e = exp->flatten(proc);
         SetArgQuad* a = new SetArgQuad(index, e);
@@ -119,8 +123,6 @@ Opd * CallExpNode::flatten(Procedure * proc){
     }
     SymOpd * sym = proc->getSymOpd(myID->getSymbol());
     return sym;
-    */
-    TODO(Fix Me);
 }
 
 Opd * NegNode::flatten(Procedure * proc){
@@ -180,8 +182,7 @@ Opd * GreaterEqNode::flatten(Procedure * proc){
 }
 
 void AssignStmtNode::to3AC(Procedure * proc){
-	TODO(Implement me)
-	//myExp->flatten(proc);
+	myExp->flatten(proc);
 }
 
 void PostIncStmtNode::to3AC(Procedure * proc){
@@ -256,7 +257,7 @@ void VarDeclNode::to3AC(IRProgram * prog){
 //We only get to this node if we are in a stmt
 // context (DeclNodes protect descent) 
 Opd * IDNode::flatten(Procedure * proc){
-	TODO(Implement me)
+	return proc->getSymOpd(this->getSymbol());	
 }
 
 

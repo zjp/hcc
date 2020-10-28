@@ -89,7 +89,7 @@ public:
 	void attachSymbol(SemSymbol * symbolIn) { } 
 	bool nameAnalysis(SymbolTable * symTab) override { return false; }
 	virtual void typeAnalysis(TypeAnalysis *) override {; } 
-	virtual Opd * flatten(Procedure * proc) override;
+	virtual Opd * flatten(Procedure * proc) override = 0;
 };
 
 class IDNode : public LValNode{
