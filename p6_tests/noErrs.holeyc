@@ -1,0 +1,23 @@
+int a;
+bool b;
+void f() {
+	TOCONSOLE "AAAAAAAAAAAA";
+}
+void g() {
+	TOCONSOLE "BBBBBBBBBBBB";
+}
+int main(int a) {
+	if(b) {
+		f();
+	} else {
+		g();
+	}
+	if(b) {
+		f();
+	}
+	int i;
+	i = 0;
+	while(i < 5) {
+		i++;
+	}
+}

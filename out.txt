@@ -1,0 +1,104 @@
+bison -Werror --graph=parser.dot --defines=grammar.hh -v holeyc.yy
+/usr/bin/clang++-9 -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Wuninitialized -Winit-self -Wmissing-declarations -Wmissing-include-dirs -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wsign-conversion -Wsign-promo -Wstrict-overflow=5 -Wundef -Werror -Wno-unused -Wno-unused-parameter  -Wno-sign-compare -Wno-sign-conversion -Wno-switch-default -g -std=c++14 -MMD -MP -c -o parser.o parser.cc
+In file included from parser.cc:40:
+holeyc.yy:54:4: error: no type named 'Token' in namespace 'holeyc'; did you mean 'lake::Token'?
+   holeyc::Token*                         transToken;
+   ^~~~~~~~~~~~~
+   lake::Token
+./tokens.hpp:8:7: note: 'lake::Token' declared here
+class Token {
+      ^
+In file included from parser.cc:40:
+holeyc.yy:55:4: error: no type named 'IDToken' in namespace 'holeyc'; did you mean 'lake::IDToken'?
+   holeyc::IDToken*                       transIDToken;
+   ^~~~~~~~~~~~~~~
+   lake::IDToken
+./tokens.hpp:34:7: note: 'lake::IDToken' declared here
+class IDToken : public Token {
+      ^
+In file included from parser.cc:40:
+holeyc.yy:56:4: error: no type named 'IntLitToken' in namespace 'holeyc'; did you mean 'lake::IntLitToken'?
+   holeyc::IntLitToken*                   transIntToken;
+   ^~~~~~~~~~~~~~~~~~~
+   lake::IntLitToken
+./tokens.hpp:26:7: note: 'lake::IntLitToken' declared here
+class IntLitToken : public Token {
+      ^
+In file included from parser.cc:40:
+holeyc.yy:57:12: error: no type named 'StrToken' in namespace 'holeyc'
+   holeyc::StrToken*                      transStrToken;
+   ~~~~~~~~^
+holeyc.yy:58:12: error: no type named 'CharLitToken' in namespace 'holeyc'; did you mean 'CharLitNode'?
+   holeyc::CharLitToken*                  transCharToken;
+   ~~~~~~~~^~~~~~~~~~~~
+           CharLitNode
+./ast.hpp:656:7: note: 'CharLitNode' declared here
+class CharLitNode : public ExpNode{
+      ^
+In file included from holeyc.yy:42:
+./scanner.hpp:28:15: error: no member named 'Parser' in namespace 'lake'; did you mean 'holeyc::Parser'?
+   int yylex( lake::Parser::semantic_type * const lval);
+              ^~~~~~~~~~~~
+              holeyc::Parser
+grammar.hh:204:9: note: 'holeyc::Parser' declared here
+  class Parser
+        ^
+In file included from holeyc.yy:42:
+./scanner.hpp:58:4: error: no member named 'Parser' in namespace 'lake'; did you mean 'holeyc::Parser'?
+   lake::Parser::semantic_type *yylval = nullptr;
+   ^~~~~~~~~~~~
+   holeyc::Parser
+grammar.hh:204:9: note: 'holeyc::Parser' declared here
+  class Parser
+        ^
+In file included from holeyc.yy:42:
+./scanner.hpp:48:23: error: no member named 'tokenValue' in 'holeyc::Parser::semantic_type'
+        this->yylval->tokenValue = new NoArgToken(
+        ~~~~~~~~~~~~  ^
+parser.cc:324:33: error: no member named 'state' in 'holeyc::Parser::stack_symbol_type'
+    : super_type (YY_MOVE (that.state), YY_MOVE (that.value))
+                           ~~~~ ^
+parser.cc:324:55: error: no member named 'value' in 'holeyc::Parser::stack_symbol_type'
+    : super_type (YY_MOVE (that.state), YY_MOVE (that.value))
+                                                 ~~~~ ^
+parser.cc:328:10: error: no member named 'state' in 'holeyc::Parser::stack_symbol_type'
+    that.state = empty_state;
+    ~~~~ ^
+parser.cc:328:18: error: use of undeclared identifier 'empty_state'; did you mean 'by_state::empty_state'?
+    that.state = empty_state;
+                 ^~~~~~~~~~~
+                 by_state::empty_state
+grammar.hh:589:14: note: 'by_state::empty_state' declared here
+      enum { empty_state = 0 };
+             ^
+parser.cc:333:36: error: no member named 'value' in 'holeyc::Parser::symbol_type'
+    : super_type (s, YY_MOVE (that.value))
+                              ~~~~ ^
+parser.cc:336:10: error: no member named 'type' in 'holeyc::Parser::symbol_type'
+    that.type = empty_symbol;
+    ~~~~ ^
+parser.cc:396:7: error: no matching member function for call to 'yy_print_'
+      YY_SYMBOL_PRINT (m, sym);
+      ^~~~~~~~~~~~~~~~~~~~~~~~
+parser.cc:98:7: note: expanded from macro 'YY_SYMBOL_PRINT'
+      yy_print_ (*yycdebug_, Symbol);           \
+      ^~~~~~~~~
+parser.cc:373:11: note: candidate template ignored: could not match 'basic_symbol<type-parameter-0-0>' against 'holeyc::Parser::stack_symbol_type'
+  Parser::yy_print_ (std::ostream& yyo,
+          ^
+parser.cc:507:55: error: no member named 'state' in 'holeyc::Parser::stack_symbol_type'
+    YYCDEBUG << "Entering state " << int (yystack_[0].state) << '\n';
+                                          ~~~~~~~~~~~ ^
+parser.cc:510:21: error: no member named 'state' in 'holeyc::Parser::stack_symbol_type'
+    if (yystack_[0].state == yyfinal_)
+        ~~~~~~~~~~~ ^
+parser.cc:521:32: error: no member named 'state' in 'holeyc::Parser::stack_symbol_type'
+    yyn = yypact_[+yystack_[0].state];
+                   ~~~~~~~~~~~ ^
+parser.cc:526:14: error: no member named 'empty' in 'holeyc::Parser::symbol_type'
+    if (yyla.empty ())
+        ~~~~ ^
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+20 errors generated.
+Makefile:28: recipe for target 'parser.o' failed
+make: *** [parser.o] Error 1
