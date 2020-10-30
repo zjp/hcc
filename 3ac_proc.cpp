@@ -7,6 +7,7 @@ Procedure::Procedure(IRProgram * prog, std::string name)
 	maxTmp = 0;
 	enter = new EnterQuad(this);
 	leave = new LeaveQuad(this);
+	bodyQuads = new std::list<Quad *>();
 	if (myName.compare("main") == 0){
 		enter->addLabel(new Label("main"));
 	} else {
@@ -31,20 +32,20 @@ std::string Procedure::toString(bool verbose){
 
 	res += "[BEGIN " + this->getName() + " LOCALS]\n";
 	for (const auto formal : this->formals){
-		res += formal->toString() + " (formal)\n";
+		res += formal->getName() + " (formal)\n";
 	}
 
 	for (auto local : this->locals){
-		res += local.second->toString() + " (local)\n";
+		res += local.second->getName() + " (local)\n";
 	}
 
 	for (auto tmp : temps){
-		res += tmp->toString() + " (tmp)\n";
+		res += tmp->locString() + " (tmp)\n";
 	}
 	res += "[END " + this->getName() + " LOCALS]\n";
 
 	res += enter->toString(verbose) + "\n";
-	for (auto quad : bodyQuads){
+	for (auto quad : *bodyQuads){
 		res += quad->toString(verbose) + "\n";
 	}
 	res += leave->toString(verbose) + "\n";
@@ -56,12 +57,12 @@ Label * Procedure::makeLabel(){
 }
 
 void Procedure::addQuad(Quad * quad){
-	bodyQuads.push_back(quad);
+	bodyQuads->push_back(quad);
 }
 
 Quad * Procedure::popQuad(){
-	Quad * last = bodyQuads.back();
-	bodyQuads.pop_back();
+	Quad * last = bodyQuads->back();
+	bodyQuads->pop_back();
 	return last;
 }
 
@@ -97,6 +98,24 @@ AuxOpd * Procedure::makeTmp(OpdWidth width){
 	temps.push_back(res);
 
 	return res;
+}
+
+size_t Procedure::numTemps() const{
+	return this->temps.size();
+}
+
+size_t Procedure::localsSize() const{
+	size_t size = 0;
+	for (auto local : locals){
+		size += 8;
+	}
+	for (auto tmp : temps){
+		size += 8;
+	}
+	for (auto formal : formals){
+		size += 8;
+	}
+	return size;
 }
 
 }

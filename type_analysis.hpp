@@ -1,5 +1,5 @@
-#ifndef HOLEYC_TYPE_ANALYSIS
-#define HOLEYC_TYPE_ANALYSIS
+#ifndef XXLANG_TYPE_ANALYSIS
+#define XXLANG_TYPE_ANALYSIS
 
 #include "ast.hpp"
 #include "symbol_table.hpp"

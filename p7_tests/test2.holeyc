@@ -3,14 +3,14 @@ bool b;
 void f() {
 	TOCONSOLE "AAAAAAAAAAAA";
 }
-void g() {
+void g(int a, bool b) {
 	TOCONSOLE "BBBBBBBBBBBB";
 }
 int main(int a) {
 	if(b) {
 		f();
 	} else {
-		g();
+		g(a, b);
 	}
 	if(b) {
 		f();

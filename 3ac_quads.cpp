@@ -72,7 +72,7 @@ std::string LeaveQuad::repr(){
 }
 
 std::string AssignQuad::repr(){
-	return dst->toString() + " := " + src->toString();
+	return dst->valString() + " := " + src->valString();
 	
 }
 
@@ -127,11 +127,11 @@ std::string BinOpQuad::repr(){
 		opString = " GTE64 ";
 		break;
 	}
-	return dst->toString()
+	return dst->valString()
 		+ " := " 
-		+ src1->toString()
+		+ src1->valString()
 		+ opString
-		+ src2->toString();
+		+ src2->valString();
 }
 
 UnaryOpQuad::UnaryOpQuad(Opd * dstIn, UnaryOp opIn, Opd * srcIn)
@@ -146,9 +146,9 @@ std::string UnaryOpQuad::repr(){
 	case NOT:
 		opString = "NOT8 ";
 	}
-	return dst->toString() + " := " 
+	return dst->valString() + " := " 
 		+ opString
-		+ src->toString();
+		+ src->valString();
 }
 
 IntrinsicQuad::IntrinsicQuad(Intrinsic intrinsic, Opd * opd) 
@@ -158,10 +158,10 @@ std::string IntrinsicQuad::repr(){
 	std::string res;
 	switch (myIntrinsic){
 	case INPUT:
-		res = "INPUT " + myArg->toString();
+		res = "TOCONSOLE " + myArg->valString();
 		break;
 	case OUTPUT:
-		res = "OUTPUT " + myArg->toString();
+		res = "FROMCONSOLE " + myArg->valString();
 		break;
 	}
 	return res;
@@ -180,7 +180,7 @@ JmpIfQuad::JmpIfQuad(Opd * cndIn, Label * tgtIn)
 
 std::string JmpIfQuad::repr(){
 	std::string res = "IFZ ";
-	res += cnd->toString();
+	res += cnd->valString();
 	res += " GOTO ";
 	res += tgt->toString();
 	return res;
@@ -198,7 +198,7 @@ GetRetQuad::GetRetQuad(Opd * opdIn)
 
 std::string GetRetQuad::repr(){
 	std::string res = "";
-	res += "getres " + opd->toString(); 
+	res += "getret " + opd->valString(); 
 	return res;
 }
 
@@ -208,7 +208,7 @@ SetArgQuad::SetArgQuad(size_t indexIn, Opd * opdIn)
 
 std::string SetArgQuad::repr(){
 	std::string res = "";
-	res += "setarg " + std::to_string(index) + " " + opd->toString(); 
+	res += "setarg " + std::to_string(index) + " " + opd->valString(); 
 	return res;
 }
 
@@ -218,7 +218,7 @@ GetArgQuad::GetArgQuad(size_t indexIn, Opd * opdIn)
 
 std::string GetArgQuad::repr(){
 	std::string res = "";
-	res += "getarg " + std::to_string(index) + " " + opd->toString(); 
+	res += "getarg " + std::to_string(index) + " " + opd->valString(); 
 	return res;
 }
 
@@ -228,16 +228,16 @@ SetRetQuad::SetRetQuad(Opd * opdIn)
 
 std::string SetRetQuad::repr(){
 	std::string res = "";
-	res += "setret " + opd->toString(); 
+	res += "setret " + opd->valString(); 
 	return res;
 }
 
 std::string LocQuad::repr(){
 	std::string res = "";
-	if (src){
-		return tgt->toString() + " := " + src->toString();
+	if (srcLoc){
+		return tgt->valString() + " := " + src->locString();
 	} else {
-		return tgt->toString() + " := " + src->toString();
+		return tgt->locString() + " := " + src->valString();
 	}
 }
 

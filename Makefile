@@ -36,7 +36,7 @@ lexer.o: lexer.yy.cc
 test: p6
 
 p6: all
-	$(MAKE) -C p6_tests/
+	$(MAKE) -C p7_tests/
 
 cleantest:
-	$(MAKE) -C p6_tests/ clean
+	$(MAKE) -C p7_tests/ clean

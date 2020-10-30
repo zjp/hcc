@@ -124,6 +124,19 @@ static void write3AC(holeyc::IRProgram * prog, const char * outPath){
 	}
 }
 
+static void writeX64(holeyc::IRProgram * prog, const char * outPath){
+	if (outPath == nullptr){
+		throw new InternalError("Null ASM file given");
+	}
+	if (strcmp(outPath, "--") == 0){
+		prog->toX64(std::cout);
+	} else {
+		std::ofstream outStream(outPath);
+		prog->toX64(outStream);
+		outStream.close();
+	}
+}
+
 int main(int argc, char * argv[]){
 	if (argc <= 1){ usageAndDie(); }
 	std::ifstream * input = new std::ifstream(argv[1]);
@@ -133,6 +146,9 @@ int main(int argc, char * argv[]){
 		usageAndDie();
 	}
 
+	bool useful = false;               // Check whether the command is 
+                                           // a no-op
+
 	const char * tokensFile = nullptr; // Output file if 
 	                                   // printing tokens
 	bool checkParse = false;	   // Flag set if doing 
@@ -141,12 +157,12 @@ int main(int argc, char * argv[]){
 	                                   // unparsing
 	const char * nameFile = NULL;	   // Output file if doing
 					   // name analysis
-	bool useful = false; // Check whether the command is 
-                         // a no-op
 	bool checkTypes = false;	   // Flag set if doing 
 					   // syntactic analysis
-	const char * threeACFile = NULL;	   // Output file if doing
+	const char * threeACFile = NULL;   // Output file if doing
 					   // 3AC conversion
+	const char * asmFile = NULL;       // Output file for
+					   // X64 representation
 	for (int i = 1; i < argc; i++){
 		if (argv[i][0] == '-'){
 			if (argv[i][1] == 't'){
@@ -176,6 +192,11 @@ int main(int argc, char * argv[]){
 				i++;
 				if (i >= argc){ usageAndDie(); }
 				threeACFile = argv[i];
+				useful = true;
+			} else if (argv[i][1] == 'o'){
+				i++;
+				if (i >= argc){ usageAndDie(); }
+				asmFile = argv[i];
 				useful = true;
 			} else {
 				std::cerr << "Unknown option"
@@ -223,11 +244,15 @@ int main(int argc, char * argv[]){
 		if (threeACFile){
 			if (auto prog = do3AC(input)){
 				write3AC(prog, threeACFile);
-			}
-			if (doTypeAnalysis(input) != nullptr){
 				return 0;
 			}
-			std::cerr << "Type Analysis Failed\n";
+			return 1;
+		}
+		if (asmFile){
+			if (auto prog = do3AC(input)){
+				writeX64(prog, asmFile);
+				return 0;
+			}
 			return 1;
 		}
 	} catch (holeyc::ToDoError * e){

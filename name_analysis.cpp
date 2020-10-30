@@ -92,10 +92,9 @@ bool VarDeclNode::nameAnalysis(SymbolTable * symTab){
 	if (!validType || !validName){ 
 		return false; 
 	} else {
-		VarSymbol * sym = new VarSymbol(varName, dataType);
-		ID()->attachSymbol(sym);
-		symTab->insert(sym);
-		
+		symTab->insert(new VarSymbol(varName, dataType));
+		SemSymbol * sym = symTab->find(varName);
+		this->myID->attachSymbol(sym);
 		return true;
 	}
 }
@@ -137,6 +136,9 @@ bool FnDeclNode::nameAnalysis(SymbolTable * symTab){
 	// analyzing the body, to allow for recursive calls
 	if (validName){
 		atFnScope->addFn(fnName, dataType);
+		SemSymbol * sym = atFnScope->lookup(fnName);
+		this->myID->attachSymbol(sym);
+		
 	}
 
 	bool validBody = true;

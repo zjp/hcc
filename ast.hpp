@@ -144,9 +144,7 @@ public:
 	std::string nodeKind() override { return "Index"; }
 	virtual bool nameAnalysis(SymbolTable * symTab) override;
 	virtual void typeAnalysis(TypeAnalysis *) override;
-	virtual Opd * flatten(Procedure * prog) override{
-		throw new ToDoError("Implement");
-	}
+	virtual Opd * flatten(Procedure * prog) override;
 private:
 	IDNode * myBase;
 	ExpNode * myOffset;
@@ -208,7 +206,7 @@ public:
 	void typeAnalysis(TypeAnalysis * typing) override;
 	virtual void to3AC(Procedure * proc) override;
 	virtual void to3AC(IRProgram * prog) override;
-protected:
+private:
 	TypeNode * myType;
 	IDNode * myID;
 };
