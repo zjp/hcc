@@ -22,3 +22,5 @@ parser.output
 *.d
 *.dot
 *.cc
+*.err
+*.s
