@@ -11,18 +11,18 @@ void IRProgram::allocGlobals(){
 
 void IRProgram::datagenX64(std::ostream& out){
 	TODO(Write out data section)
-	out << ".text\n";
-	 for(auto global : globals) {
-		switch(type) {
-			case a:
-				out << ".quad" << "\n";
-				break;
-	 		case b:
-	 			out << ".asciiz" << "\n";
-	 			break;
-	 		default: break; 
-		}
-	}
+//	out << ".text\n";
+//	 for(auto global : globals) {
+//		switch(type) {
+//			case a:
+//				out << ".quad" << "\n";
+//				break;
+//	 		case b:
+//	 			out << ".asciiz" << "\n";
+//	 			break;
+//	 		default: break; 
+//		}
+//	}
 	//Put this directive after you write out strings
 	// so that everything is aligned to a quadword value
 	// again
@@ -75,11 +75,18 @@ void BinOpQuad::codegenX64(std::ostream& out){
 		case MULT:
 			opString = "imul";
 			break;
+		case DIV:
+		case EQ:
+		case NEQ:
+		case GTE:
+		case LTE:
+		case LT:
+		case GT:
 		case OR:
 			opString = "or";
 			break;
 		case AND:
-			opString = "and"
+			opString = "and";
 			break;
 	}
 	out << opString << "\n";
