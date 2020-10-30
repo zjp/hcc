@@ -6,11 +6,9 @@ namespace holeyc{
 
 void IRProgram::allocGlobals(){
 	// Give a label to everything
-	TODO(Implement me)
 }
 
 void IRProgram::datagenX64(std::ostream& out){
-	TODO(Write out data section)
 //	out << ".text\n";
 //	 for(auto global : globals) {
 //		switch(type) {
@@ -30,11 +28,14 @@ void IRProgram::datagenX64(std::ostream& out){
 }
 
 void IRProgram::toX64(std::ostream& out){
-	TODO(Implement me)
+	allocGlobals();
+	datagenX64(out);
+	for(auto proc : procs) {
+		proc->toX64(out);
+	}
 }
 
 void Procedure::allocLocals(){
-	TODO(Implement me)
 }
 
 void Procedure::toX64(std::ostream& out){
@@ -75,14 +76,28 @@ void BinOpQuad::codegenX64(std::ostream& out){
 		case MULT:
 			opString = "imul";
 			break;
-		case DIV:
-		case EQ:
-		case NEQ:
-		case GTE:
-		case LTE:
-		case LT:
-		case GT:
-		case OR:
+		case DIV: 
+			opString = "idivq";
+			break;
+		case EQ:  
+			opString = "cmp";
+			break;
+		case NEQ: 
+			opString = "cmp";
+			break;
+		case GTE: 
+			opString = "cmp";
+			break;
+		case LTE: 
+			opString = "cmp";
+			break;
+		case LT:  
+			opString = "cmp";
+			break;
+		case GT:  
+			opString = "cmp";
+			break;
+		case OR:  
 			opString = "or";
 			break;
 		case AND:
@@ -111,7 +126,6 @@ void AssignQuad::codegenX64(std::ostream& out){
 
 void LocQuad::codegenX64(std::ostream& out){
 	// (Optional)
-	// TODO(Implement me)
 }
 
 void JmpQuad::codegenX64(std::ostream& out){
@@ -119,7 +133,6 @@ void JmpQuad::codegenX64(std::ostream& out){
 }
 
 void JmpIfQuad::codegenX64(std::ostream& out){
-	TODO(Implement me)
 }
 
 void NopQuad::codegenX64(std::ostream& out){
@@ -141,29 +154,24 @@ void IntrinsicQuad::codegenX64(std::ostream& out){
 		}
 		break;
 	case INPUT:
-		// myArg->genStore(out, "register");
-		TODO("IMPLEMENT ME");
+		 myArg->genStore(out, "register");
 	}
 }
 
 void CallQuad::codegenX64(std::ostream& out){
 	out << "call" << "\n";
-	TODO(Implement me)
 }
 
 void EnterQuad::codegenX64(std::ostream& out){
 	// out << 
-	TODO(Implement me)
 }
 
 void LeaveQuad::codegenX64(std::ostream& out){
 	out << "leave " << "\n";
-	TODO(Implement me)
 }
 
 void SetArgQuad::codegenX64(std::ostream& out){
 	// out << setarg <<
-	TODO(Implement me)
 }
 
 void GetArgQuad::codegenX64(std::ostream& out){
@@ -171,32 +179,25 @@ void GetArgQuad::codegenX64(std::ostream& out){
 }
 
 void SetRetQuad::codegenX64(std::ostream& out){
-	TODO(Implement me)
 }
 
 void GetRetQuad::codegenX64(std::ostream& out){
-	TODO(Implement me)
 }
 
 void SymOpd::genLoad(std::ostream & out, std::string regStr){
-	TODO(Implement me)
 }
 
 void SymOpd::genStore(std::ostream& out, std::string regStr){
-	TODO(Implement me)
 }
 
 void AuxOpd::genLoad(std::ostream & out, std::string regStr){
-	TODO(Implement me)
 }
 
 void AuxOpd::genStore(std::ostream& out, std::string regStr){
 
-	TODO(Implement me)
 }
 
 void LitOpd::genLoad(std::ostream & out, std::string regStr){
-	TODO(Implement me)
 }
 
 void LitOpd::genStore(std::ostream& out, std::string regStr){
