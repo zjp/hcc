@@ -171,7 +171,7 @@ void LeaveQuad::codegenX64(std::ostream& out){
 }
 
 void SetArgQuad::codegenX64(std::ostream& out){
-	// out << setarg <<
+	out << "setarg" << "\n";
 }
 
 void GetArgQuad::codegenX64(std::ostream& out){
@@ -179,25 +179,31 @@ void GetArgQuad::codegenX64(std::ostream& out){
 }
 
 void SetRetQuad::codegenX64(std::ostream& out){
+	out << "setret" << "\n";
 }
 
 void GetRetQuad::codegenX64(std::ostream& out){
+	out << "getret" << "\n";
 }
 
 void SymOpd::genLoad(std::ostream & out, std::string regStr){
+	out << regStr << "\n";
 }
 
 void SymOpd::genStore(std::ostream& out, std::string regStr){
+	out << regStr << "\n";
 }
 
 void AuxOpd::genLoad(std::ostream & out, std::string regStr){
+	out << regStr << "\n";
 }
 
 void AuxOpd::genStore(std::ostream& out, std::string regStr){
-
+	out << regStr << "\n";
 }
 
 void LitOpd::genLoad(std::ostream & out, std::string regStr){
+	out << regStr << "\n";
 }
 
 void LitOpd::genStore(std::ostream& out, std::string regStr){
