@@ -12,10 +12,16 @@ all: $(TESTS)
 	@echo "TEST $*"
 	@../holeycc $*.holeyc -o $*.s ;\
 	COMP_EXIT_CODE=$$?;
-	@as -o $*.o
-	@ld -o $*.prog $(LIBLINUX) -lc ../entry.o ../stdholeyc.o $*.o
-	objdump -Dwrt $
-	./$*.out < $*.in > $*.out; \
+	@as -o $*.o $*.s
+	@ld $(LIBLINUX) \
+		/usr/lib/x86_64-linux-gnu/crt1.o \
+		/usr/lib/x86_64-linux-gnu/crti.o \
+		-lc \
+		$*.o \
+		../stdholeyc.o \
+		/usr/lib/x86_64-linux-gnu/crtn.o \
+		-o  $*.prog
+	@./$*.prog < $*.in > $*.out; \
 	diff -B --ignore-all-space $*.out $*.out.expected;\
 	RUN_DIFF_EXIT=$$?;\
 	exit $$RUN_DIFF_EXIT
