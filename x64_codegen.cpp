@@ -9,7 +9,7 @@ void IRProgram::allocGlobals(){
 }
 
 void IRProgram::datagenX64(std::ostream& out){
-	out << ".text\n";
+	out << ".data\n";
 	 for(auto global : globals) {
 		 out << "gbl_" << global.first->getName() << " .quad" << "\n";
 		 out << "gbl_" << global.first->getName() << " .asciiz" << "\n";
@@ -18,6 +18,7 @@ void IRProgram::datagenX64(std::ostream& out){
 	// so that everything is aligned to a quadword value
 	// again
 	out << ".align 8\n";
+	out << ".text\n";
 }
 
 void IRProgram::toX64(std::ostream& out){
