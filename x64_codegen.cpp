@@ -9,18 +9,11 @@ void IRProgram::allocGlobals(){
 }
 
 void IRProgram::datagenX64(std::ostream& out){
-//	out << ".text\n";
-//	 for(auto global : globals) {
-//		switch(type) {
-//			case a:
-//				out << ".quad" << "\n";
-//				break;
-//	 		case b:
-//	 			out << ".asciiz" << "\n";
-//	 			break;
-//	 		default: break; 
-//		}
-//	}
+	out << ".text\n";
+	 for(auto global : globals) {
+		 out << "gbl_" << global.first->getName() << " .quad" << "\n";
+		 out << "gbl_" << global.first->getName() << " .asciiz" << "\n";
+	}
 	//Put this directive after you write out strings
 	// so that everything is aligned to a quadword value
 	// again
@@ -36,14 +29,19 @@ void IRProgram::toX64(std::ostream& out){
 }
 
 void Procedure::allocLocals(){
+
 }
 
 void Procedure::toX64(std::ostream& out){
 	//Allocate all locals
 	allocLocals();
 
-	enter->codegenLabels(out);
-	enter->codegenX64(out);
+	if(myName == "main") {
+		out << "main:\n";
+	} else {
+		enter->codegenLabels(out);
+        }
+        enter->codegenX64(out);
 	for (auto quad : *bodyQuads){
 		quad->codegenLabels(out);
 		quad->codegenX64(out);
@@ -76,28 +74,28 @@ void BinOpQuad::codegenX64(std::ostream& out){
 		case MULT:
 			opString = "imul";
 			break;
-		case DIV: 
+		case DIV:
 			opString = "idivq";
 			break;
-		case EQ:  
+		case EQ:
 			opString = "cmp";
 			break;
-		case NEQ: 
+		case NEQ:
 			opString = "cmp";
 			break;
-		case GTE: 
+		case GTE:
 			opString = "cmp";
 			break;
-		case LTE: 
+		case LTE:
 			opString = "cmp";
 			break;
-		case LT:  
+		case LT:
 			opString = "cmp";
 			break;
-		case GT:  
+		case GT:
 			opString = "cmp";
 			break;
-		case OR:  
+		case OR:
 			opString = "or";
 			break;
 		case AND:
@@ -159,11 +157,11 @@ void IntrinsicQuad::codegenX64(std::ostream& out){
 }
 
 void CallQuad::codegenX64(std::ostream& out){
-	out << "call" << "\n";
+	out << "callq " << callee->getName() << "\n";
 }
 
 void EnterQuad::codegenX64(std::ostream& out){
-	// out << 
+	out << "enter " << "\n";
 }
 
 void LeaveQuad::codegenX64(std::ostream& out){
