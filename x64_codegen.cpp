@@ -201,7 +201,8 @@ void AuxOpd::genStore(std::ostream& out, std::string regStr){
 }
 
 void LitOpd::genLoad(std::ostream & out, std::string regStr){
-	out << regStr << "\n";
+	// e.g. movq eax, val
+	out << "movq" << regStr << ", " << val << "\n";
 }
 
 void LitOpd::genStore(std::ostream& out, std::string regStr){
