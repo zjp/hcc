@@ -62,13 +62,13 @@ void BinOpQuad::codegenX64(std::ostream& out){
 	std::string opString;
 	switch(op) {
 		case ADD:
-			opString = "add";
+			opString = "addq";
 			break;
 		case SUB:
-			opString = "sub";
+			opString = "subq";
 			break;
 		case MULT:
-			opString = "imul";
+			opString = "imulq";
 			break;
 		case DIV:
 			opString = "idivq";
@@ -105,10 +105,10 @@ void UnaryOpQuad::codegenX64(std::ostream& out){
 	std::string opString;
 	switch(op) {
 		case NEG:
-			opString = "neg ";
+			opString = "negq ";
 			break;
 		case NOT:
-			opString = "not ";
+			opString = "notq ";
 	}
 	out << opString << "\n";
 }
