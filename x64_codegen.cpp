@@ -53,13 +53,8 @@ void Procedure::toX64(std::ostream& out){
 
 void Quad::codegenLabels(std::ostream& out){
 	if (labels.empty()){ return; }
-
-	size_t numLabels = labels.size();
-	size_t labelIdx = 0;
 	for ( Label * label : labels){
-		out << label->toString() << ": ";
-		if (labelIdx != numLabels - 1){ out << "\n"; }
-		labelIdx++;
+		out << label->toString() << ":\n";
 	}
 }
 
