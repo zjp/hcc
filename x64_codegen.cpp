@@ -187,6 +187,10 @@ void CallQuad::codegenX64(std::ostream& out){
 }
 
 void EnterQuad::codegenX64(std::ostream& out){
+	int tempLocalSize = myProc->localsSize();
+	if(tempLocalSize % 16) {
+		tempLocalSize += 8;
+	}
 	codegen_indent(out);
 	out << "pushq %rbp" << "\n";
 	codegen_indent(out);
@@ -194,12 +198,16 @@ void EnterQuad::codegenX64(std::ostream& out){
 	codegen_indent(out);
 	out << "addq $16, %rbp" << "\n";
 	codegen_indent(out);
-	out << "subq " << /* 8*locals << */ "%rsp" << "\n";
+	out << "subq " << tempLocalSize << ", %rsp" << "\n";
 }
 
 void LeaveQuad::codegenX64(std::ostream& out){
+	int tempLocalSize = myProc->localsSize();
+	if(tempLocalSize % 16) {
+		tempLocalSize += 8;
+	}
 	codegen_indent(out);
-	out << "addq " << /* 8*locals << */ "%rsp" << "\n";
+	out << "addq " << tempLocalSize <<  ", %rsp" << "\n";
 	codegen_indent(out);
 	out << "popq " << "%rbp" << "\n";
 	codegen_indent(out);
@@ -213,6 +221,7 @@ void SetArgQuad::codegenX64(std::ostream& out){
 
 void GetArgQuad::codegenX64(std::ostream& out){
 	//We don't actually need to do anything here
+	/* OR: Move values from each register to the activation record */
 }
 
 void SetRetQuad::codegenX64(std::ostream& out){
