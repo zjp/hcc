@@ -1,5 +1,16 @@
+int b;
+bool c;
 int fn(){
 	int a;
 	a = 4;
 	TOCONSOLE a;
+}
+int fn2() {
+	int a;
+}
+int main() {
+	c = true && true;
+	if(c) {
+		fn();
+	}
 }
