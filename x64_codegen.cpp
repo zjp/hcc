@@ -78,41 +78,42 @@ void BinOpQuad::codegenX64(std::ostream& out){
 	std::string opString;
 	switch(op) {
 		case ADD:
-			opString = "addq";
+			opString = "addq ";
 			break;
 		case SUB:
-			opString = "subq";
+			opString = "subq ";
 			break;
 		case MULT:
-			opString = "imulq";
+			opString = "imulq ";
 			break;
 		case DIV:
-			opString = "idivq";
+			opString = "idivq ";
 			break;
 		case EQ:
-			opString = "cmp";
+			opString = "cmpq ";
 			break;
 		case NEQ:
-			opString = "cmp";
+			opString = "cmpq ";
 			break;
 		case GTE:
-			opString = "cmp";
+			opString = "cmpq ";
 			break;
 		case LTE:
-			opString = "cmp";
+			opString = "cmpq ";
 			break;
 		case LT:
-			opString = "cmp";
+			opString = "cmpq ";
 			break;
 		case GT:
-			opString = "cmp";
+			opString = "cmpq ";
 			break;
 		case OR:
-			opString = "or";
+			opString = "orq ";
 			break;
 		case AND:
-			opString = "and";
+			opString = "andq ";
 			break;
+		default: break;
 	}
 	codegen_indent(out);
 	out << opString << /*opd1 << */"," << /*opd2 << */"\n";
