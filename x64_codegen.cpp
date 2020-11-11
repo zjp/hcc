@@ -4,15 +4,24 @@
 
 namespace holeyc{
 
-void IRProgram::allocGlobals(){
+static void codegen_indent(std::ostream& out) {
+	for(int i = 0; i < 4; i++) {
+		out << " ";
+	}
+}
+
+void IRProgram::allocGlobals() {
+	for(auto global : globals) {
 	// Give a label to everything
+		global.second->setMemoryLoc("gbl_" + global.first->getName());
+	}
 }
 
 void IRProgram::datagenX64(std::ostream& out){
 	out << ".data\n";
 	 for(auto global : globals) {
-		 out << "gbl_" << global.first->getName() << " .quad" << "\n";
-		 out << "gbl_" << global.first->getName() << " .asciiz" << "\n";
+		 codegen_indent(out);
+		 out << global.second->getMemoryLoc() << ": .quad\n";
 	}
 	//Put this directive after you write out strings
 	// so that everything is aligned to a quadword value
@@ -30,7 +39,14 @@ void IRProgram::toX64(std::ostream& out){
 }
 
 void Procedure::allocLocals(){
-
+	int i = 1;
+	int offset = 0;
+	std::string loc = "(%rbp)";
+	for(auto local : locals) {
+		std::string offset = std::to_string(8*i);
+		local.second->setMemoryLoc(offset + loc);
+		++i;
+	}
 }
 
 void Procedure::toX64(std::ostream& out){
@@ -98,7 +114,8 @@ void BinOpQuad::codegenX64(std::ostream& out){
 			opString = "and";
 			break;
 	}
-	out << opString << "\n";
+	codegen_indent(out);
+	out << opString << /*opd1 << */"," << /*opd2 << */"\n";
 }
 
 void UnaryOpQuad::codegenX64(std::ostream& out){
@@ -110,6 +127,7 @@ void UnaryOpQuad::codegenX64(std::ostream& out){
 		case NOT:
 			opString = "notq ";
 	}
+	out << "movq " << /* opd << reg << */"\n";
 	out << opString << "\n";
 }
 
@@ -123,13 +141,23 @@ void LocQuad::codegenX64(std::ostream& out){
 }
 
 void JmpQuad::codegenX64(std::ostream& out){
+	codegen_indent(out);
 	out << "jmp " << tgt->toString() << "\n";
 }
 
 void JmpIfQuad::codegenX64(std::ostream& out){
+	codegen_indent(out);
+	out << "movq $0, %rax" << "\n";
+	codegen_indent(out);
+	out << "movb" << "\n";
+	codegen_indent(out);
+	out << "cmpq $0 %rax\n";
+	codegen_indent(out);
+	out << "je " << tgt->toString() << "\n";
 }
 
 void NopQuad::codegenX64(std::ostream& out){
+	codegen_indent(out);
 	out << "nop" << "\n";
 }
 
@@ -137,6 +165,7 @@ void IntrinsicQuad::codegenX64(std::ostream& out){
 	switch(myIntrinsic){
 	case OUTPUT:
 		myArg->genLoad(out, "%rdi");
+		codegen_indent(out);
 		if (myArg->getWidth() == QUADWORD){
 			out << "callq printInt\n";
 		} else if (myArg->getWidth() == BYTE){
@@ -153,18 +182,32 @@ void IntrinsicQuad::codegenX64(std::ostream& out){
 }
 
 void CallQuad::codegenX64(std::ostream& out){
+	codegen_indent(out);
 	out << "callq " << callee->getName() << "\n";
 }
 
 void EnterQuad::codegenX64(std::ostream& out){
-	out << "enter " << "\n";
+	codegen_indent(out);
+	out << "pushq %rbp" << "\n";
+	codegen_indent(out);
+	out << "movq $rsp, %rbp" << "\n";
+	codegen_indent(out);
+	out << "addq $16, %rbp" << "\n";
+	codegen_indent(out);
+	out << "subq " << /* 8*locals << */ "%rsp" << "\n";
 }
 
 void LeaveQuad::codegenX64(std::ostream& out){
-	out << "leave " << "\n";
+	codegen_indent(out);
+	out << "addq " << /* 8*locals << */ "%rsp" << "\n";
+	codegen_indent(out);
+	out << "popq " << "%rbp" << "\n";
+	codegen_indent(out);
+	out << "retq\n";
 }
 
 void SetArgQuad::codegenX64(std::ostream& out){
+	codegen_indent(out);
 	out << "setarg" << "\n";
 }
 
@@ -173,32 +216,39 @@ void GetArgQuad::codegenX64(std::ostream& out){
 }
 
 void SetRetQuad::codegenX64(std::ostream& out){
+	codegen_indent(out);
 	out << "setret" << "\n";
 }
 
 void GetRetQuad::codegenX64(std::ostream& out){
+	codegen_indent(out);
 	out << "getret" << "\n";
 }
 
 void SymOpd::genLoad(std::ostream & out, std::string regStr){
-	out << regStr << "\n";
+	codegen_indent(out);
+	out << "movq " << regStr << ", " << "\n";
 }
 
 void SymOpd::genStore(std::ostream& out, std::string regStr){
+	codegen_indent(out);
 	out << regStr << "\n";
 }
 
 void AuxOpd::genLoad(std::ostream & out, std::string regStr){
-	out << regStr << "\n";
+	codegen_indent(out);
+	out << "movq " << regStr << "\n";
 }
 
 void AuxOpd::genStore(std::ostream& out, std::string regStr){
-	out << regStr << "\n";
+	codegen_indent(out);
+	out << "movq " << regStr << " " << "\n";
 }
 
 void LitOpd::genLoad(std::ostream & out, std::string regStr){
 	// e.g. movq eax, val
-	out << "movq" << regStr << ", " << val << "\n";
+	codegen_indent(out);
+	out << "movq " << regStr << ", $" << val << "\n";
 }
 
 void LitOpd::genStore(std::ostream& out, std::string regStr){
