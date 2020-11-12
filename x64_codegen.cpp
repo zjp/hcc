@@ -291,7 +291,15 @@ void IntrinsicQuad::codegenX64(std::ostream& out){
 		}
 		break;
 	case INPUT:
-		 myArg->genStore(out, "register");
+		codegen_indent(out);
+		if(myArg->getType() == INT) {
+			out << "callq getInt\n";
+		} else if(myArg->getType() == BOOL) {
+			out << "callq getBool\n";
+		} else {
+			out << "callq getChar";
+		}
+		 myArg->genStore(out, "%rax");
 	}
 }
 

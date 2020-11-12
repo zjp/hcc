@@ -35,6 +35,7 @@ enum OpdWidth{
 class Opd{
 public:
 	Opd(OpdWidth widthIn) : myWidth(widthIn){}
+	Opd(OpdWidth widthIn, BaseType typeIn) : myType(typeIn), myWidth(widthIn) {}
 	virtual std::string valString() = 0;
 	virtual std::string locString() = 0;
 	virtual OpdWidth getWidth(){ return myWidth; }
@@ -43,6 +44,7 @@ public:
 	virtual void setMemoryLoc(std::string loc){
 		myLoc = loc;
 	}
+	virtual BaseType getType(){ return myType; }
 	virtual std::string getMemoryLoc(){
 		return myLoc;
 	}
@@ -58,6 +60,7 @@ public:
 	}
 protected:
 	std::string myLoc;
+	BaseType myType;
 private:
 	OpdWidth myWidth;
 };
@@ -92,7 +95,7 @@ public:
 	LitOpd(std::string valIn, OpdWidth width)
 	: Opd(width), val(valIn){ }
 	LitOpd(std::string valIn, OpdWidth width, BaseType typeIn) 
-		: Opd(width), val(valIn), myType(typeIn){}
+		: Opd(width, typeIn), val(valIn){}
 	virtual std::string valString() override{
 		return val;
 	}
@@ -103,10 +106,8 @@ public:
 		override;
 	virtual void genStore(std::ostream& out, std::string loc)
 		override;
-	virtual BaseType getType(){ return myType; }
 private:
 	std::string val;
-	BaseType myType;
 };
 
 class AuxOpd : public Opd{
