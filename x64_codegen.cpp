@@ -19,10 +19,10 @@ void IRProgram::allocGlobals() {
 
 void IRProgram::datagenX64(std::ostream& out){
 	out << ".data\n\n";
-	 for(auto global : globals) {
-		 codegen_indent(out);
-                 out << global.second->getMemoryLoc() << ": .quad 0\n";
-        }
+	for(auto global : globals) {
+		codegen_indent(out);
+		out << global.second->getMemoryLoc() << ": .quad 0\n";
+	}
 	//Put this directive after you write out strings
 	// so that everything is aligned to a quadword value
 	// again
@@ -47,8 +47,13 @@ void Procedure::allocLocals(){
 		local.second->setMemoryLoc(offset + loc);
 		++i;
 	}
-	i = 8;
-	/* I'll be honest here, I have no idea why this works or even if it does */
+	for(auto formal : formals) {
+		std::string offset = std::to_string(-8*i);
+		formal->setMemoryLoc(offset + loc);
+		++i;
+	}
+        i = 8;
+        /* I'll be honest here, I have no idea why this works or even if it does */
 	for(auto tmp : temps) {
 		tmp->setMemoryLoc("%r" + std::to_string(i));
 		++i;
@@ -150,28 +155,28 @@ void BinOpQuad::codegenX64(std::ostream& out){
 			out << "movq %rax, %rbx\n";
 			break;
 		case EQ:
-			out << opString << " " << regStringSrc1 << ", "
-			    << regStringSrc2 << "\n";
+			out << opString << " " << regStringSrc2 << ", "
+			    << regStringSrc1 << "\n";
 			break;
 		case NEQ:
-			out << opString << " " << regStringSrc1 << ", "
-			    << regStringSrc2 << "\n";
+			out << opString << " " << regStringSrc2 << ", "
+			    << regStringSrc1 << "\n";
 			break;
 		case GTE:
-			out << opString << " " << regStringSrc1 << ", "
-			    << regStringSrc2 << "\n";
+			out << opString << " " << regStringSrc2 << ", "
+			    << regStringSrc1 << "\n";
 			break;
 		case LTE:
-			out << opString << " " << regStringSrc1 << ", "
-			    << regStringSrc2 << "\n";
+			out << opString << " " << regStringSrc2 << ", "
+			    << regStringSrc1 << "\n";
 			break;
 		case LT:
-			out << opString << " " << regStringSrc1 << ", "
-			    << regStringSrc2 << "\n";
+			out << opString << " " << regStringSrc2 << ", "
+			    << regStringSrc1 << "\n";
 			break;
 		case GT:
-			out << opString << " " << regStringSrc1 << ", "
-			    << regStringSrc2 << "\n";
+			out << opString << " " << regStringSrc2 << ", "
+			    << regStringSrc1 << "\n";
 			break;
 		case OR:
 			out << opString << " " << regStringSrc1 << ", "
@@ -190,40 +195,62 @@ void BinOpQuad::codegenX64(std::ostream& out){
 		case SUB: break;
 		case DIV: break;
 		case MULT: break;
-		case EQ:break;
-		case NEQ:break;
-		case GTE:break;
-		case LTE:break;
-		case LT:break;
-		case GT: break;
+		case EQ:
+			codegen_indent(out);
+			out << "sete %bl" << "\n";
+			break;
+		case NEQ:
+			codegen_indent(out);
+			out << "setne %bl" << "\n";
+			break;
+		case GTE:
+			codegen_indent(out);
+			out << "setge %bl" << "\n";
+			break;
+		case LTE:
+			codegen_indent(out);
+			out << "setle %bl" << "\n";
+			break;
+		case LT:
+			codegen_indent(out);
+			out << "setl %bl" << "\n";
+			break;
+		case GT:
+			codegen_indent(out);
+			out << "setg %bl" << "\n";
+			break;
 		case OR: break;
 		case AND: break;
-		default: break;
+		default:
+			break;
 	}
 	dst->genStore(out, regDstString);
 }
 
 void UnaryOpQuad::codegenX64(std::ostream& out){
-	std::string opString;
-	std::string regString;
 	switch(op) {
 		case NEG:
-			regString = "%rax";
-
-			opString = "negq ";
+			src->genLoad(out, "%rbx");
+			codegen_indent(out);
+			out << "negq " << "%rbx\n";
+			dst->genStore(out, "%rbx");
 			break;
 		case NOT:
-			regString = "%rcx";
-			opString = "notq ";
+			src->genLoad(out, "%rbx");
+			codegen_indent(out);
+			out << "notq " << "%rbx\n";
+			dst->genStore(out, "%rbx");
+			src->genLoad(out, "%rbx");
+			codegen_indent(out);
+			out << "andq " << dst->getMemoryLoc() << ", %rbx\n";
+			dst->genStore(out, "%rbx");
+			break;
 	}
-	src->genLoad(out, regString);
-	codegen_indent(out);
-	out << opString << regString << "\n";
 }
 
 void AssignQuad::codegenX64(std::ostream& out){
-	src->genLoad(out, "%rax");
-	dst->genStore(out, "%rax");
+	src->genLoad(out, "%rbx");
+	dst->genStore(out, "%rbx");
 }
 
 void LocQuad::codegenX64(std::ostream& out){
@@ -236,12 +263,9 @@ void JmpQuad::codegenX64(std::ostream& out){
 }
 
 void JmpIfQuad::codegenX64(std::ostream& out){
+	cnd->genLoad(out, "%rbx");
 	codegen_indent(out);
-	out << "movq $0, %rax" << "\n";
-	codegen_indent(out);
-	out << "movb" << "\n";
-	codegen_indent(out);
-	out << "cmpq $0, %rax\n";
+	out << "cmpq $0, %rbx\n";
 	codegen_indent(out);
 	out << "je " << tgt->toString() << "\n";
 }
@@ -305,15 +329,61 @@ void LeaveQuad::codegenX64(std::ostream& out){
 }
 
 void SetArgQuad::codegenX64(std::ostream& out){
-	out << "setarg" << "\n";
+	if(index >= 7) {
+		opd->genLoad(out, "%rbx");
+		codegen_indent(out);
+		out << "pushq " << "%rbx" << "\n";
+		return;
+	}
+	switch (index) {
+		case 1:
+			opd->genLoad(out, "%rdi");
+			break;
+		case 2:
+			opd->genLoad(out, "%rsi");
+			break;
+		case 3:
+			opd->genLoad(out, "%rdx");
+			break;
+		case 4:
+			opd->genLoad(out, "%rcx");
+			break;
+		case 5:
+			opd->genLoad(out, "%r8");
+			break;
+		case 6:
+			opd->genLoad(out, "%r9");
+			break;
+	}
 }
 
 void GetArgQuad::codegenX64(std::ostream& out){
 	//We don't actually need to do anything here
 	/* OR: Move values from each register to the activation record */
+	switch(index) {
+		case 1:
+			opd->genStore(out, "%rdi");
+			break;
+		case 2:
+			opd->genStore(out, "%rsi");
+			break;
+		case 3:
+			opd->genStore(out, "%rdx");
+			break;
+		case 4:
+			opd->genStore(out, "%rcx");
+			break;
+		case 5:
+			opd->genStore(out, "%r8");
+			break;
+		case 6:
+			opd->genStore(out, "%r9");
+			break;
+                default: break;
+	}
 }
 
-void SetRetQuad::codegenX64(std::ostream& out){
+void SetRetQuad::codegenX64(std::ostream& out) {
 	opd->genLoad(out, "%rax");
 }
 

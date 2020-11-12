@@ -40,7 +40,13 @@ public:
 	virtual OpdWidth getWidth(){ return myWidth; }
 	virtual void genLoad(std::ostream& out, std::string dstReg) = 0;
 	virtual void genStore(std::ostream& out, std::string srcReg) = 0;
-	static OpdWidth width(const DataType * type){
+	virtual void setMemoryLoc(std::string loc){
+		myLoc = loc;
+	}
+	virtual std::string getMemoryLoc(){
+		return myLoc;
+	}
+		static OpdWidth width(const DataType * type){
 		if (const BasicType * basic = type->asBasic()){
 			if (basic->isChar()){ return BYTE; }
 			if (basic->isBool()){ return BYTE; }
@@ -50,6 +56,8 @@ public:
 		}
 		assert(false);
 	}
+protected:
+	std::string myLoc;
 private:
 	OpdWidth myWidth;
 };
@@ -70,12 +78,6 @@ public:
 		override;
 	virtual void genStore(std::ostream& out, std::string loc)
 		override;
-	virtual void setMemoryLoc(std::string loc){
-		myLoc = loc;
-	}
-	virtual std::string getMemoryLoc(){
-		return myLoc;
-	}
 private:
 	//Private Constructor
 	SymOpd(SemSymbol * sym, OpdWidth width)
@@ -83,7 +85,6 @@ private:
 	SemSymbol * mySym;
 	friend class Procedure;
 	friend class IRProgram;
-	std::string myLoc;
 };
 
 class LitOpd : public Opd{
@@ -111,7 +112,9 @@ private:
 class AuxOpd : public Opd{
 public:
 	AuxOpd(std::string nameIn, OpdWidth width) 
-	: Opd(width), name(nameIn) { }
+	: Opd(width), name(nameIn) {
+		myLoc = "UNINIT";
+	}
 	virtual std::string valString() override{
 		return "[" + getName() + "]";
 	}
@@ -125,15 +128,8 @@ public:
 		override;
 	virtual void genStore(std::ostream& out, std::string loc)
 		override;
-	virtual void setMemoryLoc(std::string loc){
-		myLoc = loc;
-	}
-	virtual std::string getMemoryLoc(){
-		return myLoc;
-	}
 private:
 	std::string name;
-	std::string myLoc = "UNINIT";
 };
 
 enum BinOp {
