@@ -84,62 +84,62 @@ void BinOpQuad::codegenX64(std::ostream& out){
 	switch(op) {
 		case ADD:
 			regStringSrc1 = "%rax";
-			regStringSrc1 = "%rbx";
+			regStringSrc2 = "%rbx";
 			opString = "addq ";
 			break;
 		case SUB:
 			regStringSrc1 = "%rax";
-			regStringSrc1 = "%rbx";
+			regStringSrc2 = "%rbx";
 			opString = "subq ";
 			break;
 		case MULT:
 			regStringSrc1 = "%rax";
-			regStringSrc1 = "%rbx";
+			regStringSrc2 = "%rbx";
 			opString = "imulq ";
 			break;
 		case DIV:
 			regStringSrc1 = "%rax";
-			regStringSrc1 = "%rbx";
+			regStringSrc2 = "%rbx";
 			opString = "idivq ";
 			break;
 		case EQ:
 			regStringSrc1 = "%rax";
-			regStringSrc1 = "%rbx";
+			regStringSrc2 = "%rbx";
 			opString = "cmpq ";
 			break;
 		case NEQ:
 			regStringSrc1 = "%rax";
-			regStringSrc1 = "%rbx";
+			regStringSrc2 = "%rbx";
 			opString = "cmpq ";
 			break;
 		case GTE:
 			regStringSrc1 = "%rax";
-			regStringSrc1 = "%rbx";
+			regStringSrc2 = "%rbx";
 			opString = "cmpq ";
 			break;
 		case LTE:
 			regStringSrc1 = "%rax";
-			regStringSrc1 = "%rbx";
+			regStringSrc2 = "%rbx";
 			opString = "cmpq ";
 			break;
 		case LT:
 			regStringSrc1 = "%rax";
-			regStringSrc1 = "%rbx";
+			regStringSrc2 = "%rbx";
 			opString = "cmpq ";
 			break;
 		case GT:
 			regStringSrc1 = "%rax";
-			regStringSrc1 = "%rbx";
+			regStringSrc2 = "%rbx";
 			opString = "cmpq ";
 			break;
 		case OR:
 			regStringSrc1 = "%rax";
-			regStringSrc1 = "%rbx";
+			regStringSrc2 = "%rbx";
 			opString = "orq ";
 			break;
 		case AND:
 			regStringSrc1 = "%rax";
-			regStringSrc1 = "%rbx";
+			regStringSrc2 = "%rbx";
 			opString = "andq ";
 			break;
 		default: break;
