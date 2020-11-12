@@ -366,8 +366,6 @@ void SetArgQuad::codegenX64(std::ostream& out){
 }
 
 void GetArgQuad::codegenX64(std::ostream& out){
-	//We don't actually need to do anything here
-	/* OR: Move values from each register to the activation record */
 	switch(index) {
 		case 1:
 			opd->genStore(out, "%rdi");
