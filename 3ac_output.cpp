@@ -159,8 +159,8 @@ Opd * PlusNode::flatten(Procedure * proc){
 }
 
 Opd * MinusNode::flatten(Procedure * proc){
-	Opd * childL = myExp1->flatten(proc);
-	Opd * childR = myExp2->flatten(proc);
+	Opd * childL = myExp2->flatten(proc);
+	Opd * childR = myExp1->flatten(proc);
 	OpdWidth width = QUADWORD;
 	Opd * dst = proc->makeTmp(width);
 	Quad * quad = new BinOpQuad(dst, SUB, childL, childR);
