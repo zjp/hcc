@@ -28,6 +28,9 @@ void IRProgram::datagenX64(std::ostream& out){
 	// again
 	out << ".align 8\n";
 	out << ".text\n";
+	for(auto proc : procs) {
+		out << ".globl " << proc->getName() << "\n";
+	}
 }
 
 void IRProgram::toX64(std::ostream& out){
