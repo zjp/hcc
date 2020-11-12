@@ -76,58 +76,119 @@ void Quad::codegenLabels(std::ostream& out){
 
 void BinOpQuad::codegenX64(std::ostream& out){
 	std::string opString;
+	std::string regStringSrc1;
+	std::string regStringSrc2;
 	switch(op) {
 		case ADD:
+			regStringSrc1 = "%rax";
+			regStringSrc1 = "%rbx";
 			opString = "addq ";
 			break;
 		case SUB:
+			regStringSrc1 = "%rax";
+			regStringSrc1 = "%rbx";
 			opString = "subq ";
 			break;
 		case MULT:
+			regStringSrc1 = "%rax";
+			regStringSrc1 = "%rbx";
 			opString = "imulq ";
 			break;
 		case DIV:
+			regStringSrc1 = "%rax";
+			regStringSrc1 = "%rbx";
 			opString = "idivq ";
 			break;
 		case EQ:
+			regStringSrc1 = "%rax";
+			regStringSrc1 = "%rbx";
 			opString = "cmpq ";
 			break;
 		case NEQ:
+			regStringSrc1 = "%rax";
+			regStringSrc1 = "%rbx";
 			opString = "cmpq ";
 			break;
 		case GTE:
+			regStringSrc1 = "%rax";
+			regStringSrc1 = "%rbx";
 			opString = "cmpq ";
 			break;
 		case LTE:
+			regStringSrc1 = "%rax";
+			regStringSrc1 = "%rbx";
 			opString = "cmpq ";
 			break;
 		case LT:
+			regStringSrc1 = "%rax";
+			regStringSrc1 = "%rbx";
 			opString = "cmpq ";
 			break;
 		case GT:
+			regStringSrc1 = "%rax";
+			regStringSrc1 = "%rbx";
 			opString = "cmpq ";
 			break;
 		case OR:
+			regStringSrc1 = "%rax";
+			regStringSrc1 = "%rbx";
 			opString = "orq ";
 			break;
 		case AND:
+			regStringSrc1 = "%rax";
+			regStringSrc1 = "%rbx";
 			opString = "andq ";
 			break;
 		default: break;
 	}
+	src1->genLoad(out, regStringSrc1);
+	src2->genLoad(out, regStringSrc2);
 	codegen_indent(out);
-	out << opString << /*opd1 << */"," << /*opd2 << */"\n";
+	out << opString << "%rax, %rbx\n";
+	/* clean up with setl if necessary */
+	switch(op) {
+		case EQ:
+			codegen_indent(out);
+			out << "sete" << "\n";
+			break;
+		case NEQ:
+			codegen_indent(out);
+			out << "sete" << "\n";
+			break;
+		case GTE:
+			codegen_indent(out);
+			out << "setge" << "\n";
+			break;
+		case LTE:
+			codegen_indent(out);
+			out << "setle" << "\n";
+			break;
+		case LT:
+			codegen_indent(out);
+			out << "setl" << "\n";
+			break;
+		case GT:
+			codegen_indent(out);
+			out << "setg" << "\n";
+			break;
+		default: break;
+	}
 }
 
 void UnaryOpQuad::codegenX64(std::ostream& out){
 	std::string opString;
+	std::string regString;
 	switch(op) {
 		case NEG:
+			regString = "%rax";
+
 			opString = "negq ";
 			break;
 		case NOT:
+			regString = "%rcx";
 			opString = "notq ";
 	}
+	src->genLoad(out, regString);
 	out << "movq " << /* opd << reg << */"\n";
 	out << opString << "\n";
 }
@@ -195,11 +256,11 @@ void EnterQuad::codegenX64(std::ostream& out){
 	codegen_indent(out);
 	out << "pushq %rbp" << "\n";
 	codegen_indent(out);
-	out << "movq $rsp, %rbp" << "\n";
+	out << "movq %rsp, %rbp" << "\n";
 	codegen_indent(out);
 	out << "addq $16, %rbp" << "\n";
 	codegen_indent(out);
-	out << "subq " << tempLocalSize << ", %rsp" << "\n";
+	out << "subq $" << tempLocalSize << ", %rsp" << "\n";
 }
 
 void LeaveQuad::codegenX64(std::ostream& out){
@@ -208,7 +269,7 @@ void LeaveQuad::codegenX64(std::ostream& out){
 		tempLocalSize += 8;
 	}
 	codegen_indent(out);
-	out << "addq " << tempLocalSize <<  ", %rsp" << "\n";
+	out << "addq $" << tempLocalSize <<  ", %rsp" << "\n";
 	codegen_indent(out);
 	out << "popq " << "%rbp" << "\n";
 	codegen_indent(out);
@@ -258,7 +319,7 @@ void AuxOpd::genStore(std::ostream& out, std::string regStr){
 void LitOpd::genLoad(std::ostream & out, std::string regStr){
 	// e.g. movq eax, val
 	codegen_indent(out);
-	out << "movq " << regStr << ", $" << val << "\n";
+	out << "movq $" << val << ", " << regStr << "\n";
 }
 
 void LitOpd::genStore(std::ostream& out, std::string regStr){
