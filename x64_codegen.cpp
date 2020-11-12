@@ -81,103 +81,126 @@ void Quad::codegenLabels(std::ostream& out){
 
 void BinOpQuad::codegenX64(std::ostream& out){
 	std::string opString;
-	std::string regStringSrc1;
-	std::string regStringSrc2;
+	std::string regStringSrc1 = "%rax";
+	std::string regStringSrc2 = "%rbx";
+	std::string regDstString = "%rbx";
 	switch(op) {
 		case ADD:
-			regStringSrc1 = "%rax";
-			regStringSrc2 = "%rbx";
-			opString = "addq ";
+			opString = "addq";
 			break;
 		case SUB:
-			regStringSrc1 = "%rax";
-			regStringSrc2 = "%rbx";
-			opString = "subq ";
+			opString = "subq";
 			break;
 		case MULT:
-			regStringSrc1 = "%rax";
-			regStringSrc2 = "%rbx";
-			opString = "imulq ";
+			codegen_indent(out);
+			out << "movq $0, %rdx\n";
+			opString = "imulq";
 			break;
 		case DIV:
-			regStringSrc1 = "%rax";
-			regStringSrc2 = "%rbx";
-			opString = "idivq ";
+			codegen_indent(out);
+			out << "movq $0, %rdx\n";
+			opString = "idivq";
 			break;
 		case EQ:
-			regStringSrc1 = "%rax";
-			regStringSrc2 = "%rbx";
-			opString = "cmpq ";
+			opString = "cmpq";
 			break;
 		case NEQ:
-			regStringSrc1 = "%rax";
-			regStringSrc2 = "%rbx";
-			opString = "cmpq ";
+			opString = "cmpq";
 			break;
 		case GTE:
-			regStringSrc1 = "%rax";
-			regStringSrc2 = "%rbx";
-			opString = "cmpq ";
+			opString = "cmpq";
 			break;
 		case LTE:
-			regStringSrc1 = "%rax";
-			regStringSrc2 = "%rbx";
-			opString = "cmpq ";
+			opString = "cmpq";
 			break;
 		case LT:
-			regStringSrc1 = "%rax";
-			regStringSrc2 = "%rbx";
-			opString = "cmpq ";
+			opString = "cmpq";
 			break;
 		case GT:
-			regStringSrc1 = "%rax";
-			regStringSrc2 = "%rbx";
-			opString = "cmpq ";
+			opString = "cmpq";
 			break;
 		case OR:
-			regStringSrc1 = "%rax";
-			regStringSrc2 = "%rbx";
-			opString = "orq ";
+			opString = "orq";
 			break;
 		case AND:
-			regStringSrc1 = "%rax";
-			regStringSrc2 = "%rbx";
-			opString = "andq ";
+			opString = "andq";
 			break;
 		default: break;
 	}
 	src1->genLoad(out, regStringSrc1);
 	src2->genLoad(out, regStringSrc2);
 	codegen_indent(out);
-	out << opString << "%rax, %rbx\n";
-	/* clean up with setl if necessary */
-	switch(op) {
-		case EQ:
+	switch (op) {
+		case ADD:
+			out << opString << " " << regStringSrc1 << ", "
+			    << regStringSrc2 << "\n";
+			break;
+		case SUB:
+			out << opString << " " << regStringSrc1 << ", "
+			    << regStringSrc2 << "\n";
+			break;
+		case DIV:
+			out << opString << " " << regStringSrc2 << "\n";
 			codegen_indent(out);
-			out << "sete" << "\n";
+			out << "movq %rax, %rbx\n";
+			break;
+		case MULT:
+			out << opString << " " << regStringSrc2 << "\n";
+			codegen_indent(out);
+			out << "movq %rax, %rbx\n";
+			break;
+		case EQ:
+			out << opString << " " << regStringSrc1 << ", "
+			    << regStringSrc2 << "\n";
 			break;
 		case NEQ:
-			codegen_indent(out);
-			out << "sete" << "\n";
+			out << opString << " " << regStringSrc1 << ", "
+			    << regStringSrc2 << "\n";
 			break;
 		case GTE:
-			codegen_indent(out);
-			out << "setge" << "\n";
+			out << opString << " " << regStringSrc1 << ", "
+			    << regStringSrc2 << "\n";
 			break;
 		case LTE:
-			codegen_indent(out);
-			out << "setle" << "\n";
+			out << opString << " " << regStringSrc1 << ", "
+			    << regStringSrc2 << "\n";
 			break;
 		case LT:
-			codegen_indent(out);
-			out << "setl" << "\n";
+			out << opString << " " << regStringSrc1 << ", "
+			    << regStringSrc2 << "\n";
 			break;
 		case GT:
-			codegen_indent(out);
-			out << "setg" << "\n";
+			out << opString << " " << regStringSrc1 << ", "
+			    << regStringSrc2 << "\n";
 			break;
+		case OR:
+			out << opString << " " << regStringSrc1 << ", "
+			    << regStringSrc2 << "\n";
+			break;
+		case AND:
+			out << opString << " " << regStringSrc1 << ", "
+			    << regStringSrc2 << "\n";
+			break;
+		default:
+			break;
+	}
+	/* clean up with setl if necessary */
+	switch(op) {
+		case ADD: break;
+		case SUB: break;
+		case DIV: break;
+		case MULT: break;
+		case EQ:break;
+		case NEQ:break;
+		case GTE:break;
+		case LTE:break;
+		case LT:break;
+		case GT: break;
+		case OR: break;
+		case AND: break;
 		default: break;
 	}
+	dst->genStore(out, regDstString);
 }
 
 void UnaryOpQuad::codegenX64(std::ostream& out){
