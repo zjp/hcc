@@ -21,8 +21,8 @@ void IRProgram::datagenX64(std::ostream& out){
 	out << ".data\n\n";
 	 for(auto global : globals) {
 		 codegen_indent(out);
-		 out << global.second->getMemoryLoc() << ": .quad\n";
-	}
+                 out << global.second->getMemoryLoc() << ": .quad 0\n";
+        }
 	//Put this directive after you write out strings
 	// so that everything is aligned to a quadword value
 	// again
