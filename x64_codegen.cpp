@@ -327,8 +327,15 @@ void AuxOpd::genStore(std::ostream& out, std::string regStr){
 void LitOpd::genLoad(std::ostream & out, std::string regStr){
 	// e.g. movq eax, val
 	codegen_indent(out);
-	out << "movq $" << val << ", " << regStr << "\n";
-	//out << "LitOpd::genLoad\n";
+	if(this->getType() == CHAR) {
+		int output_val = static_cast<int>(val.at(0));
+		out << "movq $" << output_val << ", " << regStr << "\n";
+	} else if(this->getType() == BOOL) {
+		int output_val = static_cast<int>(val.at(0)) - 48;
+		out << "movq $" << output_val << ", " << regStr << "\n";
+	} else {
+		out << "movq $" << val << ", " << regStr << "\n";
+	}
 }
 
 void LitOpd::genStore(std::ostream& out, std::string regStr){

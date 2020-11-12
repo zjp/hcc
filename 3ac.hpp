@@ -90,6 +90,8 @@ class LitOpd : public Opd{
 public:
 	LitOpd(std::string valIn, OpdWidth width)
 	: Opd(width), val(valIn){ }
+	LitOpd(std::string valIn, OpdWidth width, BaseType typeIn) 
+		: Opd(width), val(valIn), myType(typeIn){}
 	virtual std::string valString() override{
 		return val;
 	}
@@ -100,8 +102,10 @@ public:
 		override;
 	virtual void genStore(std::ostream& out, std::string loc)
 		override;
+	virtual BaseType getType(){ return myType; }
 private:
 	std::string val;
+	BaseType myType;
 };
 
 class AuxOpd : public Opd{

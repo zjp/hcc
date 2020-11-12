@@ -63,7 +63,7 @@ void FormalDeclNode::to3AC(Procedure * proc){
 }
 
 Opd * IntLitNode::flatten(Procedure * proc){
-	return new LitOpd(std::to_string(myNum), QUADWORD);
+	return new LitOpd(std::to_string(myNum), QUADWORD, INT);
 }
 
 Opd * StrLitNode::flatten(Procedure * proc){
@@ -72,16 +72,16 @@ Opd * StrLitNode::flatten(Procedure * proc){
 }
 
 Opd * CharLitNode::flatten(Procedure * proc){
-	return new LitOpd(std::string(1, myVal), BYTE);
+	return new LitOpd(std::string(1, myVal), BYTE, CHAR);
 }
 
 Opd * FalseNode::flatten(Procedure * prog){
-	Opd * res = new LitOpd("0", BYTE);
+	Opd * res = new LitOpd("0", BYTE, BOOL);
 	return res;
 }
 
 Opd * TrueNode::flatten(Procedure * prog){
-	Opd * res = new LitOpd("1", BYTE);
+	Opd * res = new LitOpd("1", BYTE, BOOL);
 	return res;
 }
 
@@ -278,7 +278,7 @@ void AssignStmtNode::to3AC(Procedure * proc){
 void PostIncStmtNode::to3AC(Procedure * proc){
 	Opd * child = this->myLVal->flatten(proc);
 	OpdWidth width = QUADWORD;
-	LitOpd * litOpd = new LitOpd("1", width);
+	LitOpd * litOpd = new LitOpd("1", width, INT);
 	BinOpQuad * quad = new BinOpQuad(child, ADD, child, litOpd);
 	proc->addQuad(quad);
 }
@@ -286,7 +286,7 @@ void PostIncStmtNode::to3AC(Procedure * proc){
 void PostDecStmtNode::to3AC(Procedure * proc){
 	Opd * child = this->myLVal->flatten(proc);
 	OpdWidth width = QUADWORD;
-	LitOpd * litOpd = new LitOpd("1", width);
+	LitOpd * litOpd = new LitOpd("1", width, INT);
 	BinOpQuad * quad = new BinOpQuad(child, SUB, child, litOpd);
 	proc->addQuad(quad);
 }
@@ -410,7 +410,7 @@ void VarDeclNode::to3AC(IRProgram * prog){
 }
 
 Opd * NullPtrNode::flatten(Procedure * prog){
-	Opd * res = new LitOpd("0", ADDR);
+	Opd * res = new LitOpd("0", ADDR, INT);
 	return res;
 }
 
@@ -438,11 +438,11 @@ Opd * IndexNode::flatten(Procedure * proc){
 	Opd * strideOpd = nullptr;
 	OpdWidth width = baseOpd->getWidth();
 	if (width == ADDR){
-		LitOpd * litOpd = new LitOpd("4", ADDR);
+		LitOpd * litOpd = new LitOpd("4", ADDR, INT);
 		strideOpd = proc->makeTmp(ADDR);
 		Quad * strideQuad = new BinOpQuad(strideOpd, MULT, offOpd, litOpd);
 	} else if (width == QUADWORD){
-		LitOpd * litOpd = new LitOpd("4", ADDR);
+		LitOpd * litOpd = new LitOpd("4", ADDR, INT);
 		strideOpd = proc->makeTmp(ADDR);
 		Quad * strideQuad = new BinOpQuad(strideOpd, MULT, offOpd, litOpd);
 	} else if (width == BYTE){
