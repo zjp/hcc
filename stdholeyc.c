@@ -2,19 +2,19 @@
 #include "stdlib.h"
 
 void printByte(char c){
-	if (c == 0){ fprintf(stdout, "false"); }
-	else if (c == 1){ fprintf(stdout, "true"); }
-	else { fprintf(stdout, "%c", c); }
+	if (c == 0){ fprintf(stdout, "false\n"); }
+	else if (c == 1){ fprintf(stdout, "true\n"); }
+	else { fprintf(stdout, "%c\n", c); }
 	fflush(stdout);
 }
 
 void printInt(long int num){
-	fprintf(stdout, "%ld", num);
+	fprintf(stdout, "%ld\n", num);
 	fflush(stdout);
 }
 
 void printString(const char * str){
-	fprintf(stdout, "%s", str);
+	fprintf(stdout, "%s\n", str);
 	fflush(stdout);
 }
 
