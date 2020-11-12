@@ -18,7 +18,7 @@ void IRProgram::allocGlobals() {
 }
 
 void IRProgram::datagenX64(std::ostream& out){
-	out << ".data\n";
+	out << ".data\n\n";
 	 for(auto global : globals) {
 		 codegen_indent(out);
 		 out << global.second->getMemoryLoc() << ": .quad\n";
@@ -26,11 +26,9 @@ void IRProgram::datagenX64(std::ostream& out){
 	//Put this directive after you write out strings
 	// so that everything is aligned to a quadword value
 	// again
-	out << ".align 8\n";
-	out << ".text\n";
-	for(auto proc : procs) {
-		out << ".globl " << proc->getName() << "\n";
-	}
+	out << "\n.align 8\n";
+	out << "\n.text\n";
+	out << ".globl main\n\n";
 }
 
 void IRProgram::toX64(std::ostream& out){
@@ -50,17 +48,19 @@ void Procedure::allocLocals(){
 		local.second->setMemoryLoc(offset + loc);
 		++i;
 	}
+	i = 0;
+	/* I'll be honest here, I have no idea why this works or even if it does */
+	for(auto tmp : temps) {
+		tmp->setMemoryLoc("%r1" + std::to_string(i));
+		++i;
+	}
 }
 
 void Procedure::toX64(std::ostream& out){
 	//Allocate all locals
 	allocLocals();
 
-	if(myName == "main") {
-		out << "main:\n";
-	} else {
-		enter->codegenLabels(out);
-        }
+	out << this->getName() << ":\n"; // "main:\n";
         enter->codegenX64(out);
 	for (auto quad : *bodyQuads){
 		quad->codegenLabels(out);
@@ -291,13 +291,11 @@ void GetArgQuad::codegenX64(std::ostream& out){
 }
 
 void SetRetQuad::codegenX64(std::ostream& out){
-	codegen_indent(out);
-	out << "setret" << "\n";
+	opd->genLoad(out, "%rax");
 }
 
 void GetRetQuad::codegenX64(std::ostream& out){
-	codegen_indent(out);
-	out << "getret" << "\n";
+	opd->genStore(out, "%rax");
 }
 
 void SymOpd::genLoad(std::ostream & out, std::string regStr){
