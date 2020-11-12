@@ -19,7 +19,7 @@ holeycc: $(OBJ_SRCS)
 	$(CXX) $(FLAGS) -g -std=c++14 -o $@ $(OBJ_SRCS)
 
 stdholeyc.o: stdholeyc.c
-	$(CXX) -c -o $@ $< 
+	gcc -c -o $@ $< 
 
 %.o: %.cpp 
 	$(CXX) $(FLAGS) -g -std=c++14 -MMD -MP -c -o $@ $<

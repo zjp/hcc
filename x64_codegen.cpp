@@ -197,9 +197,8 @@ void UnaryOpQuad::codegenX64(std::ostream& out){
 }
 
 void AssignQuad::codegenX64(std::ostream& out){
-	src->genLoad(out, "");
-	dst->genStore(out, "");
-	out << "TODO: ASSIGN\n";
+	src->genLoad(out, "%rax");
+	dst->genStore(out, "%rax");
 }
 
 void LocQuad::codegenX64(std::ostream& out){
@@ -281,7 +280,6 @@ void LeaveQuad::codegenX64(std::ostream& out){
 }
 
 void SetArgQuad::codegenX64(std::ostream& out){
-	codegen_indent(out);
 	out << "setarg" << "\n";
 }
 
@@ -300,14 +298,12 @@ void GetRetQuad::codegenX64(std::ostream& out){
 
 void SymOpd::genLoad(std::ostream & out, std::string regStr){
 	codegen_indent(out);
-	out << "movq " << regStr << ", " << getMemoryLoc() << "\n";
-	//out << "SymOpd::genLoad\n";
+	out << "movq " << myLoc << ", " << regStr << "\n";
 }
 
 void SymOpd::genStore(std::ostream& out, std::string regStr){
 	codegen_indent(out);
-	out << "movq " << getMemoryLoc() << ", " << regStr << "\n";
-	//out << "SymOpd::genStore\n";
+	out << "movq " << regStr << ", " << myLoc << "\n";
 }
 
 void AuxOpd::genLoad(std::ostream & out, std::string regStr){
