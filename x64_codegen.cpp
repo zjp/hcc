@@ -40,11 +40,10 @@ void IRProgram::toX64(std::ostream& out){
 }
 
 void Procedure::allocLocals(){
-	int i = 1;
-	int offset = 0;
+	int i = 3;
 	std::string loc = "(%rbp)";
 	for(auto local : locals) {
-		std::string offset = std::to_string(8*i);
+		std::string offset = std::to_string(-8*i);
 		local.second->setMemoryLoc(offset + loc);
 		++i;
 	}
