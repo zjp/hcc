@@ -192,13 +192,14 @@ void UnaryOpQuad::codegenX64(std::ostream& out){
 			opString = "notq ";
 	}
 	src->genLoad(out, regString);
-	out << "movq " << /* opd << reg << */"\n";
-	out << opString << "\n";
+	codegen_indent(out);
+	out << opString << regString << "\n";
 }
 
 void AssignQuad::codegenX64(std::ostream& out){
-	src->genLoad(out, "%rax");
-	dst->genStore(out, "%rax");
+	src->genLoad(out, "");
+	dst->genStore(out, "");
+	out << "TODO: ASSIGN\n";
 }
 
 void LocQuad::codegenX64(std::ostream& out){
@@ -216,7 +217,7 @@ void JmpIfQuad::codegenX64(std::ostream& out){
 	codegen_indent(out);
 	out << "movb" << "\n";
 	codegen_indent(out);
-	out << "cmpq $0 %rax\n";
+	out << "cmpq $0, %rax\n";
 	codegen_indent(out);
 	out << "je " << tgt->toString() << "\n";
 }
@@ -301,28 +302,33 @@ void GetRetQuad::codegenX64(std::ostream& out){
 
 void SymOpd::genLoad(std::ostream & out, std::string regStr){
 	codegen_indent(out);
-	out << "movq " << regStr << ", " << "\n";
+	out << "movq " << regStr << ", " << getMemoryLoc() << "\n";
+	//out << "SymOpd::genLoad\n";
 }
 
 void SymOpd::genStore(std::ostream& out, std::string regStr){
 	codegen_indent(out);
-	out << regStr << "\n";
+	out << "movq " << getMemoryLoc() << ", " << regStr << "\n";
+	//out << "SymOpd::genStore\n";
 }
 
 void AuxOpd::genLoad(std::ostream & out, std::string regStr){
 	codegen_indent(out);
-	out << "movq " << regStr << "\n";
+	out << "movq " << myLoc << ", " << regStr << "\n";
+	//out << "AuxOpd::genLoad\n";
 }
 
 void AuxOpd::genStore(std::ostream& out, std::string regStr){
 	codegen_indent(out);
-	out << "movq " << regStr << " " << "\n";
+	out << "movq " << regStr << ", " << myLoc << "\n";
+	//out << "AuxOpd::genStore\n";
 }
 
 void LitOpd::genLoad(std::ostream & out, std::string regStr){
 	// e.g. movq eax, val
 	codegen_indent(out);
 	out << "movq $" << val << ", " << regStr << "\n";
+	//out << "LitOpd::genLoad\n";
 }
 
 void LitOpd::genStore(std::ostream& out, std::string regStr){
