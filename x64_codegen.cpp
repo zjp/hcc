@@ -48,11 +48,14 @@ void Procedure::allocLocals(){
 		local.second->setMemoryLoc(offset + loc);
 		++i;
 	}
-	i = 0;
+	i = 8;
 	/* I'll be honest here, I have no idea why this works or even if it does */
 	for(auto tmp : temps) {
-		tmp->setMemoryLoc("%r1" + std::to_string(i));
+		tmp->setMemoryLoc("%r" + std::to_string(i));
 		++i;
+		if(i == 15) {
+			i = 8;
+		}
 	}
 }
 
