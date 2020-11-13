@@ -47,13 +47,25 @@ void Procedure::allocLocals(){
 		local.second->setMemoryLoc(offset + loc);
 		++i;
 	}
-	for(auto formal : formals) {
-		std::string offset = std::to_string(-8*i);
-		formal->setMemoryLoc(offset + loc);
-		++i;
+	size_t j = 0;
+	auto it = this->formals.begin();
+	while(j < 6 && it != formals.end()) {
+		int formal_offset = -8 * (static_cast<int>(j-1) + i);
+			std::string offset = std::to_string(formal_offset);
+            (*it)->setMemoryLoc(offset + loc);
+            ++it;
+		++j;
+    }
+	if(it != formals.end()) {
+		--it;
+		i = -1;
+		auto backwards_it = this->formals.end();
+		while(++i, --backwards_it, backwards_it != it) {
+			(*backwards_it)->setMemoryLoc(std::to_string(8*i) + loc);
+		}
 	}
-        i = 8;
-        /* I'll be honest here, I have no idea why this works or even if it does */
+    i = 8;
+    /* I'll be honest here, I have no idea why this works or even if it does */
 	for(auto tmp : temps) {
 		tmp->setMemoryLoc("%r" + std::to_string(i));
 		++i;
@@ -306,6 +318,10 @@ void IntrinsicQuad::codegenX64(std::ostream& out){
 void CallQuad::codegenX64(std::ostream& out){
 	codegen_indent(out);
 	out << "callq " << callee->getName() << "\n";
+	auto formals = callee->getDataType()->asFn()->getFormalTypes();
+	int num_formals_oversize = formals->size() - 6;
+	codegen_indent(out);
+	out << "addq $" << 8*num_formals_oversize << ", %rsp\n";
 }
 
 void EnterQuad::codegenX64(std::ostream& out){
